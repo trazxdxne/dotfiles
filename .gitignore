@@ -1,0 +1,14 @@
+# Logs
+*.log
+ags/ags.log
+
+# Editor & System backups
+*.save*
+*~
+*.bak
+.DS_Store
+
+# Package Caches
+node_modules/
+.npm/
+.cache/

@@ -1,0 +1,270 @@
+* {
+    font-family: 'Adwaita Sans', 'Noto Sans', sans-serif;
+    font-size: 12px;
+}
+
+/* Main Bar Styling - Extremely thin and compact, sharp, full-width */
+.Bar {
+    background-color: #1e1e2e; /* Completely solid to hide Niri animations underneath */
+    border-bottom: 1px solid rgba(69, 71, 90, 0.4); /* #45475a (White override) with 40% opacity */
+    border-radius: 0; /* Square corners */
+    margin: 0; /* Full-width, no floating margins */
+    padding: 1px 16px; /* Slightly taller to accommodate 12px icons centered */
+    /* Transition removed to prevent border-bottom pop-in delay when exiting fullscreen */
+}
+
+/* Fullscreen transparency state - completely transparent background and border */
+.Bar.fullscreen {
+    background-color: rgba(30, 30, 46, 0.0); /* 100% transparent */
+    border-bottom: 1px solid rgba(69, 71, 90, 0.0); /* No border */
+    box-shadow: none;
+}
+
+.bar-content {
+    padding: 0; /* Completely removed padding inside centerbox */
+}
+
+/* Workspaces Widget Styling - Compact and square */
+.workspaces {
+    background-color: rgba(69, 71, 90, 0.3); /* #45475a (Surface 1) */
+    border-radius: 0;
+    padding: 1px; /* 1px padding */
+    transition: all 0.3s ease;
+}
+
+/* On fullscreen, the workspaces container background becomes more subtle */
+.Bar.fullscreen .workspaces {
+    background-color: rgba(69, 71, 90, 0.1);
+}
+
+.workspace-button {
+    background: transparent;
+    border: 1px solid transparent; /* Match border width of active state */
+    border-radius: 0; /* Square shape */
+    padding: 1px 0px; 
+    min-height: 0;
+    min-width: 24px; /* Fixed width to prevent jumping */
+    color: #f5e0dc; /* #f5e0dc (Rosewater) */
+    font-size: 13px; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.workspace-button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #f5c2e7; /* #f5c2e7 (Pink) */
+}
+
+.workspace-button.active {
+    background-color: #cba6f7; /* #cba6f7 (Mauve) */
+    color: #1e1e2e; /* #1e1e2e (Base) */
+    font-weight: normal; 
+    border: 1px solid transparent;
+}
+
+/* Fullscreen adjustments for workspaces to keep them visible and readable as floating elements */
+.Bar.fullscreen .workspace-button {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.7);
+    color: rgba(245, 224, 220, 0.8); /* Slightly dimmer rosewater */
+}
+
+.Bar.fullscreen .workspace-button.active {
+    background-color: rgba(203, 166, 247, 0.25); /* Semi-transparent Mauve */
+    border: 1px solid rgba(203, 166, 247, 0.4); /* Faint outline */
+    color: #cba6f7; /* Mauve text instead of dark base */
+    text-shadow: none; /* No shadow on active glowing button */
+}
+
+/* Clickable Clock Button (Date & Time) */
+.clock-button {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 1px 12px; /* Thinner padding */
+    min-height: 0; /* Override GTK default minimum height */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.clock-button:hover {
+    background-color: rgba(69, 71, 90, 0.4);
+}
+
+.clock-box {
+    padding: 0;
+    margin: 0;
+}
+
+.clock-time {
+    font-weight: bold;
+    color: #cba6f7; /* #cba6f7 (Mauve) */
+    transition: all 0.3s ease;
+}
+
+.clock-dot {
+    color: #f5c2e7; /* #f5c2e7 (Pink) */
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.clock-date {
+    color: #f5e0dc; /* #f5e0dc (Rosewater) */
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Fullscreen adjustments for clock */
+.Bar.fullscreen .clock-time {
+    color: #cba6f7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); /* Soft dark shadow for readability */
+}
+
+.Bar.fullscreen .clock-date {
+    color: rgba(245, 224, 220, 0.85);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.Bar.fullscreen .clock-dot {
+    color: #f5c2e7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Right System Info Button (Volume and Battery) */
+.sys-button {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 1px 4px; /* Thinner padding to match layout and tray */
+    min-height: 0; /* Override GTK default minimum height */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sys-button:hover {
+    background-color: rgba(69, 71, 90, 0.4);
+}
+
+.sys-info {
+    color: #fab387; /* #fab387 (Peach) */
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Fullscreen adjustments for system info */
+.Bar.fullscreen .sys-button {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.Bar.fullscreen .sys-button:hover {
+    background-color: rgba(69, 71, 90, 0.2);
+}
+
+.Bar.fullscreen .sys-info {
+    color: rgba(250, 179, 135, 0.85); /* Slightly dimmer peach */
+}
+
+window.calendar-popup-window,
+window.calendar-popup-window.background,
+window.calendar-popup-window decoration {
+    background-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+.calendar-box {
+    background-color: rgba(30, 30, 46, 0.95); /* #1e1e2e (Base) */
+    border: 1px solid rgba(69, 71, 90, 0.6);
+    border-radius: 0; /* Completely square */
+    padding: 16px;
+    margin-top: 0px; /* Window itself is shifted down by marginTop={16} in app.js */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* GTK Calendar Widget Customization */
+calendar {
+    color: #f5e0dc; /* #f5e0dc (Rosewater) */
+    background-color: transparent;
+    border: none;
+}
+
+calendar:selected {
+    background-color: #cba6f7; /* #cba6f7 (Mauve) */
+    color: #1e1e2e;
+    border-radius: 0; /* Square selection */
+}
+
+/* Header and navigation styling - using proper GTK 3 CSS selectors */
+calendar header {
+    color: #f5c2e7; /* #f5c2e7 (Pink) */
+    font-weight: bold;
+}
+
+calendar button {
+    color: #f5e0dc; /* #f5e0dc (Rosewater) */
+    background: transparent;
+    border: none;
+}
+
+calendar button:hover {
+    color: #f5c2e7; /* #f5c2e7 (Pink) */
+}
+
+/* System Tray Styling */
+.tray {
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tray-item {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 1px 4px;
+    min-height: 0;
+    min-width: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tray-item:hover {
+    background-color: rgba(69, 71, 90, 0.4);
+}
+
+.tray-item image {
+    color: #f5e0dc; /* #f5e0dc (Rosewater) */
+}
+
+/* Fullscreen adjustments for tray */
+.Bar.fullscreen .tray-item {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.Bar.fullscreen .tray-item:hover {
+    background-color: rgba(69, 71, 90, 0.2);
+}
+
+/* Fullscreen layout: hide all widgets except the clock */
+.Bar.fullscreen .workspaces,
+.Bar.fullscreen .tray,
+.Bar.fullscreen .layout-button,
+.Bar.fullscreen .sys-button {
+    opacity: 0;
+}
+
+/* Keyboard Layout Button Styling */
+.layout-button {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 1px 4px;
+    min-height: 0;
+    min-width: 24px; /* Matches workspace button width for symmetry, prevents layout shifting */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.layout-button:hover {
+    background-color: rgba(69, 71, 90, 0.4);
+}
+
+.layout-text {
+    color: #cba6f7; /* #cba6f7 (Mauve) */
+    font-weight: bold;
+}
