@@ -414,7 +414,7 @@ systemctl --user stop wireplumber.service
 rm -rf ~/.local/state/wireplumber
 ```
 
-3. Установите дефолтную громкость воспроизведения (например, 20%):
+3. Установите дефолтную громкость воспроизведения (например, `0.2`, что соответствует примерно 58% на линейной шкале из-за кубического масштабирования):
 ```bash
 mkdir -p ~/.config/wireplumber/wireplumber.conf.d/
 printf "wireplumber.settings = {\n  node.stream.default-playback-volume = 0.2\n}\n" > ~/.config/wireplumber/wireplumber.conf.d/99-force-volume.conf
