@@ -65,17 +65,24 @@ let currentWorkspaceIds = []
 const handleWorkspaces = (list) => {
     if (!workspacesBox || !list) return
     
-    // sort workspaces by index/id to keep them in order (1, 2, 3...)
-    list.sort((a, b) => (a.idx || a.id) - (b.idx || b.id))
+    // filter out empty, inactive workspaces to keep the bar clean
+    const filteredList = list.filter(ws => {
+        const isActive = ws.is_focused || ws.is_active || ws.active || false
+        const hasWindows = ws.active_window_id !== null && ws.active_window_id !== undefined
+        return isActive || hasWindows
+    })
     
-    const newIds = list.map(ws => ws.id)
+    // sort workspaces by index/id to keep them in order (1, 2, 3...)
+    filteredList.sort((a, b) => (a.idx || a.id) - (b.idx || b.id))
+    
+    const newIds = filteredList.map(ws => ws.id)
     const isIdentical = newIds.length === currentWorkspaceIds.length &&
         newIds.every((id, idx) => id === currentWorkspaceIds[idx])
     
     if (isIdentical) {
         // update existing buttons in-place to keep mouse grab and prevent double-click bugs
         const children = workspacesBox.get_children()
-        list.forEach((ws, idx) => {
+        filteredList.forEach((ws, idx) => {
             const btn = children[idx]
             if (btn) {
                 const isActive = ws.is_focused || ws.is_active || ws.active || false
@@ -101,7 +108,7 @@ const handleWorkspaces = (list) => {
         workspacesBox.get_children().forEach(ch => ch.destroy())
         
         // add new buttons using native GTK constructors
-        list.forEach(ws => {
+        filteredList.forEach(ws => {
             const isActive = ws.is_focused || ws.is_active || ws.active || false
             const labelText = ws.name || `${ws.idx || ws.id}`
             
