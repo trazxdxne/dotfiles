@@ -300,20 +300,19 @@ Terminal=false
 sudo pacman -S alsa-utils pipewire wireplumber
 ```
 
-### Настройка правил WirePlumber
-1. Отключите встроенные PCI звуковые карты и включите аппаратный микшер для USB-устройств. Создайте файл `~/.config/wireplumber/wireplumber.conf.d/50-audio-rules.conf`:
+### Отключение встроенного звука (PCI/HDMI) и настройка WirePlumber
+
+Чтобы полностью отключить встроенные PCI и HDMI звуковые карты (Nvidia HDMI, материнская плата) на системном уровне, чтобы они не отображались в alsamixer, заблокируйте модуль `snd_hda_intel`.
+
+1. Создайте файл конфигурации modprobe `/etc/modprobe.d/disable-hda.conf` (потребуются права superuser через `pkexec` или `sudo`):
+```bash
+echo "blacklist snd_hda_intel" | pkexec tee /etc/modprobe.d/disable-hda.conf
+```
+*(После этого перезагрузите компьютер).*
+
+2. Для USB-устройств включите аппаратный микшер в WirePlumber. Создайте файл `~/.config/wireplumber/wireplumber.conf.d/50-audio-rules.conf`:
 ```
 monitor.alsa.rules = [
-  {
-    matches = [
-      { device.name = "~alsa_card.pci-.*" }
-    ]
-    actions = {
-      update-props = {
-        device.disabled = true
-      }
-    }
-  },
   {
     matches = [
       { device.name = "~alsa_card.usb-.*" }

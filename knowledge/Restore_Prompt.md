@@ -25,6 +25,8 @@
      • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
      • `~/.gemini/antigravity-cli/knowledge/Environment_Setup.md` -> `~/dotfiles/knowledge/Environment_Setup.md`
      • `~/.gemini/antigravity-cli/knowledge/Equicord_Setup_Guide.md` -> `~/dotfiles/knowledge/Equicord_Setup_Guide.md`
+   - Отключи встроенный звук, скопировав конфигурационный файл modprobe (потребуется pkexec):
+     • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`
      • `rclone copy gdrive:Antigravity/Skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ ~/.agents/skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ --copy-links`
