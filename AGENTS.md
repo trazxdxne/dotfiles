@@ -1,6 +1,6 @@
 # Antigravity Project Rules
 
-- **Privilege Escalation**: Never run `sudo` directly for commands that require root privileges if they might prompt for a password. Instead, always use `pkexec` (e.g. `pkexec pacman -S ...`) to trigger a graphical polkit authentication dialog, allowing the user to enter their password via a GUI prompt.
+- **Privilege Escalation**: Use `pkexec` **only** for true system-level operations that require root and would prompt for a password in the terminal — e.g., installing packages (`pkexec pacman -S ...`), editing system files (`/etc/`, `/usr/`), managing system services (`pkexec systemctl ...`), etc. This triggers a graphical polkit dialog instead of a terminal password prompt. Do **not** use `pkexec` for regular development tasks (e.g., `git`, `npm`, creating repos/files in the user's home directory) — those do not need elevated privileges at all.
 
 - **Git Workflow for Configs**: The user's configurations (Niri, AGS, WezTerm, Fuzzel, GTK, WirePlumber, niri-autostart, system guides, and this rules file) are managed in a centralized Git repository at `~/dotfiles`. Whenever you modify any of these configuration files, you MUST commit the changes inside the `~/dotfiles` directory. Automatically create a concise, English-only git commit without asking for details. Make the commit minimal and purely functional. After committing, either push it automatically or provide the exact command for the user to execute.
 
