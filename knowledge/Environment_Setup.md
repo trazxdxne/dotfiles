@@ -259,7 +259,7 @@ width=1
 radius=0
 ```
 
-### Запуск Discord (Equicord) через XWayland
+### Запуск Discord (Equicord) через XWayland и обход блокировок (discord-linux-bypass)
 Для стабильности на NVIDIA под Wayland запускаем Discord через XWayland, это спасет от постоянных сегфолтов и ошибок памяти драйвера, которые ломают нативный запуск.
 
 Для этого обязательно установите `xwayland-satellite` из репозитория extra, чтобы Niri мог поднимать XWayland на лету:
@@ -272,9 +272,70 @@ sudo pacman -S xwayland-satellite
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY"
 ```
 
-Копируем ярлык и прописываем стандартный запуск без флагов в `~/.local/share/applications/discord.desktop`:
+Для обхода блокировки голосовых чатов Discord (модификации UDP-пакетов для обхода ТСПУ/DPI) используется библиотека `discord-linux-bypass`.
+
+#### 1. Сборка библиотеки
+Склонируйте и соберите библиотеку из репозитория:
+```bash
+git clone https://codeberg.org/nik9/discord-linux-bypass.git ~/Projects/discord-linux-bypass
+cd ~/Projects/discord-linux-bypass
+make
+```
+В результате соберется файл `libdiscordbypass.so`.
+
+#### 2. Создание скрипта запуска
+Создайте скрипт `~/Projects/discord-linux-bypass/discord_run.sh`:
+```bash
+#!/usr/bin/env bash
+
+# Путь к скомпилированной библиотеке и конфигу
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_PATH="$DIR/libdiscordbypass.so"
+CONFIG_PATH="$DIR/config.env"
+
+# Загружаем порт из конфига, если он существует
+if [ -f "$CONFIG_PATH" ]; then
+    source "$CONFIG_PATH"
+fi
+
+# Если порт не задан, настраиваем
+if [ -z "$PORT" ]; then
+    if [ -t 0 ]; then
+        read -p "Введи порт для SOCKS5 прокси на localhost (по умолчанию 9050): " input_port
+        PORT=${input_port:-9050}
+        echo "PORT=$PORT" > "$CONFIG_PATH"
+    else
+        PORT=9050
+        echo "PORT=$PORT" > "$CONFIG_PATH"
+    fi
+fi
+
+export BYPASS_DELAY=50
+export BYPASS_FAKE_PACKETS=2
+export LD_PRELOAD="$LIB_PATH"
+
+proxy_server="--proxy-server=socks5://127.0.0.1:$PORT"
+
+# Запуск клиента с передачей аргументов
+if command -v vesktop &> /dev/null; then
+    exec vesktop $proxy_server "$@"
+elif command -v discord &> /dev/null; then
+    exec discord $proxy_server "$@"
+fi
+```
+Сделайте его исполняемым: `chmod +x ~/Projects/discord-linux-bypass/discord_run.sh`.
+
+#### 3. Настройка порта
+Порт SOCKS5 прокси хранится в файле `~/Projects/discord-linux-bypass/config.env`:
+```env
+PORT=9050
+```
+
+#### 4. Интеграция в систему
+Скопируйте системный ярлык Discord в локальную директорию и измените строку запуска:
+`~/.local/share/applications/discord.desktop`:
 ```ini
-Exec=/usr/bin/discord --url -- %u
+Exec=/home/trazxdxne/Projects/discord-linux-bypass/discord_run.sh --url -- %u
 ```
 
 ### Запуск Windows-приложений (ярлыки Wine)
