@@ -82,6 +82,8 @@ yay -S catppuccin-gtk-theme-mocha && sudo pacman -S qt6ct qt5ct
 gtk-theme-name=catppuccin-mocha-pink-standard+default
 gtk-application-prefer-dark-theme=1
 gtk-font-name=Adwaita Sans 11
+gtk-cursor-theme-name=Bibata-Modern-Classic
+gtk-cursor-theme-size=20
 ```
 
 2. Свяжите ассеты темы с GTK4, чтобы Libadwaita приложения (Nautilus, Text Editor) тоже применили стиль:
@@ -92,11 +94,13 @@ ln -sf /usr/share/themes/catppuccin-mocha-pink-standard+default/gtk-4.0/gtk-dark
 ln -sfn /usr/share/themes/catppuccin-mocha-pink-standard+default/gtk-4.0/assets ~/.config/gtk-4.0/assets
 ```
 
-Убедитесь, что `~/.config/gtk-4.0/settings.ini` содержит настройки темы и шрифта:
+Убедитесь, что `~/.config/gtk-4.0/settings.ini` содержит настройки темы, шрифта и курсора:
 ```ini
 [Settings]
 gtk-application-prefer-dark-theme=1
 gtk-font-name=Adwaita Sans 11
+gtk-cursor-theme-name=Bibata-Modern-Classic
+gtk-cursor-theme-size=20
 ```
 
 3. Примените настройки к системному порталу:

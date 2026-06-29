@@ -262,13 +262,13 @@ tab-indicator {
 }
 
     cursor {
-        xcursor-theme "Bibata-Modern-Classic"
+        xcursor-theme "ArchCursorComplete"
         xcursor-size 20
     }
 
 environment {
     QT_QPA_PLATFORMTHEME "qt5ct"
-    XCURSOR_THEME "Bibata-Modern-Classic"
+    XCURSOR_THEME "ArchCursorComplete"
     XCURSOR_SIZE "20"
 }
 
