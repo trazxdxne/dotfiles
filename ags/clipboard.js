@@ -129,6 +129,8 @@ const loadItems = async () => {
         const id = parts[0];
         const content = parts.slice(1).join("\t");
         
+        if (content === "/tmp/pasted_screenshot.png") return;
+        
         const isImage = content.includes("[[ binary data");
         let displayTxt = content;
         if (isImage) {
@@ -214,7 +216,7 @@ export function ClipboardPopup() {
             layer={Astal.Layer.OVERLAY}
             visible={false}
             application={app}
-            keymode={Astal.Keymode.ON_DEMAND}
+            keymode={Astal.Keymode.EXCLUSIVE}
             onKeyPressEvent={(self, event) => {
                 const [_, keyval] = event.get_keyval()
                 if (keyval === Gdk.KEY_Escape) {
