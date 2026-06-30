@@ -264,7 +264,12 @@ export function ClipboardPopup() {
     
     clipboardWindow.connect("notify::has-toplevel-focus", () => {
         if (clipboardWindow && !clipboardWindow.has_toplevel_focus) {
-            clipboardWindow.visible = false
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+                if (clipboardWindow && !clipboardWindow.has_toplevel_focus && clipboardWindow.visible) {
+                    clipboardWindow.visible = false;
+                }
+                return GLib.SOURCE_REMOVE;
+            });
         }
     })
     
