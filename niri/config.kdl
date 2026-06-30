@@ -81,7 +81,7 @@ output "DP-1" {
     mode "1920x1080@200"
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
-scale 1
+    scale 1
 
     // Transform allows to rotate the output counter-clockwise, valid values are:
     // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
@@ -105,12 +105,12 @@ scale 1
 layout {
     // Set gaps around windows in logical pixels.
     gaps 12
-tab-indicator {
-            width 10  // толщина индикаторов в пикселях
-            gap 2   // отступ от самого окна
-            gaps-between-tabs 4  // расстояние между вкладками
-            corner-radius 0  // скругление
-        }
+    tab-indicator {
+        width 10  // толщина индикаторов в пикселях
+        gap 2   // отступ от самого окна
+        gaps-between-tabs 4  // расстояние между вкладками
+        corner-radius 0  // скругление
+    }
 
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
@@ -158,7 +158,7 @@ tab-indicator {
         // off
 
         // How many logical pixels the ring extends out from the windows.
-	width 1
+        width 1
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
@@ -413,9 +413,9 @@ window-rule {
     draw-border-with-background false
 }
 window-rule {
-        match title="(?i)Blacklist"  // найдет окно, если в заголовке есть "blacklist"
-        open-maximized true
-    }
+    match title="(?i)Blacklist"  // найдет окно, если в заголовке есть "blacklist"
+    open-maximized true
+}
 
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name

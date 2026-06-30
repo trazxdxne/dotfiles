@@ -47,16 +47,16 @@ config.hide_tab_bar_if_only_one_tab = true
 
 local act = wezterm.action
 config.keys = {
-      -- Вставка на обеих раскладках
-      { key = 'v', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
-      { key = 'м', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
-      -- Копирование
-      { key = 'c', mods = 'CTRL', action = act.CopyTo('Clipboard') },
-      { key = 'с', mods = 'CTRL', action = act.CopyTo('Clipboard') },
-      -- Прерывание программы (как старый Ctrl+C)
-      { key = 'C', mods = 'CTRL|SHIFT', action = act.SendKey{ key='c', mods='CTRL' } },
-      { key = 'С', mods = 'CTRL|SHIFT', action = act.SendKey{ key='c', mods='CTRL' } },
-    }
+  -- Вставка на обеих раскладках
+  { key = 'v', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
+  { key = 'м', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
+  -- Копирование
+  { key = 'c', mods = 'CTRL', action = act.CopyTo('Clipboard') },
+  { key = 'с', mods = 'CTRL', action = act.CopyTo('Clipboard') },
+  -- Прерывание программы (как старый Ctrl+C)
+  { key = 'C', mods = 'CTRL|SHIFT', action = act.SendKey { key = 'c', mods = 'CTRL' } },
+  { key = 'С', mods = 'CTRL|SHIFT', action = act.SendKey { key = 'c', mods = 'CTRL' } },
+}
 
 config.tab_max_width = 25
 wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
