@@ -189,6 +189,33 @@ environment {
 Inherits=Bibata-Modern-Classic
 ```
 
+#### Альтернатива: Установка и настройка темы ArchCursorComplete
+Если вместо Bibata используется тема `ArchCursorComplete`, её можно установить из исходников:
+
+1. Склонируйте репозиторий темы:
+   ```bash
+   git clone https://github.com/aleksator/arch-cursor-complete.git ~/Projects/arch-cursor-complete
+   ```
+2. Создайте директорию для иконок (если её нет) и скопируйте туда тему:
+   ```bash
+   mkdir -p ~/.icons
+   cp -r ~/Projects/arch-cursor-complete/ArchCursorComplete ~/.icons/
+   ```
+3. Укажите тему в настройках Niri (`config.kdl`):
+   ```kdl
+   cursor {
+       xcursor-theme "ArchCursorComplete"
+   }
+   environment {
+       XCURSOR_THEME "ArchCursorComplete"
+   }
+   ```
+4. Обновите наследование в `~/.icons/default/index.theme`:
+   ```ini
+   [Icon Theme]
+   Inherits=ArchCursorComplete
+   ```
+
 ---
 
 ## 3. Окружение Niri: Фиксы, рамки, игры и тонкая настройка
