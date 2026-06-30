@@ -337,6 +337,15 @@ window-rule {
 }
 
 window-rule {
+    match app-id="^brave-pommaclcbfghclhalboakcipcmmndhcj-Default$"
+    match app-id="^com\\.ayugram\\.desktop$"
+    match app-id="^discord$"
+
+    open-on-workspace "1"
+    default-column-display "tabbed"
+}
+
+window-rule {
      match title="Picture in picture"
      open-floating true
 }
@@ -695,13 +704,3 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 }
 
-
-
-window-rule {
-    match app-id="^brave-pommaclcbfghclhalboakcipcmmndhcj-Default$"
-    match app-id="^com\\.ayugram\\.desktop$"
-    match app-id="^discord$"
-    
-    open-on-workspace "1"
-    default-column-display "tabbed"
-}
