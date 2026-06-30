@@ -6,7 +6,7 @@ import GLib from "gi://GLib"
 import Tray from "gi://AstalTray?version=0.1"
 import GdkPixbuf from "gi://GdkPixbuf"
 import style from "./style.css"
-
+import { ClipboardPopup } from "./clipboard.js"
 // time poll updates every second with Russian formatted date and time
 const timeVal = createPoll("", 1000, 'date +"%H:%M"')
 const dateVal = createPoll("", 10000, 'date +"%a, %d %b"')
@@ -515,6 +515,7 @@ app.start({
     main() {
         app.get_monitors().map(Bar)
         CalendarPopup()
+        ClipboardPopup()
         
         // poll system info every 2 seconds
         GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {

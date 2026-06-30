@@ -268,3 +268,109 @@ calendar button:hover {
     color: #cba6f7; /* #cba6f7 (Mauve) */
     font-weight: bold;
 }
+
+/* Clipboard Popup Styles */
+.clipboard-popup-window {
+    background-color: transparent;
+}
+
+.clipboard-main-box {
+    background-color: rgba(30, 30, 46, 0.95);
+    border: 1px solid #f5c2e7;
+    border-radius: 0;
+    padding: 20px;
+    box-shadow: none;
+}
+
+.clipboard-title {
+    color: #cba6f7;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.clipboard-preview-title {
+    color: #f5c2e7;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.clipboard-left-pane {
+    min-width: 320px;
+}
+
+.clipboard-right-pane {
+    min-width: 450px;
+    min-height: 450px;
+    background-color: rgba(17, 17, 27, 0.6);
+    border-radius: 0;
+    padding: 16px;
+}
+
+.clipboard-search {
+    background-color: rgba(24, 24, 37, 1);
+    color: #cdd6f4;
+    border: 1px solid rgba(245, 194, 231, 0.3);
+    border-radius: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.clipboard-search:focus {
+    border-color: #f5c2e7;
+}
+
+.clipboard-list-scroll {
+    min-height: 400px;
+}
+
+.clipboard-item-btn {
+    background-color: transparent;
+    color: #cdd6f4;
+    border-radius: 0;
+    padding: 10px;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.clipboard-item-btn:hover {
+    background-color: rgba(245, 194, 231, 0.1);
+}
+
+.clipboard-item-btn:focus {
+    background-color: rgba(245, 194, 231, 0.2);
+    border-left: 3px solid #f5c2e7;
+}
+
+.clipboard-clear-btn {
+    background-color: rgba(243, 139, 168, 0.1);
+    color: #f38ba8;
+    border-radius: 0;
+    padding: 10px;
+    border: 1px solid rgba(243, 139, 168, 0.3);
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.clipboard-clear-btn:hover {
+    background-color: rgba(243, 139, 168, 0.2);
+}
+
+.clipboard-clear-btn:focus {
+    background-color: rgba(243, 139, 168, 0.3);
+    border: 1px solid #f38ba8;
+}
+
+.clipboard-preview-text {
+    color: #cdd6f4;
+    font-size: 14px;
+    font-family: monospace;
+}
+
+.clipboard-preview-image {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-width: 418px;
+    min-height: 418px;
+}

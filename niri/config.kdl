@@ -290,6 +290,10 @@ spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 spawn-sh-at-startup "swaybg -i ~/Pictures/Wallpapers/catppuccin_mountains.jpg -m fill"
 spawn-at-startup "niri-autostart"
 
+// Clipboard history daemon (cliphist)
+spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
+spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
+
 hotkey-overlay {
     // Uncomment this line to disable the "Important Hotkeys" pop-up at startup.
     // skip-at-startup
@@ -305,7 +309,7 @@ prefer-no-csd
 // You can change the path where screenshots are saved.
 // A ~ at the front will be expanded to the home directory.
 // The path is formatted with strftime(3) to give you the screenshot date and time.
-screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+screenshot-path null
 
 // You can also set this to null to disable saving screenshots to disk.
 // screenshot-path null
@@ -663,8 +667,8 @@ binds {
     Mod+Shift+Equal { set-window-height "+10%"; }
 
     // Move the focused window between the floating and the tiling layout.
-    Mod+V       { toggle-window-floating; }
-    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+    Mod+X       { toggle-window-floating; }
+    Mod+Shift+X { switch-focus-between-floating-and-tiling; }
 
     // Toggle tabbed column display mode.
     // Windows in this column will appear as vertical tabs,
@@ -681,9 +685,12 @@ binds {
 
 
 
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
+    Print { spawn "screenshot" "menu"; }
+    Mod+Shift+S { spawn "screenshot" "direct-area"; }
     Alt+Print { screenshot-window; }
+
+    // Clipboard history menu (bind to whatever you prefer, Mod+V is set by default)
+    Mod+V { spawn "ags" "toggle" "clipboard-popup"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here

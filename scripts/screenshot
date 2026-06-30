@@ -1,0 +1,69 @@
+#!/bin/bash
+
+mode=$1
+
+# Helper to wait for a new clipboard item in cliphist
+wait_for_clipboard_change() {
+    local old_id
+    old_id=$(cliphist list | head -n 1 | cut -f1)
+    
+    # Trigger Niri action
+    niri msg action "$1" >/dev/null
+    
+    # Poll for the new item (timeout 30 seconds)
+    for i in {1..300}; do
+        sleep 0.1
+        local new_line
+        new_line=$(cliphist list | head -n 1)
+        local new_id
+        new_id=$(echo "$new_line" | cut -f1)
+        if [ "$old_id" != "$new_id" ] && [ -n "$new_id" ]; then
+            echo "$new_line"
+            return 0
+        fi
+    done
+    return 1
+}
+
+case "$mode" in
+    "direct-area")
+        # Just run Niri's interactive screenshot (copies to clipboard, no files created)
+        niri msg action screenshot
+        ;;
+    "menu")
+        # Show selection menu
+        CHOICE=$(printf "1. Area\n2. Screen\n3. Window" | fuzzel --dmenu --lines=3 --prompt="Screenshot: ")
+        
+        NEW_LINE=""
+        case "$CHOICE" in
+            *Area*)
+                NEW_LINE=$(wait_for_clipboard_change "screenshot")
+                ;;
+            *Screen*)
+                NEW_LINE=$(wait_for_clipboard_change "screenshot-screen")
+                ;;
+            *Window*)
+                NEW_LINE=$(wait_for_clipboard_change "screenshot-window")
+                ;;
+            *)
+                exit 0
+                ;;
+        esac
+        
+        if [ -n "$NEW_LINE" ]; then
+            # Decode the raw image first
+            TEMP_IMG="/tmp/raw_screenshot.png"
+            echo "$NEW_LINE" | cliphist decode > "$TEMP_IMG"
+            
+            # Remove the raw unedited screenshot from cliphist to prevent duplication
+            echo "$NEW_LINE" | cliphist delete
+            
+            # Open the image in Swappy
+            swappy -f "$TEMP_IMG"
+        fi
+        ;;
+    *)
+        echo "Usage: screenshot {direct-area|menu}"
+        exit 1
+        ;;
+esac
