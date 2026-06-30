@@ -303,7 +303,7 @@ fi
 ```
 Сделайте его исполняемым: `chmod +x ~/Projects/discord-linux-bypass/discord_run.sh`.
 
-### Шаг 4. Настройка SOCKS5-порта и ярлыка запуска
+### Шаг 4. Настройка SOCKS5-порта, ярлыка и автозапуска
 1. Укажите порт локального прокси в файле `~/Projects/discord-linux-bypass/config.env`:
    ```env
    PORT=9050
@@ -311,6 +311,13 @@ fi
 2. Скопируйте и отредактируйте ярлык запуска `~/.local/share/applications/discord.desktop`, заменив строку выполнения:
    ```ini
    Exec=/home/trazxdxne/Projects/discord-linux-bypass/discord_run.sh --url -- %u
+   ```
+3. Если вы используете автозапуск в Niri, обновите команду запуска Discord в файле [niri-autostart/config.kdl](file:///home/trazxdxne/dotfiles/niri-autostart/config.kdl), указав полный путь к скрипту обхода:
+   ```kdl
+   window app-id="discord" {
+       command "/home/trazxdxne/Projects/discord-linux-bypass/discord_run.sh"
+       height { proportion 1.0; }
+   }
    ```
 
 ---
