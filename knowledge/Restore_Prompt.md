@@ -13,7 +13,7 @@
    - После подтверждения, автоматически склонируй мой приватный репозиторий дотфайлов: `git clone https://github.com/trazxdxne/dotfiles.git ~/dotfiles`.
 3. Авторизация Google Drive: Выведи мне пошаговую инструкцию запустить `rclone config` в отдельном терминале (название remote должно быть `gdrive`). Client ID и Client Secret оставь пустыми, проигнорируй сообщение про low performance. Приостанови выполнение и жди моего подтверждения "Готово".
 4. Восстановление и Симлинки:
-   - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`.
+   - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`.
    - Создай симлинки из `~/dotfiles` в систему:
      • `~/.config/niri/config.kdl` -> `~/dotfiles/niri/config.kdl`
      • `~/.config/niri-autostart/config.kdl` -> `~/dotfiles/niri-autostart/config.kdl`
@@ -24,6 +24,8 @@
      • `~/.config/gtk-3.0/gtk.css` -> `~/dotfiles/gtk-3.0/gtk.css`
      • `~/.config/gtk-4.0/settings.ini` -> `~/dotfiles/gtk-4.0/settings.ini`
      • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
+     • `~/.config/qt5ct/colors/Custom-Dark.conf` -> `~/dotfiles/qt5ct/colors/Custom-Dark.conf`
+     • `~/.config/qt6ct/colors/Custom-Dark.conf` -> `~/dotfiles/qt6ct/colors/Custom-Dark.conf`
      • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
      • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
      • `~/.gemini/antigravity-cli/knowledge/Environment_Setup.md` -> `~/dotfiles/knowledge/Environment_Setup.md`
