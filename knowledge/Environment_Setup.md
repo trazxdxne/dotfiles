@@ -85,26 +85,30 @@ gtk-theme-name=catppuccin-mocha-pink-standard+default
 gtk-application-prefer-dark-theme=1
 gtk-font-name=Adwaita Sans 11
 ```
-
 ### Шаг 3. Конфигурация GTK4 (Libadwaita)
 Для корректного применения стиля в современных GNOME-приложениях (например, Nautilus) свяжите стили темы с директорией GTK4:
 ```bash
 mkdir -p ~/.config/gtk-4.0
-ln -sf /usr/share/themes/catppuccin-mocha-pink-standard+default/gtk-4.0/gtk.css ~/.config/gtk-4.0/gtk.css
-ln -sf /usr/share/themes/catppuccin-mocha-pink-standard+default/gtk-4.0/gtk-dark.css ~/.config/gtk-4.0/gtk-dark.css
-ln -sfn /usr/share/themes/catppuccin-mocha-pink-standard+default/gtk-4.0/assets ~/.config/gtk-4.0/assets
-```
+ln -sf /usr/share/themes/yay -S adw-gtk-theme
+# The custom colors are configured in ~/.config/gtk-4.0/gtk.css and ~/.config/gtk-3.0/gtk.css
 
-Убедитесь, что файл [gtk-4.0/settings.ini](file:///home/trazxdxne/dotfiles/gtk-4.0/settings.ini) содержит аналогичные настройки:
-```ini
+## GTK Settings
+[~/.config/gtk-3.0/settings.ini]
 [Settings]
+gtk-theme-name=adw-gtk3-dark
 gtk-application-prefer-dark-theme=1
 gtk-font-name=Adwaita Sans 11
-```
+gtk-cursor-theme-name=ArchCursorComplete
+gtk-cursor-theme-size=20
 
-### Шаг 4. Принудительное применение через GSettings (для системных диалогов)
-```bash
-gsettings set org.gnome.desktop.interface gtk-theme 'catppuccin-mocha-pink-standard+default'
+[~/.config/gtk-4.0/settings.ini]
+[Settings]
+gtk-application-prefer-dark-theme=1
+gtk-cursor-theme-name=ArchCursorComplete
+gtk-cursor-theme-size=20
+
+### Applying GTK configuration
+gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
 ```
@@ -116,7 +120,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
        QT_QPA_PLATFORMTHEME "qt5ct"
    }
    ```
-2. Создайте файл палитры `~/.config/qt6ct/colors/Catppuccin-Mocha-Pink.conf` (и продублируйте его для `qt5ct` по пути `~/.config/qt5ct/colors/Catppuccin-Mocha-Pink.conf`):
+2. Создайте файл палитры `~/.config/qt6ct/colors/Custom-Dark.conf` (и продублируйте его для `qt5ct` по пути `~/.config/qt5ct/colors/Custom-Dark.conf`):
    ```ini
    [ColorScheme]
    active_colors=#ffcdd6f4, #ff313244, #ff45475a, #ff585b70, #ff11111b, #ff181825, #ffcdd6f4, #fff5c2e7, #ffcdd6f4, #ff1e1e2e, #ff1e1e2e, #ff11111b, #fff5c2e7, #ff11111b, #ff89b4fa, #ffcba6f7, #ff181825, #00000000, #ff1e1e2e, #ffcdd6f4, #ff6c7086

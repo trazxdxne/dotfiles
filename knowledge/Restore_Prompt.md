@@ -21,7 +21,9 @@
      • `~/.config/fuzzel/fuzzel.ini` -> `~/dotfiles/fuzzel/fuzzel.ini`
      • `~/.wezterm.lua` -> `~/dotfiles/wezterm/wezterm.lua`
      • `~/.config/gtk-3.0/settings.ini` -> `~/dotfiles/gtk-3.0/settings.ini`
+     • `~/.config/gtk-3.0/gtk.css` -> `~/dotfiles/gtk-3.0/gtk.css`
      • `~/.config/gtk-4.0/settings.ini` -> `~/dotfiles/gtk-4.0/settings.ini`
+     • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
      • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
      • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
      • `~/.gemini/antigravity-cli/knowledge/Environment_Setup.md` -> `~/dotfiles/knowledge/Environment_Setup.md`
