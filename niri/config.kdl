@@ -355,6 +355,16 @@ window-rule {
 }
 
 window-rule {
+    match title="^Clipboard History$"
+    open-floating true
+}
+
+window-rule {
+    match title="^dwm launcher$"
+    open-floating true
+}
+
+window-rule {
     match app-id=r#"^brave-origin$"#
     open-on-workspace "1"
     open-maximized true
@@ -690,7 +700,7 @@ binds {
     Alt+Print { screenshot-window; }
 
     // Clipboard history menu (bind to whatever you prefer, Mod+V is set by default)
-    Mod+V { spawn "ags" "toggle" "clipboard-popup"; }
+    Mod+V { spawn "qs" "ipc" "call" "clipboard" "toggle"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here

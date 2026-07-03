@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import Niri
+import Quickshell.Io
 import qs.panel
 import qs.core
 
@@ -20,10 +21,10 @@ PanelWindow {
 
     signal calendarToggled()
 
-    implicitHeight: 28
+    implicitHeight: Theme.panelHeight
     color: "#ff1e1e2e"
     aboveWindows: true
-    exclusiveZone: 28
+    exclusiveZone: Theme.panelHeight
 
     anchors { top: true; left: true; right: true }
 
@@ -61,14 +62,21 @@ PanelWindow {
 
     // --- Workspaces logic: показываем все от 1 до MaxActive ---
     readonly property int maxWorkspaceIndex: {
-        var maxIdx = 1
         var model = niriState.niri.workspaces
-        for (var i = 0; i < model.count; i++) {
-            var ws = model.get(i)
-            if (ws && ws.index > maxIdx) {
-                maxIdx = ws.index
+        if (!model) return 1
+        var count = model.count
+        console.log("[NiriBar] Workspaces count: " + count)
+        var maxIdx = 1
+        for (var i = 0; i < count; i++) {
+            var ws = typeof model.get === "function" ? model.get(i) : null
+            if (ws) {
+                console.log("[NiriBar] ws row " + i + " id: " + ws.id + " index: " + ws.index)
+                if ((ws.index + 1) > maxIdx) {
+                    maxIdx = ws.index + 1
+                }
             }
         }
+        console.log("[NiriBar] Computed maxWorkspaceIndex: " + maxIdx)
         return maxIdx
     }
 
@@ -78,7 +86,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         color: "#0d45475a"
-        implicitWidth: wsRow.implicitWidth + 2
+        width: wsRow.implicitWidth + 2
 
         Row {
             id: wsRow
@@ -86,23 +94,22 @@ PanelWindow {
             spacing: 0
 
             Repeater {
-                // Генерируем массив индексов от 1 до maxWorkspaceIndex
-                model: root.maxWorkspaceIndex
+                model: root.niriState.niri.workspaces
 
                 delegate: NiriWorkspaceButton {
+                    required property var id
                     required property int index
+                    required property string name
+                    required property bool isFocused
+                    required property bool isActive
+                    required property var activeWindowId
 
-                    wsName: String(index + 1)
-                    
-                    // Проверяем, активен ли этот рабочий стол в Niri
-                    active: {
-                        var activeWs = root.niriState.niri.workspaces.active
-                        return activeWs ? (activeWs.index === index) : false
-                    }
+                    wsName: name !== "" ? name : String(index)
+                    active: isFocused
+                    visible: isFocused || isActive || activeWindowId !== 0
                     
                     onClicked: {
-                        // Переключаемся на воркспейс по индексу (qml-niri принимает focusWorkspace(index))
-                        root.niriState.niri.focusWorkspace(index)
+                        root.niriState.niri.focusWorkspaceById(id)
                     }
                 }
             }
@@ -139,6 +146,12 @@ PanelWindow {
                 verticalAlignment: Text.AlignVCenter
             }
         }
+    }
+
+    Process {
+        id: pavucontrolProc
+        command: ["sh", "-c", "pavucontrol || pavucontrol-qt"]
+        running: false
     }
 
     // ── RIGHT: Tray + Layout + SysInfo ─────────────────────────
@@ -178,7 +191,10 @@ PanelWindow {
         // Volume + Battery button
         BarButton {
             anchors.verticalCenter: parent.verticalCenter
-            onActivated: Qt.openUrlExternally("")
+            onActivated: {
+                pavucontrolProc.running = false
+                pavucontrolProc.running = true
+            }
             visible: root.volumeText.length > 0
             Text {
                 anchors.centerIn: parent

@@ -1,3 +1,4 @@
+//@ pragma UseQApplication
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -36,10 +37,10 @@ ShellRoot {
     NiriBar {
         id: panelWindow
 
-        niriState:   niriState
-        clock:       clock
-        volumeText:  sysModel.volumeText
-        batteryText: sysModel.batteryText
+        niriState:     niriState
+        clock:         clock
+        volumeText:    sysModel.volumeText
+        batteryText:   sysModel.batteryText
 
         onCalendarToggled: calendarPopup.visible = !calendarPopup.visible
     }

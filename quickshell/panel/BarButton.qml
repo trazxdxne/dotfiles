@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 
+import qs.core
+
 /// Generic clickable bar button with hover effect.
 Rectangle {
     id: root
@@ -10,8 +12,8 @@ Rectangle {
 
     property bool hovered: ma.containsMouse
 
-    implicitWidth: container.childrenRect.width + 16
-    implicitHeight: 28
+    implicitWidth: Math.ceil((container.children.length > 0 ? container.children[0].implicitWidth : 0) + 16)
+    implicitHeight: Theme.panelHeight
     radius: 0
     color: hovered ? "#1a45475a" : "transparent"
 

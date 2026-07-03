@@ -15,10 +15,11 @@ RowLayout {
         model: SystemTray.items.values
 
         delegate: TrayItem {
+            id: itemDelegate
             required property var modelData
 
             trayItem: modelData
-            onOpenMenu: trayItem => root.openMenu(trayItem, this)
+            onOpenMenu: trayItem => root.openMenu(trayItem, itemDelegate)
         }
     }
 }

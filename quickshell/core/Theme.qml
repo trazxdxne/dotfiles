@@ -21,7 +21,7 @@ Singleton {
 
     readonly property string fontFamily: "Maple Mono NF"
 
-    readonly property int panelHeight: 30
+    readonly property int panelHeight: 24
     readonly property int popupMargin: 18
     readonly property int popupSpacing: 12
     readonly property int rowSpacing: 10
@@ -45,8 +45,8 @@ Singleton {
     readonly property int smallFontSize: 12
     readonly property int tinyFontSize: 10
     readonly property int inputFontSize: 16
-    readonly property int iconSize: 28
-    readonly property int trayItemSize: 24
-    readonly property int trayIconSize: 18
+    readonly property int iconSize: 24
+    readonly property int trayItemSize: 22
+    readonly property int trayIconSize: 16
     readonly property int closeButtonSize: 30
 }

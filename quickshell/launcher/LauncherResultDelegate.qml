@@ -30,6 +30,7 @@ Rectangle {
         spacing: Theme.rowSpacing
 
         IconImage {
+            id: appIcon
             Layout.preferredWidth: Theme.iconSize
             Layout.preferredHeight: Theme.iconSize
             Layout.alignment: Qt.AlignVCenter

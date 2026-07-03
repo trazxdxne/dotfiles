@@ -28,7 +28,7 @@ Rectangle {
     radius: Theme.smallRadius
     color: trayMouse.containsMouse ? Theme.surface : "transparent"
 
-    IconImage {
+    Image {
         id: trayIcon
 
         anchors.centerIn: parent
@@ -38,8 +38,9 @@ Rectangle {
         sourceSize.height: Theme.trayIconSize
         source: Icons.trayIconSource(root.trayItem)
         asynchronous: true
-        smooth: true
+        fillMode: Image.PreserveAspectFit
         mipmap: true
+        smooth: true
         visible: status === Image.Ready
     }
 

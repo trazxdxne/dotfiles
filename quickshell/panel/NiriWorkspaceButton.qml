@@ -10,8 +10,10 @@ Rectangle {
     required property bool active
     signal clicked()
 
-    Layout.preferredWidth: Math.max(24, label.implicitWidth + 12)
-    Layout.preferredHeight: 28
+    width: Math.ceil(Math.max(24, label.implicitWidth + 12))
+    height: Theme.panelHeight
+    Layout.preferredWidth: width
+    Layout.preferredHeight: height
     radius: 0
     color: active ? "#cba6f7" : (hovered ? "#0dffffff" : "transparent")
 

@@ -3,19 +3,17 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import qs.core
 
 /// Clipboard history popup using cliphist.
 /// Triggered by `visible = true` from external keybind.
-PopupWindow {
+FloatingWindow {
     id: root
 
-    implicitWidth: 820
-    implicitHeight: 540
+    implicitWidth: 960
+    implicitHeight: 620
+    title: "Clipboard History"
     color: "transparent"
-
-    anchor {
-        edges: Edges.None
-    }
 
     onVisibleChanged: {
         if (root.visible) {
@@ -156,24 +154,25 @@ PopupWindow {
     }
 
     // --- UI ---
-    Rectangle {
-        id: bgRect
-        focus: true
-        Keys.onEscapePressed: root.visible = false
+    ShellSurface {
         anchors.fill: parent
         color: "#f21e1e2e"
         border.color: "#ccf5c2e7"
         border.width: 1
         radius: 0
+        margin: 20
+        focus: true
+        Keys.onEscapePressed: root.visible = false
 
         RowLayout {
             anchors.fill: parent
-            anchors.margins: 20
             spacing: 16
 
             // ─── Left pane: list ───────────────────────────────────────
             ColumnLayout {
-                Layout.preferredWidth: 320
+                Layout.fillWidth: false
+                Layout.preferredWidth: 280
+                Layout.maximumWidth: 280
                 spacing: 12
 
                 Text {
@@ -239,9 +238,23 @@ PopupWindow {
                     Layout.fillHeight: true
                     clip: true
                     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                    ScrollBar.vertical: ScrollBar {
+                        width: 8
+                        policy: ScrollBar.AsNeeded
+                        contentItem: Rectangle {
+                            implicitWidth: 8
+                            radius: 4
+                            color: parent.pressed ? "#f5c2e7" : (parent.hovered ? "#cba6f7" : "#45475a")
+                        }
+                        background: Rectangle {
+                            implicitWidth: 8
+                            color: "transparent"
+                        }
+                    }
 
                     ListView {
                         id: clipList
+                        width: parent.width
                         model: root.filteredItems
                         spacing: 0
                         clip: true
@@ -352,6 +365,19 @@ PopupWindow {
                         anchors.margins: 12
                         visible: !root.previewIsImage
                         clip: true
+                        ScrollBar.vertical: ScrollBar {
+                            width: 8
+                            policy: ScrollBar.AsNeeded
+                            contentItem: Rectangle {
+                                implicitWidth: 8
+                                radius: 4
+                                color: parent.pressed ? "#f5c2e7" : (parent.hovered ? "#cba6f7" : "#45475a")
+                            }
+                            background: Rectangle {
+                                implicitWidth: 8
+                                color: "transparent"
+                            }
+                        }
 
                         TextArea {
                             text: root.previewText
