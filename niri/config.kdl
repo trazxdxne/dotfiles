@@ -280,8 +280,8 @@ environment {
 // Export environment variables for systemd/dbus activation (essential for XWayland and Wayland integrations)
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY"
 
-// This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-at-startup "ags" "run"
+// Quickshell — Niri panel (replaces AGS)
+spawn-at-startup "qs"
 spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 

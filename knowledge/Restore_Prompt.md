@@ -27,6 +27,7 @@
      • `~/.config/qt5ct/colors/Custom-Dark.conf` -> `~/dotfiles/qt5ct/colors/Custom-Dark.conf`
      • `~/.config/qt6ct/colors/Custom-Dark.conf` -> `~/dotfiles/qt6ct/colors/Custom-Dark.conf`
      • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
+     • `~/.config/quickshell` -> `~/dotfiles/quickshell`
      • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
      • `~/.gemini/antigravity-cli/knowledge/Environment_Setup.md` -> `~/dotfiles/knowledge/Environment_Setup.md`
      • `~/.gemini/antigravity-cli/knowledge/Clipboard_Guide.md` -> `~/dotfiles/knowledge/Clipboard_Guide.md`

@@ -12,3 +12,7 @@ ags/ags.log
 node_modules/
 .npm/
 .cache/
+
+# Build artifacts
+qml-niri/build/
+**/build/
