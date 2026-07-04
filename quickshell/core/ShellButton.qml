@@ -9,6 +9,7 @@ Rectangle {
     property bool danger: false
     property bool compact: true
     property bool hovered: buttonMouse.containsMouse
+    property string fontFamily: Theme.fontFamily
 
     signal activated
 
@@ -26,7 +27,7 @@ Rectangle {
         anchors.centerIn: parent
         text: root.label
         color: root.danger ? Theme.textStrong : Theme.text
-        font.family: Theme.fontFamily
+        font.family: root.fontFamily
         font.pixelSize: root.compact ? Theme.smallFontSize : Theme.panelFontSize
         font.bold: true
         elide: Text.ElideRight

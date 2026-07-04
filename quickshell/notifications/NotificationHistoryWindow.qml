@@ -3,20 +3,38 @@ import QtQuick.Layouts
 import Quickshell
 import qs.core
 
-FloatingWindow {
+PopupWindow {
     id: root
 
     required property var notificationModel
+    required property var panelWindow
 
-    title: "dwm notification history"
     visible: notificationModel.historyVisible
-    implicitWidth: 520
+    implicitWidth: 380
     implicitHeight: 560
     color: Theme.transparent
+    grabFocus: true
+
+    anchor {
+        window: root.panelWindow
+        rect.x: root.panelWindow ? root.panelWindow.width - root.width : 0
+        rect.y: Theme.panelHeight
+    }
+
+    contentItem.onActiveFocusChanged: {
+        if (!contentItem.activeFocus) {
+            root.notificationModel.closeHistory()
+        }
+    }
 
     ShellSurface {
         anchors.fill: parent
         margin: 16
+        focus: true
+
+        Keys.onEscapePressed: {
+            root.notificationModel.closeHistory()
+        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -46,7 +64,8 @@ FloatingWindow {
                 ShellButton {
                     Layout.preferredWidth: Theme.closeButtonSize
                     Layout.preferredHeight: Theme.closeButtonSize
-                    label: "x"
+                    label: "\uF00D"
+                    fontFamily: "FantasqueSansM Nerd Font"
                     onActivated: root.notificationModel.closeHistory()
                 }
             }

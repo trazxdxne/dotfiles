@@ -5,6 +5,7 @@ import Quickshell.Io
 import Quickshell.Services.SystemTray
 import "./panel"
 import "./state"
+import "./notifications"
 
 ShellRoot {
     id: root
@@ -33,14 +34,35 @@ ShellRoot {
         function toggle(): void { clipboardPopup.visible = !clipboardPopup.visible }
     }
 
+    // ── Notifications state ──────────────────────────────────────────
+    NotificationModel {
+        id: notificationModel
+    }
+
+    // ── Notifications popup (toast) ──────────────────────────────────
+    NotificationPopupWindow {
+        id: notificationPopup
+        notificationModel: notificationModel
+        panelWindow: panelWindow
+    }
+
+    // ── Notification history ─────────────────────────────────────────
+    NotificationHistoryWindow {
+        id: notificationHistory
+        notificationModel: notificationModel
+        panelWindow: panelWindow
+    }
+
     // ── Top bar ──────────────────────────────────────────────────────
     NiriBar {
         id: panelWindow
 
-        niriState:     niriState
-        clock:         clock
-        volumeText:    sysModel.volumeText
-        batteryText:   sysModel.batteryText
+        niriState:          niriState
+        clock:              clock
+        volumeText:         sysModel.volumeText
+        batteryText:        sysModel.batteryText
+        notificationModel:  notificationModel
+        clipboardPopup:     clipboardPopup
 
         onCalendarToggled: calendarPopup.visible = !calendarPopup.visible
     }

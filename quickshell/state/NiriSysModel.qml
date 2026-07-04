@@ -34,7 +34,7 @@ Scope {
                 const m = text.match(/Volume:\s+([0-9.]+)(\s+\[MUTED\])?/)
                 if (m) {
                     const pct = Math.round(parseFloat(m[1]) * 100)
-                    const icon = m[2] ? "🔇" : "🔊"
+                    const icon = m[2] ? "\uF026" : "\uF028"
                     root.volumeText = icon + " " + pct + "%"
                 }
             }
@@ -52,7 +52,7 @@ Scope {
                 const cap = (parts[0] || "").trim()
                 const status = (parts[1] || "").trim()
                 if (cap.length > 0 && !isNaN(parseInt(cap))) {
-                    const icon = status === "Charging" ? "⚡" : "🔋"
+                    const icon = status === "Charging" ? "\uF0E7" : "\uF240"
                     root.batteryText = icon + " " + cap + "%"
                 } else {
                     root.batteryText = ""

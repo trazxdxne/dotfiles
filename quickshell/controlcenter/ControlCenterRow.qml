@@ -26,7 +26,7 @@ Rectangle {
         Rectangle {
             Layout.preferredWidth: 10
             Layout.preferredHeight: 10
-            radius: 5
+            radius: 0
             color: root.statusColor
         }
 

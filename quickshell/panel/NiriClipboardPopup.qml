@@ -341,7 +341,7 @@ FloatingWindow {
                         opacity: 1.0
                         contentItem: Rectangle {
                             implicitWidth: 8
-                            radius: 4
+                            radius: 0
                             color: listScrollBar.pressed ? "#f5c2e7" : (listScrollBar.hovered ? "#cba6f7" : "#585b70")
                         }
                         background: Rectangle {
@@ -489,7 +489,7 @@ FloatingWindow {
                             opacity: 1.0
                             contentItem: Rectangle {
                                 implicitWidth: 8
-                                radius: 4
+                                radius: 0
                                 color: previewScrollBar.pressed ? "#f5c2e7" : (previewScrollBar.hovered ? "#cba6f7" : "#585b70")
                             }
                             background: Rectangle {

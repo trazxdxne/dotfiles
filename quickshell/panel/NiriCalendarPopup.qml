@@ -7,6 +7,8 @@ import Quickshell
 PopupWindow {
     id: root
 
+    grabFocus: true
+
     required property var barWindow
     anchor {
         window: root.barWindow

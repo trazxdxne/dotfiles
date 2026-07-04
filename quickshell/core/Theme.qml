@@ -6,20 +6,20 @@ Singleton {
     readonly property bool dark: true
 
     readonly property string transparent: "#00000000"
-    readonly property string bg: dark ? "#2e3440" : "#eceff4"
-    readonly property string surface: dark ? "#3b4252" : "#e5e9f0"
-    readonly property string surfaceHover: dark ? "#434c5e" : "#d8dee9"
-    readonly property string border: dark ? "#4c566a" : "#b8c0cc"
-    readonly property string text: dark ? "#d8dee9" : "#2e3440"
-    readonly property string textStrong: dark ? "#eceff4" : "#1f2630"
-    readonly property string textMuted: dark ? "#aeb7c4" : "#5d6778"
-    readonly property string placeholder: dark ? "#8f9aa8" : "#687386"
-    readonly property string accent: dark ? "#81a1c1" : "#5e81ac"
-    readonly property string accentText: dark ? "#2e3440" : "#eceff4"
-    readonly property string danger: "#bf616a"
-    readonly property string dangerSurface: dark ? "#4a2f35" : "#f0d5da"
+    readonly property string bg: dark ? "#f21e1e2e" : "#eceff4" // Catppuccin Mocha base with translucency
+    readonly property string surface: dark ? "#313244" : "#e5e9f0" // Catppuccin Mocha surface0
+    readonly property string surfaceHover: dark ? "#45475a" : "#d8dee9" // Catppuccin Mocha surface1
+    readonly property string border: dark ? "#45475a" : "#b8c0cc" // Catppuccin Mocha surface1
+    readonly property string text: dark ? "#cdd6f4" : "#2e3440" // Catppuccin Mocha text
+    readonly property string textStrong: dark ? "#f5e0dc" : "#1f2630" // Catppuccin Mocha rosewater
+    readonly property string textMuted: dark ? "#a6adc8" : "#5d6778" // Catppuccin Mocha subtext0
+    readonly property string placeholder: dark ? "#6c7086" : "#687386" // Catppuccin Mocha overlay0
+    readonly property string accent: dark ? "#cba6f7" : "#5e81ac" // Catppuccin Mocha mauve
+    readonly property string accentText: dark ? "#11111b" : "#eceff4" // Catppuccin Mocha crust
+    readonly property string danger: "#f38ba8" // Catppuccin Mocha red
+    readonly property string dangerSurface: dark ? "#33f38ba8" : "#f0d5da" // Catppuccin Mocha red with 20% opacity
 
-    readonly property string fontFamily: "Maple Mono NF"
+    readonly property string fontFamily: "Adwaita Sans"
 
     readonly property int panelHeight: 24
     readonly property int popupMargin: 18
@@ -29,8 +29,8 @@ Singleton {
     readonly property int compactSpacing: 2
     readonly property int tightSpacing: 3
     readonly property int sectionSpacing: 14
-    readonly property int radius: 4
-    readonly property int smallRadius: 3
+    readonly property int radius: 0
+    readonly property int smallRadius: 0
     readonly property int pillHeight: 24
     readonly property int buttonHeight: 30
     readonly property int chipHeight: 28
@@ -38,7 +38,7 @@ Singleton {
     readonly property int compactButtonHeight: 40
     readonly property int confirmButtonHeight: 48
     readonly property int notificationAccentWidth: 4
-    readonly property int notificationAccentRadius: 2
+    readonly property int notificationAccentRadius: 0
     readonly property int titleFontSize: 18
     readonly property int bodyFontSize: 14
     readonly property int panelFontSize: 13

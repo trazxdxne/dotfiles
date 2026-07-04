@@ -137,7 +137,7 @@ PopupWindow {
                         color: volumeMouse.enabled ? Theme.text : Theme.textMuted
                         border.color: Theme.border
                         border.width: 1
-                        radius: height / 2
+                        radius: 0
                     }
 
                     MouseArea {

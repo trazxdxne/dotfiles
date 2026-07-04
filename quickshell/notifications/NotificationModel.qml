@@ -10,9 +10,18 @@ Scope {
     property var history: []
     property bool historyVisible: false
     property int sequence: 0
+    property int unreadCount: {
+        var count = 0;
+        for (var i = 0; i < history.length; i++) {
+            if (!history[i].read) {
+                count++;
+            }
+        }
+        return count;
+    }
 
-    readonly property int popupTimeoutMs: 6000
-    readonly property int criticalTimeoutMs: 10000
+    readonly property int popupTimeoutMs: 3000
+    readonly property int criticalTimeoutMs: 5000
     readonly property int maxVisible: 4
     readonly property int maxHistory: 50
     readonly property string cacheDir: (Quickshell.env("XDG_CACHE_HOME") || (Quickshell.env("HOME") + "/.cache")) + "/dwm-titus"
@@ -62,7 +71,11 @@ Scope {
         const current = root.notifications.slice();
         for (const item of current) {
             if (item && item.notification) {
-                item.notification.dismiss();
+                try {
+                    if (typeof item.notification.dismiss === "function") {
+                        item.notification.dismiss();
+                    }
+                } catch(e) {}
             }
         }
         root.notifications = [];
@@ -76,7 +89,8 @@ Scope {
             "body": item.body,
             "urgency": item.urgency,
             "urgencyName": item.urgencyName,
-            "timestamp": Date.now()
+            "timestamp": Date.now(),
+            "read": false
         };
 
         root.history = [entry].concat(root.history).slice(0, root.maxHistory);
@@ -105,7 +119,13 @@ Scope {
     }
 
     function loadHistory() {
-        root.history = (historyAdapter.notifications || []).slice(0, root.maxHistory);
+        var raw = (historyAdapter.notifications || []).slice(0, root.maxHistory);
+        root.history = raw.map(n => {
+            if (n.read === undefined) {
+                n.read = true;
+            }
+            return n;
+        });
     }
 
     function saveHistory() {
@@ -113,10 +133,42 @@ Scope {
         historyFile.writeAdapter();
     }
 
+    function appsMatch(focusedApp, notifApp) {
+        if (!focusedApp || !notifApp) return false;
+        var cleanFocused = focusedApp.replace(/^org\.\w+\./, "").replace(/^com\.\w+\./, "").split(/[.-]/)[0].toLowerCase();
+        var cleanNotif = notifApp.replace(/^org\.\w+\./, "").replace(/^com\.\w+\./, "").split(/[.-]/)[0].toLowerCase();
+        return cleanFocused.indexOf(cleanNotif) !== -1 || cleanNotif.indexOf(cleanFocused) !== -1;
+    }
+
+    function markAsReadForApp(appName) {
+        if (!appName) return;
+        var changed = false;
+        var appLower = appName.toLowerCase();
+        var updatedHistory = root.history.map(item => {
+            var itemAppLower = (item.appName || "").toLowerCase();
+            if (root.appsMatch(appLower, itemAppLower)) {
+                if (!item.read) {
+                    item.read = true;
+                    changed = true;
+                }
+            }
+            return item;
+        });
+
+        if (changed) {
+            root.history = updatedHistory;
+            root.saveHistory();
+        }
+    }
+
     function dismiss(key) {
         const item = root.notifications.find(n => n.key === key);
         if (item && item.notification) {
-            item.notification.dismiss();
+            try {
+                if (typeof item.notification.dismiss === "function") {
+                    item.notification.dismiss();
+                }
+            } catch(e) {}
         }
         root.remove(key);
     }
@@ -124,7 +176,11 @@ Scope {
     function expire(key) {
         const item = root.notifications.find(n => n.key === key);
         if (item && item.notification) {
-            item.notification.expire();
+            try {
+                if (typeof item.notification.expire === "function") {
+                    item.notification.expire();
+                }
+            } catch(e) {}
         }
         root.remove(key);
     }

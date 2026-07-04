@@ -37,6 +37,8 @@ Scope {
         return name.slice(0, 2).toLowerCase()
     }
 
+    signal niriEvent(var event)
+
     function handleEvent(line) {
         var ev = null
         try {
@@ -45,6 +47,8 @@ Scope {
             return
         }
         if (!ev) return
+
+        root.niriEvent(ev)
 
         if (ev.KeyboardLayoutsChanged) {
             var kl = ev.KeyboardLayoutsChanged.keyboard_layouts

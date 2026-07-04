@@ -86,11 +86,10 @@ Rectangle {
 
             Text {
                 anchors.centerIn: parent
-                text: "x"
+                text: "\uF00D"
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.panelFontSize
-                font.bold: true
             }
 
             MouseArea {
