@@ -18,9 +18,14 @@ FloatingWindow {
     onVisibleChanged: {
         if (root.visible) {
             searchField.text = ""
-            loadItems()
+            listProcess.running = false
+            listProcess.running = true
             Qt.callLater(() => searchField.forceActiveFocus())
         }
+    }
+
+    Component.onCompleted: {
+        loadProcess.running = true
     }
 
     contentItem.onActiveFocusChanged: {
@@ -33,11 +38,12 @@ FloatingWindow {
 
     
     // --- State ---
-    property var items: []       // [{id, display, isImage}]
+    property var items: []       // [{id, display, isImage, timeStr}]
     property int selectedIdx: 0
     property string previewText: ""
     property string previewImagePath: ""
     property bool previewIsImage: false
+    property var timestampCache: ({})
 
     property string searchText: searchField.text
 
@@ -105,14 +111,94 @@ FloatingWindow {
         }
     }
 
-    function loadItems() {
-        listProcess.running = false
-        listProcess.running = true
+    // --- Load timestamp cache ---
+    Process {
+        id: loadProcess
+        command: ["cat", "/home/trazxdxne/.cache/qs_clipboard_timestamps.json"]
+        running: false
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    root.timestampCache = JSON.parse(this.text);
+                } catch (e) {
+                    root.timestampCache = {};
+                }
+            }
+        }
+    }
+
+    // --- Real-time clipboard watcher ---
+    Process {
+        id: clipWatcher
+        command: ["wl-paste", "--watch", "sh", "-c", "sleep 0.1 && cliphist list | head -n 1"]
+        running: true
+        
+        stdout: SplitParser {
+            onRead: function(line) {
+                const tab = line.indexOf("\t")
+                if (tab >= 0) {
+                    const id = line.slice(0, tab).trim()
+                    if (id && !root.timestampCache[id]) {
+                        root.timestampCache[id] = Date.now()
+                        root.saveTimestamps()
+                    }
+                }
+            }
+        }
+        
+        onRunningChanged: {
+            if (!running) {
+                Qt.callLater(function() { clipWatcher.running = true })
+            }
+        }
+    }
+
+
+
+    function saveTimestamps() {
+        saveProcess.jsonText = JSON.stringify(root.timestampCache)
+        saveProcess.running = false
+        saveProcess.running = true
+    }
+
+    function escapeShell(str) {
+        return str.replace(/'/g, "'\\''");
+    }
+
+    function formatTime(ts) {
+        if (!ts) return ""
+        var date = new Date(ts)
+        var now = new Date()
+        
+        var hours = String(date.getHours()).padStart(2, '0')
+        var minutes = String(date.getMinutes()).padStart(2, '0')
+        var timeStr = hours + ":" + minutes
+        
+        if (date.toDateString() === now.toDateString()) {
+            return "Today " + timeStr
+        }
+        
+        var yesterday = new Date(now)
+        yesterday.setDate(now.getDate() - 1)
+        if (date.toDateString() === yesterday.toDateString()) {
+            return "Yesterday " + timeStr
+        }
+        
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        return date.getDate() + " " + months[date.getMonth()] + " " + timeStr
+    }
+
+    Process {
+        id: saveProcess
+        property string jsonText: ""
+        command: ["sh", "-c", "mkdir -p ~/.cache && echo -n '" + root.escapeShell(jsonText) + "' > ~/.cache/qs_clipboard_timestamps.json"]
+        running: false
     }
 
     function parseItems(text) {
         const lines = text.split("\n").filter(l => l.trim() !== "")
         const parsed = []
+        
         lines.forEach(line => {
             const tab = line.indexOf("\t")
             if (tab < 0) return
@@ -124,7 +210,11 @@ FloatingWindow {
             if (isImage) {
                 display = "🖼 Image (" + content.split("[[ binary data")[1].trim() + ")"
             }
-            parsed.push({ id, display, isImage })
+            
+            const ts = root.timestampCache[id]
+            const timeStr = ts ? root.formatTime(ts) : ""
+            
+            parsed.push({ id, display, isImage, timeStr })
         })
         root.items = parsed
         root.selectedIdx = 0
@@ -176,7 +266,7 @@ FloatingWindow {
                 spacing: 12
 
                 Text {
-                    text: "Clipboard History"
+                    text: "Clipboard History (" + root.items.length + ")"
                     color: "#cba6f7"
                     font.family: "Adwaita Sans"
                     font.pixelSize: 18
@@ -234,17 +324,25 @@ FloatingWindow {
 
                 // Clipboard list
                 ScrollView {
+                    id: listScrollView
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     clip: true
+                    rightPadding: 8
                     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                     ScrollBar.vertical: ScrollBar {
+                        id: listScrollBar
+                        parent: listScrollView
+                        x: listScrollView.width - width
+                        y: listScrollView.topPadding
+                        height: listScrollView.availableHeight
                         width: 8
-                        policy: ScrollBar.AsNeeded
+                        policy: ScrollBar.AlwaysOn
+                        opacity: 1.0
                         contentItem: Rectangle {
                             implicitWidth: 8
                             radius: 4
-                            color: parent.pressed ? "#f5c2e7" : (parent.hovered ? "#cba6f7" : "#45475a")
+                            color: listScrollBar.pressed ? "#f5c2e7" : (listScrollBar.hovered ? "#cba6f7" : "#585b70")
                         }
                         background: Rectangle {
                             implicitWidth: 8
@@ -254,7 +352,8 @@ FloatingWindow {
 
                     ListView {
                         id: clipList
-                        width: parent.width
+                        width: listScrollView.availableWidth
+                        height: listScrollView.availableHeight
                         model: root.filteredItems
                         spacing: 0
                         clip: true
@@ -267,8 +366,8 @@ FloatingWindow {
                             required property var modelData
                             required property int index
 
-                            width: ListView.view.width
-                            height: 38
+                            width: clipList.width
+                            height: 48
                             radius: 0
                             color: index === root.selectedIdx ? "#33f5c2e7" : (hovered ? "#19f5c2e7" : "transparent")
                             border.color: index === root.selectedIdx ? "#4df5c2e7" : "transparent"
@@ -284,17 +383,29 @@ FloatingWindow {
                                 color: "#f5c2e7"
                             }
 
-                            Text {
+                            Column {
                                 anchors.left: parent.left
                                 anchors.leftMargin: index === root.selectedIdx ? 12 : 10
                                 anchors.right: parent.right
                                 anchors.rightMargin: 8
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: modelData.display
-                                color: "#cdd6f4"
-                                font.family: "Adwaita Sans"
-                                font.pixelSize: 12
-                                elide: Text.ElideRight
+                                spacing: 2
+
+                                Text {
+                                    width: parent.width
+                                    text: modelData.display
+                                    color: "#cdd6f4"
+                                    font.family: "Adwaita Sans"
+                                    font.pixelSize: 12
+                                    elide: Text.ElideRight
+                                }
+
+                                Text {
+                                    text: modelData.timeStr
+                                    color: "#6c7086"
+                                    font.family: "Adwaita Sans"
+                                    font.pixelSize: 10
+                                }
                             }
 
                             MouseArea {
@@ -361,17 +472,25 @@ FloatingWindow {
 
                     // Text preview
                     ScrollView {
+                        id: previewScrollView
                         anchors.fill: parent
                         anchors.margins: 12
+                        rightPadding: 8
                         visible: !root.previewIsImage
                         clip: true
                         ScrollBar.vertical: ScrollBar {
+                            id: previewScrollBar
+                            parent: previewScrollView
+                            x: previewScrollView.width - width
+                            y: previewScrollView.topPadding
+                            height: previewScrollView.availableHeight
                             width: 8
-                            policy: ScrollBar.AsNeeded
+                            policy: ScrollBar.AlwaysOn
+                            opacity: 1.0
                             contentItem: Rectangle {
                                 implicitWidth: 8
                                 radius: 4
-                                color: parent.pressed ? "#f5c2e7" : (parent.hovered ? "#cba6f7" : "#45475a")
+                                color: previewScrollBar.pressed ? "#f5c2e7" : (previewScrollBar.hovered ? "#cba6f7" : "#585b70")
                             }
                             background: Rectangle {
                                 implicitWidth: 8
