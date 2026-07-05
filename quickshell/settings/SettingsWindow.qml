@@ -2,16 +2,36 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
 import Quickshell
+import Quickshell.Io
 import qs.core
 
 Window {
     id: root
     visible: false
-    width: 600
-    height: 400
+    width: 700
+    height: 500
     color: Theme.bg
     title: "Quickshell Settings"
     
+    property var configSchema: []
+    property int currentCategoryIndex: 0
+
+    Process {
+        id: schemaLoader
+        command: ["sh", "-c", "cat ~/dotfiles/quickshell/config_schema.json"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    var obj = JSON.parse(this.text);
+                    root.configSchema = obj.categories || [];
+                } catch(e) {
+                    console.warn("Failed to parse config schema:", e);
+                }
+            }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: Theme.bg
@@ -23,7 +43,7 @@ Window {
             anchors.margins: 10
             spacing: 10
             
-            // Sidebar for tabs
+            // Sidebar for categories
             Rectangle {
                 Layout.preferredWidth: 150
                 Layout.fillHeight: true
@@ -31,144 +51,152 @@ Window {
                 border.color: Theme.border
                 border.width: 1
                 
-                ColumnLayout {
+                ListView {
                     anchors.fill: parent
                     anchors.margins: 5
-                    spacing: 5
-                    
-                    Repeater {
-                        model: ["Themes", "Bar", "Clipboard", "Notifications"]
-                        delegate: Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 30
-                            color: stackLayout.currentIndex === index ? Theme.accent : Theme.surfaceHover
-                            
-                            Text {
-                                anchors.centerIn: parent
-                                text: modelData
-                                color: stackLayout.currentIndex === index ? Theme.accentText : Theme.text
-                                font.family: Theme.fontFamily
-                                font.pixelSize: Theme.bodyFontSize
-                            }
-                            
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: stackLayout.currentIndex = index
-                            }
+                    model: root.configSchema
+                    delegate: Rectangle {
+                        width: ListView.view.width
+                        height: 40
+                        color: root.currentCategoryIndex === index ? Theme.accent : Theme.surfaceHover
+                        
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData.name
+                            color: root.currentCategoryIndex === index ? Theme.accentText : Theme.text
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.bodyFontSize
+                        }
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: root.currentCategoryIndex = index
                         }
                     }
-                    Item { Layout.fillHeight: true } // Spacer
                 }
             }
             
             // Content area
-            StackLayout {
-                id: stackLayout
+            Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                currentIndex: 0
                 
-                // Themes Tab
-                Item {
+                ScrollView {
+                    anchors.fill: parent
+                    contentWidth: availableWidth
+                    clip: true
+                    
                     ColumnLayout {
-                        anchors.fill: parent
-                        Text { text: "Theme Settings"; color: Theme.text; font.pixelSize: Theme.titleFontSize; font.family: Theme.fontFamily }
+                        width: parent.width - 20
+                        spacing: 15
                         
-                        RowLayout {
-                            Text { text: "Dark Mode:"; color: Theme.text; font.family: Theme.fontFamily }
-                            CheckBox {
-                                checked: Config.darkTheme
-                                onCheckedChanged: Config.darkTheme = checked
+                        Text {
+                            text: root.configSchema[root.currentCategoryIndex] ? root.configSchema[root.currentCategoryIndex].name : ""
+                            color: Theme.text
+                            font.pixelSize: Theme.titleFontSize
+                            font.family: Theme.fontFamily
+                            font.bold: true
+                            Layout.bottomMargin: 10
+                        }
+                        
+                        Repeater {
+                            model: root.configSchema[root.currentCategoryIndex] ? root.configSchema[root.currentCategoryIndex].properties : []
+                            
+                            delegate: Loader {
+                                Layout.fillWidth: true
+                                
+                                sourceComponent: {
+                                    switch (modelData.type) {
+                                        case "number": return numberComponent;
+                                        case "boolean": return booleanComponent;
+                                        case "string": return stringComponent;
+                                        case "theme": return themeComponent;
+                                        default: return stringComponent;
+                                    }
+                                }
+                                
+                                Component {
+                                    id: numberComponent
+                                    SettingNumber {
+                                        labelText: modelData.title
+                                        minValue: modelData.min !== undefined ? modelData.min : 0
+                                        maxValue: modelData.max !== undefined ? modelData.max : 100
+                                        stepValue: modelData.step !== undefined ? modelData.step : 1
+                                        Component.onCompleted: value = Config[modelData.id] !== undefined ? Config[modelData.id] : 0
+                                        onValueChanged: Config[modelData.id] = value
+                                    }
+                                }
+                                
+                                Component {
+                                    id: booleanComponent
+                                    RowLayout {
+                                        spacing: 10
+                                        Text {
+                                            Layout.preferredWidth: 150
+                                            text: modelData.title
+                                            color: Theme.text
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: Theme.bodyFontSize
+                                        }
+                                        CheckBox {
+                                            Component.onCompleted: checked = Config[modelData.id] !== undefined ? Config[modelData.id] : false
+                                            onCheckedChanged: Config[modelData.id] = checked
+                                            
+                                            indicator: Rectangle {
+                                                implicitWidth: 20
+                                                implicitHeight: 20
+                                                color: Theme.surface
+                                                border.color: Theme.border
+                                                Rectangle {
+                                                    anchors.centerIn: parent
+                                                    width: 10
+                                                    height: 10
+                                                    color: Theme.accent
+                                                    visible: parent.parent.checked
+                                                }
+                                            }
+                                        }
+                                        Item { Layout.fillWidth: true }
+                                    }
+                                }
+                                
+                                Component {
+                                    id: stringComponent
+                                    RowLayout {
+                                        spacing: 10
+                                        Text {
+                                            Layout.preferredWidth: 150
+                                            text: modelData.title
+                                            color: Theme.text
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: Theme.bodyFontSize
+                                        }
+                                        TextField {
+                                            Layout.fillWidth: true
+                                            Component.onCompleted: text = Config[modelData.id] !== undefined ? Config[modelData.id] : ""
+                                            color: Theme.text
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: Theme.bodyFontSize
+                                            background: Rectangle {
+                                                color: Theme.surface
+                                                border.color: Theme.border
+                                                border.width: 1
+                                            }
+                                            onTextChanged: Config[modelData.id] = text
+                                        }
+                                    }
+                                }
+                                
+                                Component {
+                                    id: themeComponent
+                                    SettingTheme {
+                                        labelText: modelData.title
+                                        Component.onCompleted: value = Config[modelData.id] !== undefined ? Config[modelData.id] : "Mocha"
+                                        onValueChanged: Config[modelData.id] = value
+                                    }
+                                }
                             }
                         }
-                        
-                        RowLayout {
-                            Text { text: "Active Theme:"; color: Theme.text; font.family: Theme.fontFamily }
-                            TextField {
-                                text: Config.activeTheme
-                                color: Theme.text
-                                onTextChanged: Config.activeTheme = text
-                                background: Rectangle { color: Theme.surface; border.color: Theme.border }
-                            }
-                        }
-                        Item { Layout.fillHeight: true }
-                    }
-                }
-                
-                // Bar Tab
-                Item {
-                    ColumnLayout {
-                        anchors.fill: parent
-                        Text { text: "Bar Settings"; color: Theme.text; font.pixelSize: Theme.titleFontSize; font.family: Theme.fontFamily }
-                        
-                        RowLayout {
-                            Text { text: "Bar Height:"; color: Theme.text; font.family: Theme.fontFamily }
-                            SpinBox {
-                                value: Config.barHeight
-                                to: 100
-                                onValueChanged: Config.barHeight = value
-                            }
-                        }
-                        
-                        RowLayout {
-                            Text { text: "Show Clock:"; color: Theme.text; font.family: Theme.fontFamily }
-                            CheckBox { checked: Config.showClock; onCheckedChanged: Config.showClock = checked }
-                        }
-                        RowLayout {
-                            Text { text: "Show Volume:"; color: Theme.text; font.family: Theme.fontFamily }
-                            CheckBox { checked: Config.showVolume; onCheckedChanged: Config.showVolume = checked }
-                        }
-                        RowLayout {
-                            Text { text: "Show Battery:"; color: Theme.text; font.family: Theme.fontFamily }
-                            CheckBox { checked: Config.showBattery; onCheckedChanged: Config.showBattery = checked }
-                        }
-                        Item { Layout.fillHeight: true }
-                    }
-                }
-                
-                // Clipboard Tab
-                Item {
-                    ColumnLayout {
-                        anchors.fill: parent
-                        Text { text: "Clipboard Settings"; color: Theme.text; font.pixelSize: Theme.titleFontSize; font.family: Theme.fontFamily }
-                        
-                        RowLayout {
-                            Text { text: "Max Items:"; color: Theme.text; font.family: Theme.fontFamily }
-                            SpinBox {
-                                value: Config.clipboardMaxItems
-                                to: 1000
-                                onValueChanged: Config.clipboardMaxItems = value
-                            }
-                        }
-                        Item { Layout.fillHeight: true }
-                    }
-                }
-                
-                // Notifications Tab
-                Item {
-                    ColumnLayout {
-                        anchors.fill: parent
-                        Text { text: "Notifications Settings"; color: Theme.text; font.pixelSize: Theme.titleFontSize; font.family: Theme.fontFamily }
-                        
-                        RowLayout {
-                            Text { text: "Timeout (ms):"; color: Theme.text; font.family: Theme.fontFamily }
-                            SpinBox {
-                                value: Config.notifTimeout
-                                to: 60000
-                                stepSize: 1000
-                                onValueChanged: Config.notifTimeout = value
-                            }
-                        }
-                        
-                        RowLayout {
-                            Text { text: "Width:"; color: Theme.text; font.family: Theme.fontFamily }
-                            SpinBox {
-                                value: Config.notifWidth
-                                to: 1000
-                                onValueChanged: Config.notifWidth = value
-                            }
-                        }
-                        Item { Layout.fillHeight: true }
                     }
                 }
             }

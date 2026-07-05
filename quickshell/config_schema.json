@@ -1,0 +1,144 @@
+{
+    "categories": [
+        {
+            "name": "Theme",
+            "properties": [
+                {
+                    "id": "activeTheme",
+                    "type": "theme",
+                    "title": "Active Theme",
+                    "description": "Select the overall color theme."
+                },
+                {
+                    "id": "darkTheme",
+                    "type": "boolean",
+                    "title": "Dark Mode",
+                    "description": "Enable dark mode for the selected theme."
+                }
+            ]
+        },
+        {
+            "name": "Bar",
+            "properties": [
+                {
+                    "id": "barHeight",
+                    "type": "number",
+                    "title": "Bar Height",
+                    "description": "Height of the top bar in pixels.",
+                    "min": 16,
+                    "max": 64,
+                    "step": 1
+                },
+                {
+                    "id": "barMargins",
+                    "type": "number",
+                    "title": "Bar Margins",
+                    "description": "Margin around the bar.",
+                    "min": 0,
+                    "max": 24,
+                    "step": 1
+                },
+                {
+                    "id": "barFont",
+                    "type": "string",
+                    "title": "Bar Font",
+                    "description": "Font family for the bar."
+                },
+                {
+                    "id": "showClock",
+                    "type": "boolean",
+                    "title": "Show Clock",
+                    "description": "Display clock in the bar."
+                },
+                {
+                    "id": "showVolume",
+                    "type": "boolean",
+                    "title": "Show Volume",
+                    "description": "Display volume in the bar."
+                },
+                {
+                    "id": "showBattery",
+                    "type": "boolean",
+                    "title": "Show Battery",
+                    "description": "Display battery in the bar."
+                }
+            ]
+        },
+        {
+            "name": "Clipboard",
+            "properties": [
+                {
+                    "id": "clipboardWidth",
+                    "type": "number",
+                    "title": "Width",
+                    "description": "Width of the clipboard window.",
+                    "min": 200,
+                    "max": 1920,
+                    "step": 10
+                },
+                {
+                    "id": "clipboardHeight",
+                    "type": "number",
+                    "title": "Height",
+                    "description": "Height of the clipboard window.",
+                    "min": 200,
+                    "max": 1080,
+                    "step": 10
+                },
+                {
+                    "id": "clipboardFont",
+                    "type": "string",
+                    "title": "Font",
+                    "description": "Font family for clipboard entries."
+                },
+                {
+                    "id": "clipboardMaxItems",
+                    "type": "number",
+                    "title": "Max Items",
+                    "description": "Maximum number of history items to keep.",
+                    "min": 10,
+                    "max": 500,
+                    "step": 10
+                }
+            ]
+        },
+        {
+            "name": "Notifications",
+            "properties": [
+                {
+                    "id": "notifWidth",
+                    "type": "number",
+                    "title": "Width",
+                    "description": "Width of the notification popup.",
+                    "min": 200,
+                    "max": 800,
+                    "step": 10
+                },
+                {
+                    "id": "notifTimeout",
+                    "type": "number",
+                    "title": "Timeout",
+                    "description": "Time in milliseconds before notifications disappear.",
+                    "min": 1000,
+                    "max": 15000,
+                    "step": 500
+                },
+                {
+                    "id": "notifMaxItems",
+                    "type": "number",
+                    "title": "Max Items",
+                    "description": "Maximum number of notifications to keep in history.",
+                    "min": 5,
+                    "max": 100,
+                    "step": 5
+                },
+                {
+                    "id": "notifFont",
+                    "type": "string",
+                    "title": "Font",
+                    "description": "Font family for notifications."
+                }
+            ]
+        }
+    ]
+}
