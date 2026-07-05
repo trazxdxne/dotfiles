@@ -40,6 +40,10 @@ PopupWindow {
         anchors.fill: parent
         margin: 16
         focus: true
+        color: "#f21e1e2e"
+        border.color: "#ccf5c2e7"
+        border.width: 1
+        radius: 0
 
         ColumnLayout {
             anchors.fill: parent
@@ -51,27 +55,37 @@ PopupWindow {
 
                 Text {
                     Layout.fillWidth: true
-                    text: "Notifications"
-                    color: Theme.text
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.titleFontSize
+                    text: "Notifications (" + root.notificationModel.history.length + ")"
+                    color: "#cba6f7"
+                    font.family: "Adwaita Sans"
+                    font.pixelSize: 18
                     font.bold: true
                     elide: Text.ElideRight
                 }
 
-                ShellButton {
-                    Layout.preferredWidth: 58
-                    Layout.preferredHeight: Theme.buttonHeight
-                    label: "Clear"
-                    onActivated: root.notificationModel.clearHistory()
-                }
+                Rectangle {
+                    Layout.preferredWidth: 64
+                    Layout.preferredHeight: 28
+                    color: clearMa.containsMouse ? "#33f38ba8" : "#1af38ba8"
+                    border.color: "#4df38ba8"
+                    border.width: 1
+                    radius: 0
 
-                ShellButton {
-                    Layout.preferredWidth: Theme.closeButtonSize
-                    Layout.preferredHeight: Theme.closeButtonSize
-                    label: "\uF00D"
-                    fontFamily: "FantasqueSansM Nerd Font"
-                    onActivated: root.notificationModel.closeHistory()
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Clear"
+                        color: "#f38ba8"
+                        font.family: "Adwaita Sans"
+                        font.pixelSize: 13
+                    }
+
+                    MouseArea {
+                        id: clearMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.notificationModel.clearHistory()
+                    }
                 }
             }
 
@@ -106,12 +120,13 @@ PopupWindow {
 
                             Layout.fillWidth: true
                             Layout.preferredHeight: Math.max(74, historyContent.implicitHeight + 22)
-                            radius: Theme.radius
-                            color: modelData.urgencyName === "critical" ? Theme.dangerSurface : Theme.surface
-                            border.color: modelData.urgencyName === "critical" ? Theme.danger : Theme.border
-                            border.width: 1
+                            radius: 0
+                            color: itemMouseArea.containsMouse ? "#19f5c2e7" : "transparent"
+                            border.width: 0
 
                             MouseArea {
+                                id: itemMouseArea
+                                hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
@@ -128,10 +143,10 @@ PopupWindow {
                                 spacing: Theme.rowSpacing
 
                                 Rectangle {
-                                    Layout.preferredWidth: Theme.notificationAccentWidth
+                                    Layout.preferredWidth: 3
                                     Layout.fillHeight: true
-                                    radius: Theme.notificationAccentRadius
-                                    color: modelData.urgencyName === "critical" ? Theme.danger : Theme.accent
+                                    radius: 0
+                                    color: "#f5c2e7"
                                     visible: !modelData.read
                                 }
 
@@ -161,26 +176,26 @@ PopupWindow {
                                         Text {
                                             Layout.fillWidth: true
                                             text: modelData.appName || "Notification"
-                                            color: Theme.textMuted
-                                            font.family: Theme.fontFamily
-                                            font.pixelSize: Theme.smallFontSize
+                                            color: "#cdd6f4"
+                                            font.family: "Adwaita Sans"
+                                            font.pixelSize: 12
                                             elide: Text.ElideRight
                                         }
 
                                         Text {
                                             text: Qt.formatTime(new Date(modelData.timestamp || Date.now()), "hh:mm")
-                                            color: Theme.textMuted
-                                            font.family: Theme.fontFamily
-                                            font.pixelSize: Theme.smallFontSize
+                                            color: "#a6adc8"
+                                            font.family: "Adwaita Sans"
+                                            font.pixelSize: 12
                                         }
                                     }
 
                                     Text {
                                         Layout.fillWidth: true
                                         text: modelData.summary || modelData.urgencyName || ""
-                                        color: modelData.read ? Theme.textMuted : Theme.textStrong
-                                        font.family: Theme.fontFamily
-                                        font.pixelSize: Theme.bodyFontSize
+                                        color: "#cdd6f4"
+                                        font.family: "Adwaita Sans"
+                                        font.pixelSize: 14
                                         font.bold: !modelData.read
                                         wrapMode: Text.Wrap
                                         maximumLineCount: 3
@@ -191,9 +206,9 @@ PopupWindow {
                                         Layout.fillWidth: true
                                         visible: text.length > 0
                                         text: modelData.body || ""
-                                        color: modelData.read ? Theme.textMuted : Theme.text
-                                        font.family: Theme.fontFamily
-                                        font.pixelSize: Theme.smallFontSize
+                                        color: "#a6adc8"
+                                        font.family: "Adwaita Sans"
+                                        font.pixelSize: 12
                                         wrapMode: Text.Wrap
                                         maximumLineCount: 6
                                         elide: Text.ElideRight
