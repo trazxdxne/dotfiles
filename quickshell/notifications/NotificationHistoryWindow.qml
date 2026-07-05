@@ -37,6 +37,12 @@ PopupWindow {
         }
     }
 
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+    }
+
     ShellSurface {
         anchors.fill: parent
         margin: 16
@@ -100,22 +106,21 @@ PopupWindow {
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            ScrollView {
-                id: listScrollView
+            ListView {
+                id: historyList
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                model: root.notificationModel.sortedHistory
+                spacing: Theme.listSpacing * 2
                 clip: true
-                rightPadding: 8
+                
+                // Add right padding for the scrollbar
+                rightMargin: 8
 
-                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                 ScrollBar.vertical: ScrollBar {
                     id: listScrollBar
-                    parent: listScrollView
-                    x: listScrollView.width - width
-                    y: listScrollView.topPadding
-                    height: listScrollView.availableHeight
+                    policy: ScrollBar.AsNeeded
                     width: 8
-                    policy: ScrollBar.AlwaysOn
                     opacity: 1.0
                     contentItem: Rectangle {
                         implicitWidth: 8
@@ -128,113 +133,103 @@ PopupWindow {
                     }
                 }
 
-                ListView {
-                    id: historyList
-                    width: listScrollView.availableWidth
-                    height: listScrollView.availableHeight
-                    model: root.notificationModel.sortedHistory
-                    spacing: Theme.listSpacing * 2
-                    clip: true
+                delegate: Rectangle {
+                    required property var modelData
 
-                        delegate: Rectangle {
-                            required property var modelData
+                    width: historyList.width - historyList.rightMargin
+                    height: Math.max(74, historyContent.implicitHeight + 22)
+                    radius: 0
+                    color: itemMouseArea.containsMouse ? (modelData.read ? "#08ffffff" : "#19f5c2e7") : "transparent"
+                    border.width: 0
 
-                            width: historyList.width
-                            height: Math.max(74, historyContent.implicitHeight + 22)
+                    MouseArea {
+                        id: itemMouseArea
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            if (modelData && modelData.appName) {
+                                Commands.focusApp(modelData.appName);
+                            }
+                            root.notificationModel.closeHistory();
+                        }
+                    }
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 11
+                        spacing: Theme.rowSpacing
+
+                        Rectangle {
+                            Layout.preferredWidth: 3
+                            Layout.fillHeight: true
                             radius: 0
-                            color: itemMouseArea.containsMouse ? (modelData.read ? "#08ffffff" : "#19f5c2e7") : "transparent"
-                            border.width: 0
+                            color: "#f5c2e7"
+                            visible: !modelData.read
+                        }
 
-                            MouseArea {
-                                id: itemMouseArea
-                                hoverEnabled: true
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (modelData && modelData.appName) {
-                                        Commands.focusApp(modelData.appName);
+                        ColumnLayout {
+                            id: historyContent
+
+                            Layout.fillWidth: true
+                            spacing: Theme.tightSpacing
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: Theme.listSpacing
+
+                                Image {
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
+                                    sourceSize.width: 16
+                                    sourceSize.height: 16
+                                    source: {
+                                        let iconName = modelData.appIcon || (modelData.appName ? modelData.appName.toLowerCase().replace(" desktop", "") : "");
+                                        return iconName ? Icons.launcherIcon(iconName) : "";
                                     }
-                                    root.notificationModel.closeHistory();
+                                    asynchronous: true
+                                    visible: status === Image.Ready
+                                }
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: modelData.appName || "Notification"
+                                    color: "#cdd6f4"
+                                    font.family: "Adwaita Sans"
+                                    font.pixelSize: 12
+                                    elide: Text.ElideRight
+                                }
+
+                                Text {
+                                    text: Qt.formatTime(new Date(modelData.timestamp || Date.now()), "hh:mm")
+                                    color: "#a6adc8"
+                                    font.family: "Adwaita Sans"
+                                    font.pixelSize: 12
                                 }
                             }
 
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.margins: 11
-                                spacing: Theme.rowSpacing
+                            Text {
+                                Layout.fillWidth: true
+                                text: modelData.summary || modelData.urgencyName || ""
+                                color: modelData.read ? "#7f849c" : "#cdd6f4"
+                                font.family: "Adwaita Sans"
+                                font.pixelSize: 14
+                                font.bold: !modelData.read
+                                wrapMode: Text.Wrap
+                                maximumLineCount: 3
+                                elide: Text.ElideRight
+                            }
 
-                                Rectangle {
-                                    Layout.preferredWidth: 3
-                                    Layout.fillHeight: true
-                                    radius: 0
-                                    color: "#f5c2e7"
-                                    visible: !modelData.read
-                                }
-
-                                ColumnLayout {
-                                    id: historyContent
-
-                                    Layout.fillWidth: true
-                                    spacing: Theme.tightSpacing
-
-                                    RowLayout {
-                                        Layout.fillWidth: true
-                                        spacing: Theme.listSpacing
-
-                                        Image {
-                                            Layout.preferredWidth: 16
-                                            Layout.preferredHeight: 16
-                                            sourceSize.width: 16
-                                            sourceSize.height: 16
-                                            source: {
-                                                let iconName = modelData.appIcon || (modelData.appName ? modelData.appName.toLowerCase().replace(" desktop", "") : "");
-                                                return iconName ? Icons.launcherIcon(iconName) : "";
-                                            }
-                                            asynchronous: true
-                                            visible: status === Image.Ready
-                                        }
-
-                                        Text {
-                                            Layout.fillWidth: true
-                                            text: modelData.appName || "Notification"
-                                            color: "#cdd6f4"
-                                            font.family: "Adwaita Sans"
-                                            font.pixelSize: 12
-                                            elide: Text.ElideRight
-                                        }
-
-                                        Text {
-                                            text: Qt.formatTime(new Date(modelData.timestamp || Date.now()), "hh:mm")
-                                            color: "#a6adc8"
-                                            font.family: "Adwaita Sans"
-                                            font.pixelSize: 12
-                                        }
-                                    }
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: modelData.summary || modelData.urgencyName || ""
-                                        color: modelData.read ? "#7f849c" : "#cdd6f4"
-                                        font.family: "Adwaita Sans"
-                                        font.pixelSize: 14
-                                        font.bold: !modelData.read
-                                        wrapMode: Text.Wrap
-                                        maximumLineCount: 3
-                                        elide: Text.ElideRight
-                                    }
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        visible: text.length > 0
-                                        text: modelData.body || ""
-                                        color: modelData.read ? "#585b70" : "#a6adc8"
-                                        font.family: "Adwaita Sans"
-                                        font.pixelSize: 12
-                                        wrapMode: Text.Wrap
-                                        maximumLineCount: 6
-                                        elide: Text.ElideRight
-                                    }
-                                }
+                            Text {
+                                Layout.fillWidth: true
+                                visible: text.length > 0
+                                text: modelData.body || ""
+                                color: modelData.read ? "#585b70" : "#a6adc8"
+                                font.family: "Adwaita Sans"
+                                font.pixelSize: 12
+                                wrapMode: Text.Wrap
+                                maximumLineCount: 6
+                                elide: Text.ElideRight
                             }
                         }
                     }
@@ -242,3 +237,4 @@ PopupWindow {
             }
         }
     }
+}

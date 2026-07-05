@@ -243,7 +243,12 @@ FloatingWindow {
         }
     }
 
-    // --- UI ---
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+    }
+
     ShellSurface {
         anchors.fill: parent
         color: "#f21e1e2e"
@@ -327,8 +332,8 @@ FloatingWindow {
                     id: listScrollView
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    clip: true
                     rightPadding: 8
+                    
                     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                     ScrollBar.vertical: ScrollBar {
                         id: listScrollBar
@@ -337,7 +342,7 @@ FloatingWindow {
                         y: listScrollView.topPadding
                         height: listScrollView.availableHeight
                         width: 8
-                        policy: ScrollBar.AlwaysOn
+                        policy: ScrollBar.AsNeeded
                         opacity: 1.0
                         contentItem: Rectangle {
                             implicitWidth: 8
@@ -477,7 +482,7 @@ FloatingWindow {
                         anchors.margins: 12
                         rightPadding: 8
                         visible: !root.previewIsImage
-                        clip: true
+
                         ScrollBar.vertical: ScrollBar {
                             id: previewScrollBar
                             parent: previewScrollView
@@ -485,7 +490,7 @@ FloatingWindow {
                             y: previewScrollView.topPadding
                             height: previewScrollView.availableHeight
                             width: 8
-                            policy: ScrollBar.AlwaysOn
+                            policy: ScrollBar.AsNeeded
                             opacity: 1.0
                             contentItem: Rectangle {
                                 implicitWidth: 8
@@ -506,6 +511,7 @@ FloatingWindow {
                             readOnly: true
                             wrapMode: TextArea.Wrap
                             background: null
+                            clip: true
                         }
                     }
 
