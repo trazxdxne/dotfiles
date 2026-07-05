@@ -81,7 +81,7 @@ PopupWindow {
         implicitHeight: dayRow.height + grid.height + header.height + 32 + 16
         color: "#f21e1e2e"
         border.color: "#9945475a"
-        border.width: 1
+        border.width: 0
         radius: 0
 
         Column {

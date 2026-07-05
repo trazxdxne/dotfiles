@@ -41,7 +41,7 @@ PopupWindow {
         margin: 16
         focus: true
         color: "#f21e1e2e"
-        border.color: "#ccf5c2e7"
+        border.color: "#9945475a"
         border.width: 1
         radius: 0
 

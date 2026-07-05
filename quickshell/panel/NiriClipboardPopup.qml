@@ -248,7 +248,7 @@ FloatingWindow {
         anchors.fill: parent
         color: "#f21e1e2e"
         border.color: "#ccf5c2e7"
-        border.width: 1
+        border.width: 0
         radius: 0
         margin: 20
         focus: true
