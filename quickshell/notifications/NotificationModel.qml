@@ -226,7 +226,7 @@ Scope {
     NotificationServer {
         id: server
 
-        keepOnReload: false
+        keepOnReload: true
         actionsSupported: true
         bodySupported: true
         bodyMarkupSupported: false
