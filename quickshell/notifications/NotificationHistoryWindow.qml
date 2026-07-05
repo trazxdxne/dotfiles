@@ -30,11 +30,6 @@ PopupWindow {
         }
     }
 
-    Shortcut {
-        sequence: "Escape"
-        onActivated: root.notificationModel.closeHistory()
-    }
-
     contentItem.onActiveFocusChanged: {
         if (!contentItem.activeFocus) {
             root.notificationModel.closeHistory()
@@ -45,10 +40,6 @@ PopupWindow {
         anchors.fill: parent
         margin: 16
         focus: true
-
-        Keys.onEscapePressed: {
-            root.notificationModel.closeHistory()
-        }
 
         ColumnLayout {
             anchors.fill: parent

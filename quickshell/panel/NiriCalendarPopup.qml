@@ -77,7 +77,6 @@ PopupWindow {
     Rectangle {
         id: calBox
         focus: true
-        Keys.onEscapePressed: root.visible = false
         implicitWidth:  7 * 36 + 32
         implicitHeight: dayRow.height + grid.height + header.height + 32 + 16
         color: "#f21e1e2e"
