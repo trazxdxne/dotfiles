@@ -19,6 +19,13 @@ config.harfbuzz_features = { 'calt=1', 'clig=1', 'liga=1' }
 
 
 config.colors = {
+  background = '#1e1e2e',
+  foreground = '#cdd6f4',
+  cursor_bg = '#f5e0dc',
+  cursor_fg = '#1e1e2e',
+  cursor_border = '#f5e0dc',
+  selection_bg = '#585b70',
+  selection_fg = '#cdd6f4',
   ansi = {
     '#1e1e2e', -- 0 black
     '#f38ba8', -- 1 red (high usage)
