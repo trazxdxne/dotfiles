@@ -17,7 +17,7 @@ config.max_fps = 200
 -- WezTerm natively supports flags and emojis via HarfBuzz and font shaping
 config.harfbuzz_features = { 'calt=1', 'clig=1', 'liga=1' }
 
-config.color_scheme = 'Catppuccin Mocha'
+
 config.colors = {
   ansi = {
     '#1e1e2e', -- 0 black

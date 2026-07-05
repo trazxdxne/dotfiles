@@ -8,8 +8,8 @@ Item {
     implicitHeight: layout.height + 20
 
     property string labelText: "Active Theme"
-    property string value: "Mocha"
-    property var themes: ["Latte", "Frappe", "Macchiato", "Mocha"]
+    property string value: "Custom"
+    property var themes: ["Custom"]
 
 
 

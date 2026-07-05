@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.core
 
-/// Workspace button for Niri panel. Catppuccin Mauve theme.
+/// Workspace button for Niri panel. Custom theme.
 Rectangle {
     id: root
 
