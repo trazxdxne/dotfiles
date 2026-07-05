@@ -13,6 +13,7 @@ Rectangle {
         if (button === Qt.LeftButton) {
             if (!root.trayItem.onlyMenu) {
                 root.trayItem.activate();
+                Commands.focusApp(root.trayItem.tooltipTitle || root.trayItem.title || root.trayItem.id || "");
             } else if (root.trayItem.hasMenu) {
                 root.openMenu(root.trayItem);
             }

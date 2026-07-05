@@ -44,6 +44,10 @@ Scope {
             return;
         }
 
+        if (notification.appName === "niri") {
+            return;
+        }
+
         notification.tracked = true;
         root.sequence += 1;
 
@@ -51,11 +55,13 @@ Scope {
             "key": notification.id + "-" + root.sequence,
             "notification": notification,
             "appName": notification.appName || "Notification",
+            "appIcon": notification.appIcon || "",
             "summary": notification.summary || "",
             "body": notification.body || "",
             "urgency": notification.urgency,
             "urgencyName": root.urgencyName(notification.urgency),
-            "timeoutMs": notification.urgency === NotificationUrgency.Critical ? root.criticalTimeoutMs : root.popupTimeoutMs
+            "timeoutMs": notification.urgency === NotificationUrgency.Critical ? root.criticalTimeoutMs : root.popupTimeoutMs,
+            "expireTime": Date.now() + (notification.urgency === NotificationUrgency.Critical ? root.criticalTimeoutMs : root.popupTimeoutMs)
         };
 
         const existing = root.notifications.filter(n => n.notification && n.notification.id !== notification.id);
@@ -85,6 +91,7 @@ Scope {
         const entry = {
             "key": item.key,
             "appName": item.appName,
+            "appIcon": item.appIcon,
             "summary": item.summary,
             "body": item.body,
             "urgency": item.urgency,
@@ -100,6 +107,7 @@ Scope {
     function clearHistory() {
         root.history = [];
         root.saveHistory();
+        root.closeHistory();
     }
 
     function closeHistory() {
@@ -208,7 +216,7 @@ Scope {
         id: server
 
         keepOnReload: false
-        actionsSupported: false
+        actionsSupported: true
         bodySupported: true
         bodyMarkupSupported: false
         imageSupported: false

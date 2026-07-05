@@ -20,10 +20,21 @@ Rectangle {
     border.width: 1
 
     Timer {
-        interval: root.item.timeoutMs
+        interval: Math.max(10, root.item.expireTime - Date.now())
         running: true
         repeat: false
         onTriggered: root.expired()
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            if (root.item && root.item.appName) {
+                Commands.focusApp(root.item.appName);
+            }
+            root.dismiss();
+        }
     }
 
     RowLayout {
@@ -44,13 +55,31 @@ Rectangle {
             Layout.fillWidth: true
             spacing: Theme.tightSpacing
 
-            Text {
+            RowLayout {
                 Layout.fillWidth: true
-                text: root.item.appName
-                color: Theme.textMuted
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.smallFontSize
-                elide: Text.ElideRight
+                spacing: Theme.listSpacing
+
+                Image {
+                    Layout.preferredWidth: 16
+                    Layout.preferredHeight: 16
+                    sourceSize.width: 16
+                    sourceSize.height: 16
+                    source: {
+                        let iconName = root.item.appIcon || root.item.appName.toLowerCase().replace(" desktop", "");
+                        return iconName ? Icons.launcherIcon(iconName) : "";
+                    }
+                    asynchronous: true
+                    visible: status === Image.Ready
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: root.item.appName
+                    color: Theme.textMuted
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.smallFontSize
+                    elide: Text.ElideRight
+                }
             }
 
             Text {
@@ -60,6 +89,8 @@ Rectangle {
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.bodyFontSize
                 font.bold: true
+                wrapMode: Text.Wrap
+                maximumLineCount: 3
                 elide: Text.ElideRight
             }
 
@@ -70,8 +101,8 @@ Rectangle {
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.smallFontSize
-                wrapMode: Text.WordWrap
-                maximumLineCount: 3
+                wrapMode: Text.Wrap
+                maximumLineCount: 6
                 elide: Text.ElideRight
             }
         }

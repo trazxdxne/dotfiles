@@ -13,7 +13,7 @@ PopupWindow {
     anchor {
         window: root.barWindow
         rect.x: root.barWindow && root.barWindow.clockButton ? root.barWindow.clockButton.x : 0
-        rect.y: root.barWindow && root.barWindow.clockButton ? root.barWindow.clockButton.y : 0
+        rect.y: root.barWindow && root.barWindow.clockButton ? root.barWindow.clockButton.y + 12 : 0
         rect.width: root.barWindow && root.barWindow.clockButton ? root.barWindow.clockButton.width : 0
         rect.height: root.barWindow && root.barWindow.clockButton ? root.barWindow.clockButton.height : 0
         edges: Edges.Bottom
