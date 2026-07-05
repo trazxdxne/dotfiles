@@ -122,8 +122,12 @@ Window {
                                         minValue: modelData.min !== undefined ? modelData.min : 0
                                         maxValue: modelData.max !== undefined ? modelData.max : 100
                                         stepValue: modelData.step !== undefined ? modelData.step : 1
-                                        Component.onCompleted: value = Config[modelData.id] !== undefined ? Config[modelData.id] : 0
-                                        onValueChanged: Config[modelData.id] = value
+                                        property bool _ready: false
+                                        Component.onCompleted: {
+                                            value = Config[modelData.id] !== undefined ? Config[modelData.id] : 0
+                                            _ready = true
+                                        }
+                                        onValueChanged: { if (_ready) Config[modelData.id] = value; }
                                     }
                                 }
                                 
@@ -139,8 +143,12 @@ Window {
                                             font.pixelSize: Theme.bodyFontSize
                                         }
                                         CheckBox {
-                                            Component.onCompleted: checked = Config[modelData.id] !== undefined ? Config[modelData.id] : false
-                                            onCheckedChanged: Config[modelData.id] = checked
+                                            property bool _ready: false
+                                            Component.onCompleted: {
+                                                checked = Config[modelData.id] !== undefined ? Config[modelData.id] : false
+                                                _ready = true
+                                            }
+                                            onCheckedChanged: { if (_ready) Config[modelData.id] = checked; }
                                             
                                             indicator: Rectangle {
                                                 implicitWidth: 20
@@ -173,7 +181,11 @@ Window {
                                         }
                                         TextField {
                                             Layout.fillWidth: true
-                                            Component.onCompleted: text = Config[modelData.id] !== undefined ? Config[modelData.id] : ""
+                                            property bool _ready: false
+                                            Component.onCompleted: {
+                                                text = Config[modelData.id] !== undefined ? Config[modelData.id] : ""
+                                                _ready = true
+                                            }
                                             color: Theme.text
                                             font.family: Theme.fontFamily
                                             font.pixelSize: Theme.bodyFontSize
@@ -182,7 +194,7 @@ Window {
                                                 border.color: Theme.border
                                                 border.width: 1
                                             }
-                                            onTextChanged: Config[modelData.id] = text
+                                            onTextChanged: { if (_ready) Config[modelData.id] = text; }
                                         }
                                     }
                                 }
@@ -191,8 +203,12 @@ Window {
                                     id: themeComponent
                                     SettingTheme {
                                         labelText: modelData.title
-                                        Component.onCompleted: value = Config[modelData.id] !== undefined ? Config[modelData.id] : "Mocha"
-                                        onValueChanged: Config[modelData.id] = value
+                                        property bool _ready: false
+                                        Component.onCompleted: {
+                                            value = Config[modelData.id] !== undefined ? Config[modelData.id] : "Mocha"
+                                            _ready = true
+                                        }
+                                        onValueChanged: { if (_ready) Config[modelData.id] = value; }
                                     }
                                 }
                             }
