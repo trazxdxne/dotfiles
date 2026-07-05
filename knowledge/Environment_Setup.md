@@ -8,7 +8,7 @@
 
 1. [Как быстро восстановить окружение из дотфайлов](#1-как-быстро-восстановить-окружение-из-дотфайлов)
 2. [Как настроить безопасное редактирование системных файлов через sudoedit](#2-как-настроить-безопасное-редактирование-системных-файлов-через-sudoedit)
-3. [Как применить темную тему Catppuccin Mocha Pink](#3-как-применить-темную-тему-catppuccin-mocha-pink)
+3. [Как применить темную тему Velvet Night](#3-как-применить-темную-тему-velvet-night)
 4. [Как синхронизировать тему и размер курсора во всех приложениях](#4-как-синхронизировать-тему-и-размер-курсора-во-всех-приложениях)
 5. [Как настроить границы окон, отступы и автозапуск в Niri](#5-как-настроить-границы-окон-отступы-и-автозапуск-в-niri)
 6. [Как настроить Discord без вылетов под NVIDIA и с обходом блокировок](#6-как-настроить-discord-без-вылетов-под-nvidia-и-с-обходом-блокировок)
@@ -68,9 +68,9 @@ zed() {
 
 ---
 
-## 3. Как применить темную тему Catppuccin Mocha Pink
+## 3. Как применить темную тему Velvet Night
 
-Настройка сквозного оформления с единой палитрой Catppuccin Mocha Pink для всех типов интерфейсов (GTK3, GTK4/Libadwaita, Qt5/Qt6).
+Настройка сквозного оформления с единой палитрой Velvet Night для всех типов интерфейсов (GTK3, GTK4/Libadwaita, Qt5/Qt6).
 
 ### Шаг 1. Установка необходимых пакетов
 ```bash
@@ -81,7 +81,7 @@ yay -S catppuccin-gtk-theme-mocha && sudo pacman -S qt6ct qt5ct
 Пропишите название темы в файле настроек [gtk-3.0/settings.ini](file:///home/trazxdxne/dotfiles/gtk-3.0/settings.ini):
 ```ini
 [Settings]
-gtk-theme-name=catppuccin-mocha-pink-standard+default
+gtk-theme-name=Velvet-Night
 gtk-application-prefer-dark-theme=1
 gtk-font-name=Adwaita Sans 11
 ```
@@ -120,7 +120,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
        QT_QPA_PLATFORMTHEME "qt5ct"
    }
    ```
-2. Создайте файл палитры `~/.config/qt6ct/colors/Custom-Dark.conf` (и продублируйте его для `qt5ct` по пути `~/.config/qt5ct/colors/Custom-Dark.conf`):
+2. Создайте файл палитры `~/.config/qt6ct/colors/Velvet-Night.conf` (и продублируйте его для `qt5ct` по пути `~/.config/qt5ct/colors/Velvet-Night.conf`):
    ```ini
    [ColorScheme]
    active_colors=#ffcdd6f4, #ff313244, #ff45475a, #ff585b70, #ff11111b, #ff181825, #ffcdd6f4, #fff5c2e7, #ffcdd6f4, #ff1e1e2e, #ff1e1e2e, #ff11111b, #fff5c2e7, #ff11111b, #ff89b4fa, #ffcba6f7, #ff181825, #00000000, #ff1e1e2e, #ffcdd6f4, #ff6c7086
@@ -130,7 +130,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
 3. Примените созданные схемы в конфигурационных файлах `~/.config/qt6ct/qt6ct.conf` и `~/.config/qt5ct/qt5ct.conf`:
    ```ini
    [Appearance]
-   color_scheme_path=/home/trazxdxne/.config/qt6ct/colors/Catppuccin-Mocha-Pink.conf
+   color_scheme_path=/home/trazxdxne/.config/qt6ct/colors/Velvet-Night.conf
    custom_palette=true
    style=Fusion
    ```
@@ -449,10 +449,16 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 ### Шаг 2. Настройка темы, цветовой палитры и горячих клавиш
 Настройте файл конфигурации терминала [wezterm/wezterm.lua](file:///home/trazxdxne/dotfiles/wezterm/wezterm.lua):
 
-1. **Цветовая схема Catppuccin Mocha** с переопределением ANSI-палитры (для лучшей читаемости в alsamixer/TUI):
+1. **Цветовая схема Velvet Night** с переопределением ANSI-палитры (для лучшей читаемости в alsamixer/TUI):
    ```lua
-   config.color_scheme = 'Catppuccin Mocha'
    config.colors = {
+     background = '#1e1e2e',
+     foreground = '#cdd6f4',
+     cursor_bg = '#f5e0dc',
+     cursor_fg = '#1e1e2e',
+     cursor_border = '#f5e0dc',
+     selection_bg = '#585b70',
+     selection_fg = '#cdd6f4',
      ansi = {
        '#1e1e2e', -- 0 black
        '#f38ba8', -- 1 red (высокая нагрузка)

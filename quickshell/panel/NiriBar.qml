@@ -10,7 +10,7 @@ import Qt5Compat.GraphicalEffects
 import qs.panel
 import qs.core
 
-/// Niri top bar — Custom
+/// Niri top bar — Velvet Night
 PanelWindow {
     id: root
 

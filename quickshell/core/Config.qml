@@ -11,7 +11,7 @@ Singleton {
 
     // Theme properties
     property bool darkTheme: true
-    property string activeTheme: "Custom"
+    property string activeTheme: "Velvet Night"
 
     // Bar properties
     property int barHeight: 24

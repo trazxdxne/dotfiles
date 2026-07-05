@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.core
 
-/// Workspace button for Niri panel. Custom theme.
+/// Workspace button for Niri panel. Velvet Night theme.
 Rectangle {
     id: root
 

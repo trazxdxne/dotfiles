@@ -205,7 +205,7 @@ Window {
                                         labelText: modelData.title
                                         property bool _ready: false
                                         Component.onCompleted: {
-                                            value = Config[modelData.id] !== undefined ? Config[modelData.id] : "Custom"
+                                            value = Config[modelData.id] !== undefined ? Config[modelData.id] : "Velvet Night"
                                             _ready = true
                                         }
                                         onValueChanged: { if (_ready) Config[modelData.id] = value; }
