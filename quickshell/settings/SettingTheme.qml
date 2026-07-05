@@ -5,7 +5,7 @@ import qs.core
 Item {
     id: root
     Layout.fillWidth: true
-    implicitHeight: layout.height + 20
+    implicitHeight: layout.implicitHeight + 20
 
     property string labelText: "Active Theme"
     property string value: "Velvet Night"
@@ -15,7 +15,9 @@ Item {
 
     ColumnLayout {
         id: layout
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
         anchors.margins: 10
         spacing: 10
 
