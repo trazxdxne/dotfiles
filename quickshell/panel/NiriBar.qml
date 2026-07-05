@@ -20,6 +20,7 @@ PanelWindow {
     required property var batteryText // string from NiriSysModel
     required property var notificationModel
     required property var clipboardPopup
+    required property var settingsWindow
 
     property alias clockButton: clockAnchor
     property alias notifButton: notifButton
@@ -45,7 +46,7 @@ PanelWindow {
     }
 
     Behavior on color {
-        ColorAnimation { duration: 200 }
+        ColorAnimation { duration: 0 }
     }
 
     Connections {
@@ -106,6 +107,17 @@ PanelWindow {
         height: 1
         color: "#1a45475a"
         visible: !root.isFullscreenActive
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+        onClicked: (mouse) => {
+            if (mouse.button === Qt.RightButton) {
+                root.settingsWindow.visible = !root.settingsWindow.visible
+                if (root.settingsWindow.visible) root.settingsWindow.requestActivate()
+            }
+        }
     }
 
     function openTrayMenu(trayItem, anchorItem) {
@@ -254,6 +266,7 @@ PanelWindow {
                 Behavior on opacity { NumberAnimation { duration: 200 } }
             }
         }
+        visible: Config.showClock
     }
 
     Process {
@@ -319,7 +332,7 @@ PanelWindow {
                 pavucontrolProc.running = false
                 pavucontrolProc.running = true
             }
-            visible: root.volumeText.length > 0
+            visible: root.volumeText.length > 0 && (Config.showVolume || Config.showBattery)
 
             Row {
                 anchors.centerIn: parent
@@ -332,12 +345,13 @@ PanelWindow {
                     font { family: "FantasqueSansM Nerd Font"; pixelSize: 12 }
                     color: "#fab387"
                     verticalAlignment: Text.AlignVCenter
+                    visible: Config.showVolume
                 }
 
                 // Battery Icon
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    visible: root.batteryText.length > 0
+                    visible: root.batteryText.length > 0 && Config.showBattery
                     text: root.batteryText.charAt(0)
                     font { family: "FantasqueSansM Nerd Font"; pixelSize: 12 }
                     color: "#fab387"

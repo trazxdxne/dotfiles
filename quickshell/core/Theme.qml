@@ -3,7 +3,7 @@ pragma Singleton
 import Quickshell
 
 Singleton {
-    readonly property bool dark: true
+    property bool dark: Config.darkTheme
 
     readonly property string transparent: "#00000000"
     readonly property string bg: dark ? "#f21e1e2e" : "#eceff4" // Catppuccin Mocha base with translucency
@@ -19,9 +19,9 @@ Singleton {
     readonly property string danger: "#f38ba8" // Catppuccin Mocha red
     readonly property string dangerSurface: dark ? "#33f38ba8" : "#f0d5da" // Catppuccin Mocha red with 20% opacity
 
-    readonly property string fontFamily: "Adwaita Sans"
+    property string fontFamily: Config.barFont
 
-    readonly property int panelHeight: 24
+    property int panelHeight: Config.barHeight
     readonly property int popupMargin: 18
     readonly property int popupSpacing: 12
     readonly property int rowSpacing: 10

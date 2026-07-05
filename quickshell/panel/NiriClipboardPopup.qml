@@ -10,8 +10,8 @@ import qs.core
 FloatingWindow {
     id: root
 
-    implicitWidth: 960
-    implicitHeight: 620
+    implicitWidth: Config.clipboardWidth
+    implicitHeight: Config.clipboardHeight
     title: "Clipboard History"
     color: "transparent"
 

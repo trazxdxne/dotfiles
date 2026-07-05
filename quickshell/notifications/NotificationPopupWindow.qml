@@ -9,7 +9,7 @@ PopupWindow {
     required property var notificationModel
     required property var panelWindow
 
-    readonly property int popupWidth: 380
+    property int popupWidth: Config.notifWidth
     readonly property int edgeMargin: Theme.rowSpacing
 
     visible: notificationModel.notifications.length > 0

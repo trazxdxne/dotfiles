@@ -6,6 +6,7 @@ import Quickshell.Services.SystemTray
 import "./panel"
 import "./state"
 import "./notifications"
+import "./settings"
 
 ShellRoot {
     id: root
@@ -63,6 +64,7 @@ ShellRoot {
         batteryText:        sysModel.batteryText
         notificationModel:  notificationModel
         clipboardPopup:     clipboardPopup
+        settingsWindow:     settingsWindow
 
         onCalendarToggled: calendarPopup.visible = !calendarPopup.visible
     }
@@ -78,5 +80,10 @@ ShellRoot {
     NiriClipboardPopup {
         id: clipboardPopup
         visible: false
+    }
+
+    // ── Settings window ───────────────────────────────────────────────
+    SettingsWindow {
+        id: settingsWindow
     }
 }

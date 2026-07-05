@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Notifications
+import qs.core
 
 Scope {
     id: root
@@ -30,10 +31,10 @@ Scope {
         return count;
     }
 
-    readonly property int popupTimeoutMs: 3000
-    readonly property int criticalTimeoutMs: 5000
-    readonly property int maxVisible: 4
-    readonly property int maxHistory: 50
+    property int popupTimeoutMs: Config.notifTimeout
+    property int criticalTimeoutMs: Config.notifTimeout * 2
+    property int maxVisible: 4
+    property int maxHistory: Config.notifMaxItems
     readonly property string cacheDir: (Quickshell.env("XDG_CACHE_HOME") || (Quickshell.env("HOME") + "/.cache")) + "/dwm-titus"
     readonly property string historyPath: cacheDir + "/notification-history.json"
 
