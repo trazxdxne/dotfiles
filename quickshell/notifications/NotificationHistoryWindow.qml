@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
 import qs.core
 
@@ -99,27 +100,47 @@ PopupWindow {
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            Flickable {
+            ScrollView {
+                id: listScrollView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                contentWidth: width
-                contentHeight: historyColumn.implicitHeight
                 clip: true
+                rightPadding: 8
 
-                ColumnLayout {
-                    id: historyColumn
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                ScrollBar.vertical: ScrollBar {
+                    id: listScrollBar
+                    parent: listScrollView
+                    x: listScrollView.width - width
+                    y: listScrollView.topPadding
+                    height: listScrollView.availableHeight
+                    width: 8
+                    policy: ScrollBar.AlwaysOn
+                    opacity: 1.0
+                    contentItem: Rectangle {
+                        implicitWidth: 8
+                        radius: 0
+                        color: listScrollBar.pressed ? "#f5c2e7" : (listScrollBar.hovered ? "#cba6f7" : "#585b70")
+                    }
+                    background: Rectangle {
+                        implicitWidth: 8
+                        color: "transparent"
+                    }
+                }
 
-                    width: parent.width
+                ListView {
+                    id: historyList
+                    width: listScrollView.availableWidth
+                    height: listScrollView.availableHeight
+                    model: root.notificationModel.sortedHistory
                     spacing: Theme.listSpacing * 2
-
-                    Repeater {
-                        model: root.notificationModel.sortedHistory
+                    clip: true
 
                         delegate: Rectangle {
                             required property var modelData
 
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: Math.max(74, historyContent.implicitHeight + 22)
+                            width: historyList.width
+                            height: Math.max(74, historyContent.implicitHeight + 22)
                             radius: 0
                             color: itemMouseArea.containsMouse ? (modelData.read ? "#08ffffff" : "#19f5c2e7") : "transparent"
                             border.width: 0
@@ -221,4 +242,3 @@ PopupWindow {
             }
         }
     }
-}
