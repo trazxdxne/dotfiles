@@ -204,7 +204,7 @@ FloatingWindow {
             if (tab < 0) return
             const id = line.slice(0, tab)
             const content = line.slice(tab + 1)
-            if (content === "/tmp/pasted_screenshot.png") return
+            if (content === "/tmp/pasted_screenshot.png" || content === "/tmp/qs_clipboard_preview.png") return
             const isImage = content.includes("[[ binary data")
             let display = content
             if (isImage) {
