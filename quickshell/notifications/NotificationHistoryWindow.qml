@@ -121,7 +121,7 @@ PopupWindow {
                     id: listScrollBar
                     policy: ScrollBar.AsNeeded
                     width: 8
-                    opacity: 1.0
+                    visible: size < 1.0
                     contentItem: Rectangle {
                         implicitWidth: 8
                         radius: 0

@@ -343,7 +343,7 @@ FloatingWindow {
                         height: listScrollView.availableHeight
                         width: 8
                         policy: ScrollBar.AsNeeded
-                        opacity: 1.0
+                        visible: size < 1.0
                         contentItem: Rectangle {
                             implicitWidth: 8
                             radius: 0
@@ -491,7 +491,7 @@ FloatingWindow {
                             height: previewScrollView.availableHeight
                             width: 8
                             policy: ScrollBar.AsNeeded
-                            opacity: 1.0
+                            visible: size < 1.0
                             contentItem: Rectangle {
                                 implicitWidth: 8
                                 radius: 0
