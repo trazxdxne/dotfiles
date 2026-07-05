@@ -8,6 +8,16 @@ Scope {
 
     property var notifications: []
     property var history: []
+    property var sortedHistory: {
+        var arr = history.slice();
+        arr.sort(function(a, b) {
+            if (a.read === b.read) {
+                return b.timestamp - a.timestamp;
+            }
+            return a.read ? 1 : -1;
+        });
+        return arr;
+    }
     property bool historyVisible: false
     property int sequence: 0
     property int unreadCount: {

@@ -55,7 +55,7 @@ PopupWindow {
 
                 Text {
                     Layout.fillWidth: true
-                    text: "Notifications (" + root.notificationModel.history.length + ")"
+                    text: "Notifications"
                     color: "#cba6f7"
                     font.family: "Adwaita Sans"
                     font.pixelSize: 18
@@ -113,7 +113,7 @@ PopupWindow {
                     spacing: Theme.listSpacing * 2
 
                     Repeater {
-                        model: root.notificationModel.history
+                        model: root.notificationModel.sortedHistory
 
                         delegate: Rectangle {
                             required property var modelData
@@ -121,7 +121,7 @@ PopupWindow {
                             Layout.fillWidth: true
                             Layout.preferredHeight: Math.max(74, historyContent.implicitHeight + 22)
                             radius: 0
-                            color: itemMouseArea.containsMouse ? "#19f5c2e7" : "transparent"
+                            color: itemMouseArea.containsMouse ? (modelData.read ? "#08ffffff" : "#19f5c2e7") : "transparent"
                             border.width: 0
 
                             MouseArea {
@@ -193,7 +193,7 @@ PopupWindow {
                                     Text {
                                         Layout.fillWidth: true
                                         text: modelData.summary || modelData.urgencyName || ""
-                                        color: "#cdd6f4"
+                                        color: modelData.read ? "#7f849c" : "#cdd6f4"
                                         font.family: "Adwaita Sans"
                                         font.pixelSize: 14
                                         font.bold: !modelData.read
@@ -206,7 +206,7 @@ PopupWindow {
                                         Layout.fillWidth: true
                                         visible: text.length > 0
                                         text: modelData.body || ""
-                                        color: "#a6adc8"
+                                        color: modelData.read ? "#585b70" : "#a6adc8"
                                         font.family: "Adwaita Sans"
                                         font.pixelSize: 12
                                         wrapMode: Text.Wrap
