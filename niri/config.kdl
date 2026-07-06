@@ -288,7 +288,7 @@ spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 spawn-sh-at-startup "swaybg -i ~/Pictures/Wallpapers/mountains.jpg -m fill"
-spawn-at-startup "niri-autostart"
+spawn-sh-at-startup "sleep 2 && niri-autostart"
 
 // Clipboard history daemon (cliphist)
 spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
