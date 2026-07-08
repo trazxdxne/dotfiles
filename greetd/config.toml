@@ -2,5 +2,5 @@
 vt = 1
 
 [default_session]
-command = "dbus-run-session sh -c 'gsettings set org.gnome.desktop.interface gtk-theme Velvet-Night; gsettings set org.gnome.desktop.interface cursor-theme ArchCursorComplete; gsettings set org.gnome.desktop.interface cursor-size 20; gsettings set org.gnome.desktop.interface color-scheme prefer-dark; env GTK_THEME=Velvet-Night XCURSOR_THEME=ArchCursorComplete XCURSOR_SIZE=20 cage -s -- regreet'"
+command = "dbus-run-session sh -c 'gsettings set org.gnome.desktop.interface gtk-theme Velvet-Night; gsettings set org.gnome.desktop.interface color-scheme prefer-dark; env GTK_THEME=Velvet-Night cage -s -- regreet'"
 user = "greeter"
