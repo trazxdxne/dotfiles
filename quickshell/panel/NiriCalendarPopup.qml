@@ -94,10 +94,17 @@ PopupWindow {
                 width: parent.width
 
                 // Prev month
-                Text {
-                    text: "◀"
-                    color: "#a6adc8"
-                    font.pixelSize: 12
+                Item {
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "◀"
+                        color: "#a6adc8"
+                        font.pixelSize: 12
+                    }
+
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -115,10 +122,17 @@ PopupWindow {
                 }
 
                 // Next month
-                Text {
-                    text: "▶"
-                    color: "#a6adc8"
-                    font.pixelSize: 12
+                Item {
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "▶"
+                        color: "#a6adc8"
+                        font.pixelSize: 12
+                    }
+
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor

@@ -119,8 +119,8 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "\uF00D"
                 color: Theme.text
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.panelFontSize
+                font.family: "FantasqueSansM Nerd Font"
+                font.pixelSize: 12
             }
 
             MouseArea {

@@ -34,11 +34,7 @@ Item {
             to: root.maxValue
             stepSize: root.stepValue
             value: root.value
-            onValueChanged: {
-                if (root.value !== value) {
-                    root.value = value
-                }
-            }
+            onMoved: root.value = value
 
             background: Rectangle {
                 x: slider.leftPadding

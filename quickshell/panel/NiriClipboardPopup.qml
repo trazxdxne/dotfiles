@@ -328,19 +328,16 @@ FloatingWindow {
                 }
 
                 // Clipboard list
-                ScrollView {
-                    id: listScrollView
+                ListView {
+                    id: clipList
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    rightPadding: 8
-                    
-                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                    model: root.filteredItems
+                    spacing: 0
+                    clip: true
+
                     ScrollBar.vertical: ScrollBar {
                         id: listScrollBar
-                        parent: listScrollView
-                        x: listScrollView.width - width
-                        y: listScrollView.topPadding
-                        height: listScrollView.availableHeight
                         width: 8
                         policy: ScrollBar.AsNeeded
                         visible: size < 1.0
@@ -355,74 +352,65 @@ FloatingWindow {
                         }
                     }
 
-                    ListView {
-                        id: clipList
-                        width: listScrollView.availableWidth
-                        height: listScrollView.availableHeight
-                        model: root.filteredItems
-                        spacing: 0
-                        clip: true
+                    onCountChanged: {
+                        if (count > 0) root.showPreview(root.filteredItems[0])
+                    }
 
-                        onCountChanged: {
-                            if (count > 0) root.showPreview(root.filteredItems[0])
+                    delegate: Rectangle {
+                        required property var modelData
+                        required property int index
+
+                        width: clipList.width
+                        height: 48
+                        radius: 0
+                        color: index === root.selectedIdx ? "#33f5c2e7" : (hovered ? "#19f5c2e7" : "transparent")
+                        border.color: index === root.selectedIdx ? "#4df5c2e7" : "transparent"
+                        border.width: index === root.selectedIdx ? 1 : 0
+
+                        property bool hovered: ma.containsMouse
+
+                        // Left accent bar for selected
+                        Rectangle {
+                            visible: index === root.selectedIdx
+                            width: 3
+                            height: parent.height
+                            color: "#f5c2e7"
                         }
 
-                        delegate: Rectangle {
-                            required property var modelData
-                            required property int index
+                        Column {
+                            anchors.left: parent.left
+                            anchors.leftMargin: index === root.selectedIdx ? 12 : 10
+                            anchors.right: parent.right
+                            anchors.rightMargin: 8
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 2
 
-                            width: clipList.width
-                            height: 48
-                            radius: 0
-                            color: index === root.selectedIdx ? "#33f5c2e7" : (hovered ? "#19f5c2e7" : "transparent")
-                            border.color: index === root.selectedIdx ? "#4df5c2e7" : "transparent"
-                            border.width: index === root.selectedIdx ? 1 : 0
-
-                            property bool hovered: ma.containsMouse
-
-                            // Left accent bar for selected
-                            Rectangle {
-                                visible: index === root.selectedIdx
-                                width: 3
-                                height: parent.height
-                                color: "#f5c2e7"
+                            Text {
+                                width: parent.width
+                                text: modelData.display
+                                color: "#cdd6f4"
+                                font.family: "Adwaita Sans"
+                                font.pixelSize: 12
+                                elide: Text.ElideRight
                             }
 
-                            Column {
-                                anchors.left: parent.left
-                                anchors.leftMargin: index === root.selectedIdx ? 12 : 10
-                                anchors.right: parent.right
-                                anchors.rightMargin: 8
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 2
-
-                                Text {
-                                    width: parent.width
-                                    text: modelData.display
-                                    color: "#cdd6f4"
-                                    font.family: "Adwaita Sans"
-                                    font.pixelSize: 12
-                                    elide: Text.ElideRight
-                                }
-
-                                Text {
-                                    text: modelData.timeStr
-                                    color: "#6c7086"
-                                    font.family: "Adwaita Sans"
-                                    font.pixelSize: 10
-                                }
+                            Text {
+                                text: modelData.timeStr
+                                color: "#6c7086"
+                                font.family: "Adwaita Sans"
+                                font.pixelSize: 10
                             }
+                        }
 
-                            MouseArea {
-                                id: ma
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.copyItem(modelData)
-                                onEntered: {
-                                    root.selectedIdx = index
-                                    root.showPreview(modelData)
-                                }
+                        MouseArea {
+                            id: ma
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.copyItem(modelData)
+                            onEntered: {
+                                root.selectedIdx = index
+                                root.showPreview(modelData)
                             }
                         }
                     }

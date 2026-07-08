@@ -13,7 +13,7 @@ FloatingWindow {
     property bool isEnterPressed: false
 
     title: "dwm power menu"
-    visible: powerMenuModel.visible
+    visible: powerMenuModel.visible || content.opacity > 0.0
     implicitWidth: 620
     implicitHeight: 200
     color: Theme.transparent
@@ -44,7 +44,7 @@ FloatingWindow {
         anchors.fill: parent
         focus: true
 
-        opacity: root.visible ? 1.0 : 0.0
+        opacity: powerMenuModel.visible ? 1.0 : 0.0
         Behavior on opacity {
             NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
         }
