@@ -34,6 +34,7 @@
       • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
+      • `~/.config/systemd/user/lock-on-sleep.service` -> `~/dotfiles/systemd/lock-on-sleep.service`
    - Отключи встроенный звук, скопировав конфигурационный файл modprobe (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
    - Скачай файлы бэкапа с Google Drive:
@@ -44,6 +45,6 @@
 6. Планировщик: Настрой ежедневный бэкап с помощью пользовательского systemd таймера. Создай файлы:
    - `~/.config/systemd/user/backup-gdrive.service` (запуск скрипта бэкапа с `Type=oneshot`, StandardOutput/StandardError направь в `~/.gemini/antigravity-cli/knowledge/backup_gdrive.log`).
    - `~/.config/systemd/user/backup-gdrive.timer` (настрой `OnCalendar=*-*-* 22:00:00` и `Persistent=true`).
-   Выполни `systemctl --user daemon-reload`, `systemctl --user enable --now backup-gdrive.timer` и `systemctl --user start backup-gdrive.service`.
+   Выполни `systemctl --user daemon-reload`, `systemctl --user enable --now backup-gdrive.timer`, `systemctl --user start backup-gdrive.service` и `systemctl --user enable --now lock-on-sleep.service`.
 7. Напиши мне красивый отчет, когда всё будет готово!
 ```

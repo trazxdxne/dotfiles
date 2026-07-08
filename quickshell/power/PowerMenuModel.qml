@@ -23,7 +23,7 @@ Scope {
             "label": "Logout",
             "detail": "End the current session",
             "icon": "system-log-out-symbolic",
-            "command": ["niri", "msg", "action", "quit"],
+            "command": ["niri", "msg", "action", "quit", "--skip-confirmation"],
             "confirm": true
         },
         {
