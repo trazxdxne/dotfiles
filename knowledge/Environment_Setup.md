@@ -538,7 +538,7 @@ Ly — это легковесный консольный дисплейный �
 Включите службу `ly` и отключите старый дисплейный менеджер (например, `greetd` или `gdm`):
 ```bash
 pkexec systemctl disable greetd
-pkexec systemctl enable ly
+pkexec systemctl enable ly@tty2.service
 ```
 
 ### Шаг 1.1. Настройка автоматического разблокирования GNOME Keyring
