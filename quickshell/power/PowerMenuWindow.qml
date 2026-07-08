@@ -76,9 +76,14 @@ FloatingWindow {
                 return;
             }
 
-            var keyStr = String.fromCharCode(event.key).toUpperCase();
-            if (keyStr === "Z" || keyStr === "L" || keyStr === "R" || keyStr === "S") {
-                root.activeHotkey = keyStr;
+            var keyText = event.text ? event.text.toUpperCase() : String.fromCharCode(event.key).toUpperCase();
+            var ruToEn = { "Я": "Z", "Ы": "S", "Д": "L", "К": "R" };
+            if (ruToEn[keyText]) {
+                keyText = ruToEn[keyText];
+            }
+
+            if (keyText === "Z" || keyText === "L" || keyText === "R" || keyText === "S") {
+                root.activeHotkey = keyText;
                 event.accepted = true;
                 return;
             }
@@ -93,8 +98,13 @@ FloatingWindow {
                 return;
             }
 
-            var keyStr = String.fromCharCode(event.key).toUpperCase();
-            if (keyStr === root.activeHotkey) {
+            var keyText = event.text ? event.text.toUpperCase() : String.fromCharCode(event.key).toUpperCase();
+            var ruToEn = { "Я": "Z", "Ы": "S", "Д": "L", "К": "R" };
+            if (ruToEn[keyText]) {
+                keyText = ruToEn[keyText];
+            }
+
+            if (keyText === root.activeHotkey) {
                 root.activeHotkey = "";
                 event.accepted = true;
                 return;
