@@ -527,57 +527,22 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 
 ---
 
-## 10. Как настроить дисплейный менеджер (greetd + regreet) и автоблокировку сессии (hyprlock)
+## 10. Как настроить дисплейный менеджер (ly) и автоблокировку сессии (hyprlock)
 
-Для обеспечения легкого графического входа при запуске системы и безопасной блокировки сессии при переходе в спящий режим используется связка `greetd` (в качестве дисплейного менеджера), `regreet` (в качестве графического Wayland-интерфейса входа) и `hyprlock` (в качестве блокировщика экрана).
+Для обеспечения легкого графического входа при запуске системы и безопасной блокировки сессии при переходе в спящий режим используется связка `ly` (в качестве консольного TUI дисплейного менеджера) и `hyprlock` (в качестве блокировщика экрана).
 
-### Шаг 1. Настройка greetd и regreet
-Конфигурационный файл дисплейного менеджера находится по пути `/etc/greetd/config.toml`. Для работы Wayland-приложения regreet требуется минимальный композитор `cage`. Убедитесь, что установлены пакеты `greetd-regreet` и `cage`, затем отредактируйте конфиг с помощью привилегий суперпользователя:
-```toml
-[terminal]
-vt = 1
+### Шаг 1. Настройка ly
+Ly — это легковесный консольный дисплейный менеджер. Его конфигурационный файл находится по пути `/etc/ly/config.ini`.
+Убедитесь, что установлен пакет `ly`, затем отредактируйте конфиг с помощью привилегий суперпользователя. В нашей конфигурации мы применяем цвета из темы Velvet Night напрямую в виде hex-кодов (поддерживаются 24-битные цвета в формате `0xSSRRGGBB`):
 
-[default_session]
-command = "dbus-run-session niri --config /etc/greetd/niri.kdl"
-user = "greeter"
-```
-Для того чтобы курсор, тема и сессия работали нативно, ReGreet запускается не через Cage, а через отдельную сессию Niri (`/etc/greetd/niri.kdl`):
-```kdl
-spawn-sh-at-startup "regreet --style /usr/share/themes/Velvet-Night/gtk-4.0/gtk.css; niri msg action quit --skip-confirmation"
-hotkey-overlay { skip-at-startup; }
-cursor {
-    xcursor-theme "ArchCursorComplete"
-    xcursor-size 20
-}
-window-rule {
-    match app-id="^regreet$"
-    open-maximized true
-}
-layout { focus-ring { off; }; border { off; } }
-```
-> [!IMPORTANT]
-> Обратите внимание:
-> 1. В отличие от tuigreet, regreet — нативное Wayland-приложение, поэтому запуск через `niri` (или `cage`) предотвращает проблемы с перехватом прав на DRM-сессию и переменными окружения, с которыми часто сталкиваются Wayland-композиторы.
-> 2. Убедитесь, что regreet корректно находит Wayland-сессии, они должны лежать в `/usr/share/wayland-sessions/`. Сессия Niri должна запускать `niri-session`, чтобы инициализировать `systemd --user` и подгрузить автозапуск.
-> 3. Для работы демонстрации экрана (screencast в OBS, Discord и т.д.) в файле конфигурации `~/.config/niri/config.kdl` в блоке `spawn-at-startup` команды `dbus-update-activation-environment` должен быть явно указан импорт переменной `XDG_CURRENT_DESKTOP`, иначе порталы не смогут определить окружение Niri.
-
-Для стилизации экрана входа в соответствии с системной GTK-темой создайте или отредактируйте `/etc/greetd/regreet.toml`:
-```toml
-[GTK]
-application_prefer_dark_theme = true
-cursor_theme_name = "ArchCursorComplete"
-font_name = "Adwaita Sans 11"
-```
-*Примечание:* Из-за особенностей работы GTK4 (на котором написан regreet) параметр `theme_name` часто некорректно работает с кастомными темами. Для правильного применения CSS-стилей используется флаг `--style` с прямым указанием файла темы. Убедитесь, что тема `Velvet-Night` скопирована из локальной директории пользователя в общесистемную директорию `/usr/share/themes/`, чтобы у пользователя `greeter` был к ней доступ (подробнее в `Restore_Prompt.md`).
-
-Включите службу `greetd` и отключите старый дисплейный менеджер (например, `gdm`):
+Включите службу `ly` и отключите старый дисплейный менеджер (например, `greetd` или `gdm`):
 ```bash
-pkexec systemctl disable gdm
-pkexec systemctl enable greetd
+pkexec systemctl disable greetd
+pkexec systemctl enable ly
 ```
 
 ### Шаг 1.1. Настройка автоматического разблокирования GNOME Keyring
-Чтобы при входе через `greetd` автоматически разблокировалась связка ключей (GNOME Keyring), отредактируйте файл конфигурации PAM `/etc/pam.d/greetd` (потребуются root-привилегии):
+Чтобы при входе через `ly` автоматически разблокировалась связка ключей (GNOME Keyring), отредактируйте файл конфигурации PAM `/etc/pam.d/ly` (потребуются root-привилегии), добавив `pam_gnome_keyring.so`:
 ```pam
 #%PAM-1.0
 
