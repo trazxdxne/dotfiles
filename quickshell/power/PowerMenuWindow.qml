@@ -8,25 +8,21 @@ FloatingWindow {
 
     required property var powerMenuModel
 
+    property int focusedIndex: 0
+    property string activeHotkey: ""
+    property bool isEnterPressed: false
+
     title: "dwm power menu"
     visible: powerMenuModel.visible
     implicitWidth: 620
-    implicitHeight: powerMenuModel.confirming ? 150 : 200
+    implicitHeight: 200
     color: Theme.transparent
-    readonly property var cancelAction: {
-        "label": "Cancel",
-        "detail": "Return to menu",
-        "icon": "dialog-cancel-symbolic"
-    }
-
-    readonly property var confirmButtonAction: {
-        "label": "Confirm",
-        "detail": powerMenuModel.pendingAction ? powerMenuModel.pendingAction.label : "",
-        "icon": "dialog-ok-symbolic"
-    }
 
     onVisibleChanged: {
         if (visible) {
+            focusedIndex = 0;
+            activeHotkey = "";
+            isEnterPressed = false;
             Qt.callLater(content.forceActiveFocus);
         }
     }
@@ -54,13 +50,54 @@ FloatingWindow {
         }
 
         Keys.onPressed: function(event) {
+            if (event.isAutoRepeat) return;
+
             if (event.key === Qt.Key_Escape) {
-                if (root.powerMenuModel.confirming) {
-                    root.powerMenuModel.cancelConfirmation();
-                } else {
-                    root.powerMenuModel.close();
-                }
+                root.powerMenuModel.close();
                 event.accepted = true;
+                return;
+            }
+
+            if (event.key === Qt.Key_Left) {
+                root.focusedIndex = Math.max(0, root.focusedIndex - 1);
+                event.accepted = true;
+                return;
+            }
+
+            if (event.key === Qt.Key_Right) {
+                root.focusedIndex = Math.min(root.powerMenuModel.sessionActions.length - 1, root.focusedIndex + 1);
+                event.accepted = true;
+                return;
+            }
+
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                root.isEnterPressed = true;
+                event.accepted = true;
+                return;
+            }
+
+            var keyStr = String.fromCharCode(event.key).toUpperCase();
+            if (keyStr === "Z" || keyStr === "L" || keyStr === "R" || keyStr === "S") {
+                root.activeHotkey = keyStr;
+                event.accepted = true;
+                return;
+            }
+        }
+
+        Keys.onReleased: function(event) {
+            if (event.isAutoRepeat) return;
+
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                root.isEnterPressed = false;
+                event.accepted = true;
+                return;
+            }
+
+            var keyStr = String.fromCharCode(event.key).toUpperCase();
+            if (keyStr === root.activeHotkey) {
+                root.activeHotkey = "";
+                event.accepted = true;
+                return;
             }
         }
 
@@ -69,7 +106,7 @@ FloatingWindow {
             spacing: Theme.popupSpacing
 
             Text {
-                text: root.powerMenuModel.confirming ? "Confirm Action" : "Power Menu"
+                text: "Power Menu"
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.titleFontSize
@@ -79,7 +116,6 @@ FloatingWindow {
 
             // Horizontal layout for the 4 power actions
             RowLayout {
-                visible: !root.powerMenuModel.confirming
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 spacing: Theme.listSpacing * 3
@@ -94,31 +130,12 @@ FloatingWindow {
                         Layout.preferredHeight: 110
                         action: modelData
                         danger: modelData.id === "shutdown" || modelData.id === "reboot"
+                        
+                        focused: root.focusedIndex === index
+                        externalPressed: (root.focusedIndex === index && root.isEnterPressed) || (root.activeHotkey === modelData.hotkeyStr)
+
                         onActivated: root.powerMenuModel.requestAction(modelData)
                     }
-                }
-            }
-
-            // Horizontal layout for confirmation
-            RowLayout {
-                visible: root.powerMenuModel.confirming
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: Theme.listSpacing * 3
-
-                PowerMenuActionButton {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 110
-                    action: root.cancelAction
-                    onActivated: root.powerMenuModel.cancelConfirmation()
-                }
-
-                PowerMenuActionButton {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 110
-                    action: root.confirmButtonAction
-                    danger: true
-                    onActivated: root.powerMenuModel.confirmAction()
                 }
             }
         }

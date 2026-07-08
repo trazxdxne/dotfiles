@@ -15,7 +15,9 @@ Scope {
             "label": "Sleep",
             "detail": "Suspend the system",
             "icon": "system-suspend-symbolic",
-            "command": ["systemctl", "suspend"],
+            "command": ["sh", "-c", "hyprlock & sleep 1 && systemctl suspend"],
+            "hotkey": Qt.Key_Z,
+            "hotkeyStr": "Z",
             "confirm": false
         },
         {
@@ -24,7 +26,9 @@ Scope {
             "detail": "End the current session",
             "icon": "system-log-out-symbolic",
             "command": ["niri", "msg", "action", "quit", "--skip-confirmation"],
-            "confirm": true
+            "hotkey": Qt.Key_L,
+            "hotkeyStr": "L",
+            "confirm": false
         },
         {
             "id": "reboot",
@@ -32,7 +36,9 @@ Scope {
             "detail": "Restart this system",
             "icon": "system-reboot-symbolic",
             "command": ["systemctl", "reboot"],
-            "confirm": true
+            "hotkey": Qt.Key_R,
+            "hotkeyStr": "R",
+            "confirm": false
         },
         {
             "id": "shutdown",
@@ -40,7 +46,9 @@ Scope {
             "detail": "Power off this system",
             "icon": "system-shutdown-symbolic",
             "command": ["systemctl", "poweroff"],
-            "confirm": true
+            "hotkey": Qt.Key_S,
+            "hotkeyStr": "S",
+            "confirm": false
         }
     ]
 
