@@ -547,6 +547,16 @@ user = "greeter"
 > 2. Убедитесь, что regreet корректно находит Wayland-сессии, они должны лежать в `/usr/share/wayland-sessions/`. Сессия Niri должна запускать `niri-session`, чтобы инициализировать `systemd --user` и подгрузить автозапуск.
 > 3. Для работы демонстрации экрана (screencast в OBS, Discord и т.д.) в файле конфигурации `~/.config/niri/config.kdl` в блоке `spawn-at-startup` команды `dbus-update-activation-environment` должен быть явно указан импорт переменной `XDG_CURRENT_DESKTOP`, иначе порталы не смогут определить окружение Niri.
 
+Для стилизации экрана входа в соответствии с системной GTK-темой создайте или отредактируйте `/etc/greetd/regreet.toml`:
+```toml
+[GTK]
+application_prefer_dark_theme = true
+theme_name = "Velvet-Night"
+cursor_theme_name = "ArchCursorComplete"
+font_name = "Adwaita Sans 11"
+```
+*Примечание:* Убедитесь, что тема `Velvet-Night` скопирована из локальной директории пользователя в общесистемную директорию `/usr/share/themes/`, чтобы у пользователя `greeter` был к ней доступ (подробнее в `Restore_Prompt.md`).
+
 Включите службу `greetd` и отключите старый дисплейный менеджер (например, `gdm`):
 ```bash
 pkexec systemctl disable gdm

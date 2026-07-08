@@ -35,8 +35,11 @@
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
       • `~/.config/systemd/user/lock-on-sleep.service` -> `~/dotfiles/systemd/lock-on-sleep.service`
-   - Отключи встроенный звук, скопировав конфигурационный файл modprobe (потребуется pkexec):
+   - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
+     • `pkexec cp ~/dotfiles/greetd/config.toml /etc/greetd/config.toml`
+     • `pkexec cp ~/dotfiles/greetd/regreet.toml /etc/greetd/regreet.toml`
+     • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`
      • `rclone copy gdrive:Antigravity/Skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ ~/.agents/skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ --copy-links`
