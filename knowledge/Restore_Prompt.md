@@ -36,6 +36,9 @@
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
       • `~/.agents/skills/review` -> `~/dotfiles/.agents/skills/review`
+      • `~/.agents/skills/qt-qml` -> `~/dotfiles/.agents/skills/qt-qml`
+      • `~/.agents/skills/qt-qml-docs` -> `~/dotfiles/.agents/skills/qt-qml-docs`
+      • `~/.agents/skills/arch-linux-triage` -> `~/dotfiles/.agents/skills/arch-linux-triage`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/ly/config.ini /etc/ly/config.ini`
