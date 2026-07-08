@@ -26,6 +26,7 @@
       • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
       • `~/.config/qt5ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt5ct/colors/Velvet-Night.conf`
       • `~/.config/qt6ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt6ct/colors/Velvet-Night.conf`
+      • `~/.themes/Velvet-Night` -> `~/dotfiles/.themes/Velvet-Night`
       • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
       • `~/.config/quickshell` -> `~/dotfiles/quickshell`
       • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
