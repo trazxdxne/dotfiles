@@ -35,7 +35,6 @@
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
       • `~/.config/systemd/user/lock-on-sleep.service` -> `~/dotfiles/systemd/lock-on-sleep.service`
-      • `~/.config/systemd/user/niri.service.d/override.conf` -> `~/dotfiles/systemd/niri.service.d/override.conf`
    - Отключи встроенный звук, скопировав конфигурационный файл modprobe (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
    - Скачай файлы бэкапа с Google Drive:
