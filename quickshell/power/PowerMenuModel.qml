@@ -15,7 +15,7 @@ Scope {
             "label": "Sleep",
             "detail": "Suspend the system",
             "icon": "system-suspend-symbolic",
-            "command": ["sh", "-c", "hyprlock & sleep 1 && systemctl suspend"],
+            "command": ["bash", "-c", "setsid hyprlock & disown; sleep 1; systemctl suspend"],
             "hotkey": Qt.Key_Z,
             "hotkeyStr": "Z",
             "confirm": false
