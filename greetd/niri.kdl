@@ -18,3 +18,7 @@ layout {
     focus-ring { off; }
     border { off; }
 }
+
+animations {
+    off
+}

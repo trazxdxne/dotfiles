@@ -746,7 +746,7 @@ button.osd:disabled {
 
 button.suggested-action {
   background-color: #f9e2af;
-  color: #cdd6f4;
+  color: #1e1e2e;
 }
 
 
@@ -782,7 +782,7 @@ button.suggested-action.flat:checked {
 
 button.destructive-action {
   background-color: #f38ba8;
-  color: #cdd6f4;
+  color: #1e1e2e;
 }
 
 
