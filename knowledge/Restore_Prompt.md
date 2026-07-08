@@ -35,6 +35,7 @@
       • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
+      • `~/.agents/skills/review` -> `~/dotfiles/.agents/skills/review`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/ly/config.ini /etc/ly/config.ini`
