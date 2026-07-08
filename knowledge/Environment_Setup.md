@@ -538,7 +538,7 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 vt = 1
 
 [default_session]
-command = "env XDG_CONFIG_HOME=/etc/greetd cage -s -- regreet"
+command = "cage -s -- regreet --style /usr/share/themes/Velvet-Night/gtk-4.0/gtk.css"
 user = "greeter"
 ```
 > [!IMPORTANT]
@@ -554,7 +554,7 @@ application_prefer_dark_theme = true
 cursor_theme_name = "ArchCursorComplete"
 font_name = "Adwaita Sans 11"
 ```
-*Примечание:* Из-за особенностей работы GTK4 (на котором написан regreet) параметр `theme_name` часто некорректно работает с кастомными темами, из-за чего тема становится белой. Для правильного применения CSS-стилей используется подмена `XDG_CONFIG_HOME=/etc/greetd`. Убедитесь, что директория `gtk-4.0` из вашей темы `Velvet-Night` скопирована в `/etc/greetd/gtk-4.0` (а сама тема — в `/usr/share/themes/Velvet-Night/`). Подробнее автоматизация этого процесса описана в `Restore_Prompt.md`.
+*Примечание:* Из-за особенностей работы GTK4 (на котором написан regreet) параметр `theme_name` часто некорректно работает с кастомными темами. Для правильного применения CSS-стилей используется флаг `--style` с прямым указанием файла темы. Убедитесь, что тема `Velvet-Night` скопирована из локальной директории пользователя в общесистемную директорию `/usr/share/themes/`, чтобы у пользователя `greeter` был к ней доступ (подробнее в `Restore_Prompt.md`).
 
 Включите службу `greetd` и отключите старый дисплейный менеджер (например, `gdm`):
 ```bash
