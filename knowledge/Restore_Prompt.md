@@ -35,13 +35,13 @@
       • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
-      • `~/.config/systemd/user/lock-on-sleep.service` -> `~/dotfiles/systemd/lock-on-sleep.service`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/ly/config.ini /etc/ly/config.ini`
      • `pkexec mkdir -p /etc/systemd/system/ly-kmsconvt@.service.d`
      • `pkexec cp ~/dotfiles/ly/ly-kmsconvt-override.conf /etc/systemd/system/ly-kmsconvt@.service.d/override.conf`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
+     • `pkexec ln -s ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`
      • `rclone copy gdrive:Antigravity/Skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ ~/.agents/skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ --copy-links`
@@ -50,6 +50,6 @@
 6. Планировщик: Настрой ежедневный бэкап с помощью пользовательского systemd таймера. Создай файлы:
    - `~/.config/systemd/user/backup-gdrive.service` (запуск скрипта бэкапа с `Type=oneshot`, StandardOutput/StandardError направь в `~/.gemini/antigravity-cli/knowledge/backup_gdrive.log`).
    - `~/.config/systemd/user/backup-gdrive.timer` (настрой `OnCalendar=*-*-* 22:00:00` и `Persistent=true`).
-   Выполни `systemctl --user daemon-reload`, `systemctl --user enable --now backup-gdrive.timer`, `systemctl --user start backup-gdrive.service` и `systemctl --user enable --now lock-on-sleep.service`.
+   Выполни `systemctl --user daemon-reload`, `systemctl --user enable --now backup-gdrive.timer` и `systemctl --user start backup-gdrive.service`.
 7. Напиши мне красивый отчет, когда всё будет готово!
 ```
