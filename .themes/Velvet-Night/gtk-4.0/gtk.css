@@ -4041,7 +4041,7 @@ emoji-completion-row:hover, .view selection, .view:selected, iconview selection,
 entry selection, spinbutton > text > selection, spinbutton:not(.vertical) selection, dropdown popover listview > row:selected,
 combobox popover listview > row:selected, popover.background.menu button:checked,
 popover.background button.model:checked, modelbutton.flat:selected, row:selected, columnview row:not(:selected) cell editablelabel.editing text selection, calendar > grid > label.today:selected, calendar > grid > label.day-number:selected, filechooser stack.view scrolledwindow treeview.view selection, filechooser stack.view scrolledwindow treeview.view:selected {
-  color: #cdd6f4;
+  color: #1e1e2e;
 }
 
 row:selected label:disabled, label:disabled:selected, emoji-completion-row:disabled:focus,
@@ -4343,3 +4343,8 @@ FIXME this is really an API */
 @define-color budgie_tasklist_indicator_color_active #f9e2af;
 @define-color budgie_tasklist_indicator_color_active_window rgba(172, 122, 16, 0.931);
 @define-color budgie_tasklist_indicator_color_attention #fab387;
+
+*:focus,
+*:focus-visible {
+  outline-color: #cba6f7;
+}
