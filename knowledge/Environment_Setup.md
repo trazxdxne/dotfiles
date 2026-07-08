@@ -538,7 +538,7 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 vt = 1
 
 [default_session]
-command = "cage -s -- regreet"
+command = "env GTK_THEME=Velvet-Night cage -s -- regreet"
 user = "greeter"
 ```
 > [!IMPORTANT]
