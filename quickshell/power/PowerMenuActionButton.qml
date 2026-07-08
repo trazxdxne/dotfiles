@@ -23,12 +23,40 @@ Rectangle {
 
     scale: (actionMouse.containsMouse || focused || root.isPressed) ? 1.03 : 1.0
 
-    Timer {
-        id: holdTimer
-        interval: 600
-        running: root.isPressed
-        repeat: false
-        onTriggered: root.activated()
+    property real holdProgress: 0.0
+
+    PropertyAnimation {
+        id: fillAnim
+        target: root
+        property: "holdProgress"
+        to: 1.0
+        easing.type: Easing.Linear
+        onFinished: {
+            if (root.holdProgress >= 0.99) {
+                root.activated();
+                root.holdProgress = 0.0;
+            }
+        }
+    }
+
+    PropertyAnimation {
+        id: emptyAnim
+        target: root
+        property: "holdProgress"
+        to: 0.0
+        easing.type: Easing.OutQuad
+    }
+
+    onIsPressedChanged: {
+        if (isPressed) {
+            emptyAnim.stop();
+            fillAnim.duration = 600 * (1.0 - root.holdProgress);
+            fillAnim.start();
+        } else {
+            fillAnim.stop();
+            emptyAnim.duration = 150 * root.holdProgress;
+            emptyAnim.start();
+        }
     }
 
     Behavior on color {
@@ -47,17 +75,10 @@ Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: root.isPressed ? parent.width : 0
+        width: root.width * root.holdProgress
         radius: Theme.radius
         color: danger ? Theme.danger : Theme.accent
         opacity: 0.2
-
-        Behavior on width {
-            NumberAnimation { 
-                duration: root.isPressed ? 600 : 150
-                easing.type: Easing.Linear 
-            }
-        }
     }
 
     MouseArea {
