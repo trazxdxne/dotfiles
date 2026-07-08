@@ -277,7 +277,7 @@ environment {
 // See the binds section below for more spawn examples.
 
 // Export environment variables for systemd/dbus activation (essential for XWayland and Wayland integrations)
-spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY"
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY" "XDG_CURRENT_DESKTOP"
 
 // Quickshell — Niri panel (replaces AGS)
 spawn-at-startup "qs"

@@ -538,11 +538,14 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 vt = 1
 
 [default_session]
-command = "/usr/bin/tuigreet --time --remember --remember-user-session --sessions /usr/share/wayland-sessions --theme window=#1e1e2e;border=#cba6f7;text=#cdd6f4;prompt=#fab387;time=#f9e2af;action=#89b4fa;button=#313244;error=#f38ba8 --cmd niri-session"
+command = '/usr/bin/tuigreet --time --remember --remember-user-session --sessions /usr/share/wayland-sessions --theme "window=#1e1e2e;border=#cba6f7;text=#cdd6f4;prompt=#fab387;time=#f9e2af;action=#89b4fa;button=#313244;error=#f38ba8" --cmd niri-session'
 user = "greeter"
 ```
 > [!IMPORTANT]
-> Обратите внимание: аргумент `--cmd` должен вызывать `niri-session`, а не просто `niri`. Запуск через `niri-session` инициализирует пользовательский системный менеджер systemd (`systemd --user`), который запускает службы `xdg-desktop-autostart.target` (благодаря чему срабатывают все приложения из автозапуска) и корректно импортирует переменные окружения Wayland.
+> Обратите внимание:
+> 1. Аргумент `--cmd` должен вызывать `niri-session`, а не просто `niri`. Запуск через `niri-session` инициализирует пользовательский системный менеджер systemd (`systemd --user`), который запускает службы `xdg-desktop-autostart.target` (благодаря чему срабатывают все приложения из автозапуска) и корректно импортирует переменные окружения Wayland.
+> 2. Значение параметра `--theme` обязательно должно быть обернуто в двойные кавычки (а сама строка `command` — в одинарные кавычки в TOML). Иначе символы точки с запятой `;` будут восприняты командным интерпретатором как разделители команд, из-за чего строка обрежется, тема сбросится в дефолтную, а параметр `--cmd` не выполнится.
+> 3. Для работы демонстрации экрана (screencast в OBS, Discord и т.д.) в файле конфигурации `~/.config/niri/config.kdl` в блоке `spawn-at-startup` команды `dbus-update-activation-environment` должен быть явно указан импорт переменной `XDG_CURRENT_DESKTOP`, иначе порталы не смогут определить окружение Niri.
 
 Включите службу `greetd` и отключите старый дисплейный менеджер (например, `gdm`):
 ```bash
