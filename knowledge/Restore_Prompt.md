@@ -24,8 +24,8 @@
      • `~/.config/gtk-3.0/gtk.css` -> `~/dotfiles/gtk-3.0/gtk.css`
      • `~/.config/gtk-4.0/settings.ini` -> `~/dotfiles/gtk-4.0/settings.ini`
      • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
-     • `~/.config/qt5ct/colors/Custom-Dark.conf` -> `~/dotfiles/qt5ct/colors/Custom-Dark.conf`
-     • `~/.config/qt6ct/colors/Custom-Dark.conf` -> `~/dotfiles/qt6ct/colors/Custom-Dark.conf`
+     • `~/.config/qt5ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt5ct/colors/Velvet-Night.conf`
+     • `~/.config/qt6ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt6ct/colors/Velvet-Night.conf`
      • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
      • `~/.config/quickshell` -> `~/dotfiles/quickshell`
      • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
