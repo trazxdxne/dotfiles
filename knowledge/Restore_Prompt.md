@@ -40,6 +40,7 @@
      • `pkexec cp ~/dotfiles/greetd/config.toml /etc/greetd/config.toml`
      • `pkexec cp ~/dotfiles/greetd/regreet.toml /etc/greetd/regreet.toml`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
+     • `pkexec cp -r /usr/share/themes/Velvet-Night/gtk-4.0 /etc/greetd/`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`
      • `rclone copy gdrive:Antigravity/Skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ ~/.agents/skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ --copy-links`
