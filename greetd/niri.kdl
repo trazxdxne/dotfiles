@@ -1,0 +1,20 @@
+spawn-sh-at-startup "regreet --style /usr/share/themes/Velvet-Night/gtk-4.0/gtk.css; niri msg action quit --skip-confirmation"
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+cursor {
+    xcursor-theme "ArchCursorComplete"
+    xcursor-size 20
+}
+
+window-rule {
+    match app-id="^regreet$"
+    open-maximized true
+}
+
+layout {
+    focus-ring { off; }
+    border { off; }
+}

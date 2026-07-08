@@ -538,12 +538,26 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 vt = 1
 
 [default_session]
-command = "cage -s -- regreet --style /usr/share/themes/Velvet-Night/gtk-4.0/gtk.css"
+command = "dbus-run-session niri --config /etc/greetd/niri.kdl"
 user = "greeter"
+```
+Для того чтобы курсор, тема и сессия работали нативно, ReGreet запускается не через Cage, а через отдельную сессию Niri (`/etc/greetd/niri.kdl`):
+```kdl
+spawn-sh-at-startup "regreet --style /usr/share/themes/Velvet-Night/gtk-4.0/gtk.css; niri msg action quit --skip-confirmation"
+hotkey-overlay { skip-at-startup; }
+cursor {
+    xcursor-theme "ArchCursorComplete"
+    xcursor-size 20
+}
+window-rule {
+    match app-id="^regreet$"
+    open-maximized true
+}
+layout { focus-ring { off; }; border { off; } }
 ```
 > [!IMPORTANT]
 > Обратите внимание:
-> 1. В отличие от tuigreet, regreet — нативное Wayland-приложение, поэтому запуск через `cage` предотвращает проблемы с перехватом прав на DRM-сессию и переменными окружения, с которыми часто сталкиваются Wayland-композиторы.
+> 1. В отличие от tuigreet, regreet — нативное Wayland-приложение, поэтому запуск через `niri` (или `cage`) предотвращает проблемы с перехватом прав на DRM-сессию и переменными окружения, с которыми часто сталкиваются Wayland-композиторы.
 > 2. Убедитесь, что regreet корректно находит Wayland-сессии, они должны лежать в `/usr/share/wayland-sessions/`. Сессия Niri должна запускать `niri-session`, чтобы инициализировать `systemd --user` и подгрузить автозапуск.
 > 3. Для работы демонстрации экрана (screencast в OBS, Discord и т.д.) в файле конфигурации `~/.config/niri/config.kdl` в блоке `spawn-at-startup` команды `dbus-update-activation-environment` должен быть явно указан импорт переменной `XDG_CURRENT_DESKTOP`, иначе порталы не смогут определить окружение Niri.
 

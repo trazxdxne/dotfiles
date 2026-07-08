@@ -39,6 +39,7 @@
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/greetd/config.toml /etc/greetd/config.toml`
      • `pkexec cp ~/dotfiles/greetd/regreet.toml /etc/greetd/regreet.toml`
+     • `pkexec cp ~/dotfiles/greetd/niri.kdl /etc/greetd/niri.kdl`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`
