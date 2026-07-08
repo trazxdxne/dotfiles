@@ -5,6 +5,8 @@ poweroff = [ "systemctl", "poweroff" ]
 [GTK]
 application_prefer_dark_theme = true
 font_name = "Adwaita Sans 11"
+theme_name = "Velvet-Night"
+cursor_theme_name = "ArchCursorComplete"
 
 [env]
 GTK_THEME = "Velvet-Night"
