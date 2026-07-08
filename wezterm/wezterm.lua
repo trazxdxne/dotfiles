@@ -3,8 +3,8 @@ local config = wezterm.config_builder()
 
 -- Modern default settings
 config.font = wezterm.font_with_fallback {
-  'Geist Mono',
-  'Twemoji',
+  { family = 'Geist Mono' },
+  { family = 'Twemoji' },
 }
 config.font_size = 12.0
 config.initial_cols = 140

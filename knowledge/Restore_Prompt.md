@@ -13,26 +13,27 @@
    - После подтверждения, автоматически склонируй мой приватный репозиторий дотфайлов: `git clone https://github.com/trazxdxne/dotfiles.git ~/dotfiles`.
 3. Авторизация Google Drive: Выведи мне пошаговую инструкцию запустить `rclone config` в отдельном терминале (название remote должно быть `gdrive`). Client ID и Client Secret оставь пустыми, проигнорируй сообщение про low performance. Приостанови выполнение и жди моего подтверждения "Готово".
 4. Восстановление и Симлинки:
-   - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`.
-   - Создай симлинки из `~/dotfiles` в систему:
-     • `~/.config/niri/config.kdl` -> `~/dotfiles/niri/config.kdl`
-     • `~/.config/niri-autostart/config.kdl` -> `~/dotfiles/niri-autostart/config.kdl`
-     • `~/.config/ags` -> `~/dotfiles/ags`
-     • `~/.config/fuzzel/fuzzel.ini` -> `~/dotfiles/fuzzel/fuzzel.ini`
-     • `~/.wezterm.lua` -> `~/dotfiles/wezterm/wezterm.lua`
-     • `~/.config/gtk-3.0/settings.ini` -> `~/dotfiles/gtk-3.0/settings.ini`
-     • `~/.config/gtk-3.0/gtk.css` -> `~/dotfiles/gtk-3.0/gtk.css`
-     • `~/.config/gtk-4.0/settings.ini` -> `~/dotfiles/gtk-4.0/settings.ini`
-     • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
-     • `~/.config/qt5ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt5ct/colors/Velvet-Night.conf`
-     • `~/.config/qt6ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt6ct/colors/Velvet-Night.conf`
-     • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
-     • `~/.config/quickshell` -> `~/dotfiles/quickshell`
-     • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
-     • `~/.gemini/antigravity-cli/knowledge/Environment_Setup.md` -> `~/dotfiles/knowledge/Environment_Setup.md`
-     • `~/.gemini/antigravity-cli/knowledge/Clipboard_Guide.md` -> `~/dotfiles/knowledge/Clipboard_Guide.md`
-     • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
-     • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
+    - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`, `~/.config/hypr`.
+    - Создай симлинки из `~/dotfiles` в систему:
+      • `~/.config/niri/config.kdl` -> `~/dotfiles/niri/config.kdl`
+      • `~/.config/niri-autostart/config.kdl` -> `~/dotfiles/niri-autostart/config.kdl`
+      • `~/.config/ags` -> `~/dotfiles/ags`
+      • `~/.config/fuzzel/fuzzel.ini` -> `~/dotfiles/fuzzel/fuzzel.ini`
+      • `~/.wezterm.lua` -> `~/dotfiles/wezterm/wezterm.lua`
+      • `~/.config/gtk-3.0/settings.ini` -> `~/dotfiles/gtk-3.0/settings.ini`
+      • `~/.config/gtk-3.0/gtk.css` -> `~/dotfiles/gtk-3.0/gtk.css`
+      • `~/.config/gtk-4.0/settings.ini` -> `~/dotfiles/gtk-4.0/settings.ini`
+      • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
+      • `~/.config/qt5ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt5ct/colors/Velvet-Night.conf`
+      • `~/.config/qt6ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt6ct/colors/Velvet-Night.conf`
+      • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
+      • `~/.config/quickshell` -> `~/dotfiles/quickshell`
+      • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
+      • `~/.gemini/antigravity-cli/knowledge/Environment_Setup.md` -> `~/dotfiles/knowledge/Environment_Setup.md`
+      • `~/.gemini/antigravity-cli/knowledge/Clipboard_Guide.md` -> `~/dotfiles/knowledge/Clipboard_Guide.md`
+      • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
+      • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
+      • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
    - Отключи встроенный звук, скопировав конфигурационный файл modprobe (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
    - Скачай файлы бэкапа с Google Drive:

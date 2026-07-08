@@ -10,18 +10,19 @@ FloatingWindow {
 
     title: "dwm power menu"
     visible: powerMenuModel.visible
-    implicitWidth: 520
-    implicitHeight: powerMenuModel.confirming ? 250 : 520
+    implicitWidth: 620
+    implicitHeight: powerMenuModel.confirming ? 150 : 200
     color: Theme.transparent
-
     readonly property var cancelAction: {
         "label": "Cancel",
-        "detail": "Return to menu"
+        "detail": "Return to menu",
+        "icon": "dialog-cancel-symbolic"
     }
 
     readonly property var confirmButtonAction: {
         "label": "Confirm",
-        "detail": powerMenuModel.pendingAction ? powerMenuModel.pendingAction.label : ""
+        "detail": powerMenuModel.pendingAction ? powerMenuModel.pendingAction.label : "",
+        "icon": "dialog-ok-symbolic"
     }
 
     onVisibleChanged: {
@@ -30,11 +31,27 @@ FloatingWindow {
         }
     }
 
+    // Reset state to close the menu on focus loss, preventing double-press trigger
+    contentItem.onActiveFocusChanged: {
+        if (!contentItem.activeFocus) {
+            Qt.callLater(function() {
+                if (!contentItem.activeFocus && root.powerMenuModel.visible) {
+                    root.powerMenuModel.close();
+                }
+            });
+        }
+    }
+
     ShellSurface {
         id: content
 
         anchors.fill: parent
         focus: true
+
+        opacity: root.visible ? 1.0 : 0.0
+        Behavior on opacity {
+            NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
+        }
 
         Keys.onPressed: function(event) {
             if (event.key === Qt.Key_Escape) {
@@ -60,147 +77,48 @@ FloatingWindow {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            ColumnLayout {
+            // Horizontal layout for the 4 power actions
+            RowLayout {
                 visible: !root.powerMenuModel.confirming
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: Theme.sectionSpacing
+                spacing: Theme.listSpacing * 3
 
-                SectionLabel {
-                    label: "Session"
-                }
+                Repeater {
+                    model: root.powerMenuModel.sessionActions
+                    delegate: PowerMenuActionButton {
+                        required property int index
+                        required property var modelData
 
-                    GridLayout {
                         Layout.fillWidth: true
-                        columns: 2
-                        columnSpacing: Theme.listSpacing * 2
-                        rowSpacing: Theme.listSpacing * 2
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 74
-                        action: root.powerMenuModel.sessionActions[0]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 74
-                        action: root.powerMenuModel.sessionActions[1]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 74
-                        action: root.powerMenuModel.sessionActions[2]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 74
-                        action: root.powerMenuModel.sessionActions[3]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-                }
-
-                SectionLabel {
-                    label: "Quick Actions"
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: Theme.listSpacing
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.compactButtonHeight
-                        compact: true
-                        action: root.powerMenuModel.quickActions[0]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.compactButtonHeight
-                        compact: true
-                        action: root.powerMenuModel.quickActions[1]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.compactButtonHeight
-                        compact: true
-                        action: root.powerMenuModel.quickActions[2]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.compactButtonHeight
-                        compact: true
-                        action: root.powerMenuModel.quickActions[3]
-                        onActivated: root.powerMenuModel.requestAction(action)
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.compactButtonHeight
-                        compact: true
-                        action: root.powerMenuModel.quickActions[4]
-                        onActivated: root.powerMenuModel.requestAction(action)
+                        Layout.preferredHeight: 110
+                        action: modelData
+                        danger: modelData.id === "shutdown" || modelData.id === "reboot"
+                        onActivated: root.powerMenuModel.requestAction(modelData)
                     }
                 }
             }
 
-            ColumnLayout {
+            // Horizontal layout for confirmation
+            RowLayout {
                 visible: root.powerMenuModel.confirming
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: Theme.sectionSpacing
+                spacing: Theme.listSpacing * 3
 
-                Text {
+                PowerMenuActionButton {
                     Layout.fillWidth: true
-                    text: root.powerMenuModel.pendingAction ? root.powerMenuModel.pendingAction.label : ""
-                    color: Theme.textStrong
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.inputFontSize
-                    font.bold: true
-                    elide: Text.ElideRight
+                    Layout.preferredHeight: 110
+                    action: root.cancelAction
+                    onActivated: root.powerMenuModel.cancelConfirmation()
                 }
 
-                Text {
+                PowerMenuActionButton {
                     Layout.fillWidth: true
-                    text: "This action will affect the current session or system."
-                    color: Theme.textMuted
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.smallFontSize
-                    wrapMode: Text.WordWrap
-                }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignBottom
-                    spacing: Theme.listSpacing * 2
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.confirmButtonHeight
-                        action: root.cancelAction
-                        compact: true
-                        onActivated: root.powerMenuModel.cancelConfirmation()
-                    }
-
-                    PowerMenuActionButton {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.confirmButtonHeight
-                        action: root.confirmButtonAction
-                        compact: true
-                        danger: true
-                        onActivated: root.powerMenuModel.confirmAction()
-                    }
+                    Layout.preferredHeight: 110
+                    action: root.confirmButtonAction
+                    danger: true
+                    onActivated: root.powerMenuModel.confirmAction()
                 }
             }
         }

@@ -7,6 +7,7 @@ import "./panel"
 import "./state"
 import "./notifications"
 import "./settings"
+import "./power"
 
 ShellRoot {
     id: root
@@ -33,6 +34,14 @@ ShellRoot {
         function open(): void   { clipboardPopup.visible = true  }
         function close(): void  { clipboardPopup.visible = false }
         function toggle(): void { clipboardPopup.visible = !clipboardPopup.visible }
+    }
+
+    // ── IPC: power menu ──────────────────────────────────────────────
+    IpcHandler {
+        target: "power"
+        function open(): void   { powerMenuModel.open() }
+        function close(): void  { powerMenuModel.close() }
+        function toggle(): void { powerMenuModel.toggle() }
     }
 
     // ── Notifications state ──────────────────────────────────────────
@@ -85,5 +94,15 @@ ShellRoot {
     // ── Settings window ───────────────────────────────────────────────
     SettingsWindow {
         id: settingsWindow
+    }
+
+    // ── Power menu ────────────────────────────────────────────────────
+    PowerMenuModel {
+        id: powerMenuModel
+    }
+
+    PowerMenuWindow {
+        id: powerMenuWindow
+        powerMenuModel: powerMenuModel
     }
 }

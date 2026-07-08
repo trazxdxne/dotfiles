@@ -364,6 +364,11 @@ window-rule {
 }
 
 window-rule {
+    match title="^dwm power menu$"
+    open-floating true
+}
+
+window-rule {
     match app-id=r#"^brave-origin$"#
     open-on-workspace "1"
     open-maximized true
@@ -448,7 +453,7 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+Return hotkey-overlay-title="Open a Terminal: wezterm" { spawn "wezterm" "start" "--always-new-process"; }
     Mod+Space hotkey-overlay-title="Run an Application: walker" { spawn "fuzzel"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
@@ -699,7 +704,10 @@ binds {
     Alt+Print { screenshot-window; }
 
     // Clipboard history menu (bind to whatever you prefer, Mod+V is set by default)
-    Mod+V { spawn "qs" "ipc" "call" "clipboard" "toggle"; }
+    Mod+V cooldown-ms=500 { spawn "qs" "ipc" "call" "clipboard" "toggle"; }
+
+    // Power menu
+    Mod+BackSpace cooldown-ms=500 { spawn "qs" "ipc" "call" "power" "toggle"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
