@@ -2,5 +2,5 @@
 vt = 1
 
 [default_session]
-command = "cage -s -- regreet"
+command = "env GTK_THEME=Velvet-Night XCURSOR_THEME=ArchCursorComplete XCURSOR_SIZE=20 cage -s -- regreet --style /usr/share/themes/Velvet-Night/gtk-4.0/gtk.css"
 user = "greeter"
