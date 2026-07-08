@@ -15,6 +15,7 @@
 7. [Как починить сброс громкости USB-гарнитуры и настроить объемный звук 7.1](#7-как-починить-сброс-громкости-usb-гарнитуры-и-настроить-объемный-звук-71)
 8. [Как активировать русскую типографскую раскладку клавиатуры](#8-как-активировать-русскую-типографскую-раскладку-клавиатуры)
 9. [Как настроить WezTerm для плавной работы под Wayland и русских шорткатов](#9-как-настроить-wezterm-для-плавной-работы-под-wayland-и-русских-шорткатов)
+10. [Как настроить дисплейный менеджер (greetd + tuigreet) и автоблокировку сессии (hyprlock)](#10-как-настроить-дисплейный-менеджер-greetd-tuigreet-и-автоблокировку-сессии-hyprlock)
 
 ---
 
@@ -522,4 +523,62 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
     }
   ]
 }
+```
+
+---
+
+## 10. Как настроить дисплейный менеджер (greetd + tuigreet) и автоблокировку сессии (hyprlock)
+
+Для обеспечения легкого графического входа при запуске системы и безопасной блокировки сессии при переходе в спящий режим используется связка `greetd` (в качестве дисплейного менеджера), `tuigreet` (в качестве консольного интерфейса входа) и `hyprlock` (в качестве блокировщика экрана).
+
+### Шаг 1. Настройка greetd и tuigreet
+Конфигурационный файл дисплейного менеджера находится по пути `/etc/greetd/config.toml`. Для его редактирования используйте привилегии суперпользователя:
+```toml
+[terminal]
+vt = 1
+
+[default_session]
+command = "/usr/bin/tuigreet --time --remember --remember-user-session --sessions /usr/share/wayland-sessions --theme 'window=#1e1e2e;border=#cba6f7;text=#cdd6f4;prompt=#fab387;time=#f9e2af;action=#89b4fa;button=#313244;error=#f38ba8' --cmd niri"
+user = "greeter"
+```
+Этот вызов автоматически запускает `tuigreet` на TTY1 с цветовой схемой, соответствующей теме Velvet Night (Catppuccin Mocha), отображает часы и запоминает выбор сессии пользователя.
+
+Включите службу `greetd` и отключите старый дисплейный менеджер (например, `gdm`):
+```bash
+pkexec systemctl disable gdm
+pkexec systemctl enable greetd
+```
+
+### Шаг 2. Конфигурация hyprlock
+Настройки блокировщика экрана находятся в файле `~/.config/hypr/hyprlock.conf` (который ссылается на `~/dotfiles/hypr/hyprlock.conf`). Основные параметры:
+* `path = screenshot` и `blur_passes = 3` для размытия текущего изображения на экране.
+* Отображение текущего времени через `$TIME` и раскладки клавиатуры через `$LAYOUT`.
+* Применение шрифта `Adwaita Sans` для текстовых полей и заголовков.
+
+Горячая клавиша для ручной блокировки экрана настраивается в файле `~/.config/niri/config.kdl`:
+```kdl
+Super+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "hyprlock"; }
+```
+
+### Шаг 3. Автоматическая блокировка при переходе в спящий режим
+Для вызова блокировки перед засыпанием компьютера создана пользовательская служба systemd `~/.config/systemd/user/lock-on-sleep.service` (ссылающаяся на `~/dotfiles/systemd/lock-on-sleep.service`):
+```ini
+[Unit]
+Description=Lock screen before sleep listener
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sh -c "dbus-monitor --system \"type='signal',interface='org.freedesktop.login1.Manager',member='PrepareForSleep'\" | while read -r line; do if echo \"$line\" | grep -q 'boolean true'; then /usr/bin/hyprlock; fi; done"
+Restart=always
+
+[Install]
+WantedBy=default.target
+```
+Служба отслеживает сигнал `PrepareForSleep` от `systemd-logind` через шину D-Bus и вызывает `hyprlock` до начала процесса приостановки системы.
+
+Активируйте и запустите службу для текущего пользователя:
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now lock-on-sleep.service
 ```
