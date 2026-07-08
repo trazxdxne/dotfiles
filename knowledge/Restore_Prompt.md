@@ -39,6 +39,8 @@
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/ly/config.ini /etc/ly/config.ini`
+     • `pkexec mkdir -p /etc/systemd/system/ly-kmsconvt@.service.d`
+     • `pkexec cp ~/dotfiles/ly/ly-kmsconvt-override.conf /etc/systemd/system/ly-kmsconvt@.service.d/override.conf`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`
