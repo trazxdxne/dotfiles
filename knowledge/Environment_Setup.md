@@ -538,16 +538,37 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 vt = 1
 
 [default_session]
-command = "/usr/bin/tuigreet --time --remember --remember-user-session --sessions /usr/share/wayland-sessions --theme 'window=#1e1e2e;border=#cba6f7;text=#cdd6f4;prompt=#fab387;time=#f9e2af;action=#89b4fa;button=#313244;error=#f38ba8' --cmd niri"
+command = "/usr/bin/tuigreet --time --remember --remember-user-session --sessions /usr/share/wayland-sessions --theme window=#1e1e2e;border=#cba6f7;text=#cdd6f4;prompt=#fab387;time=#f9e2af;action=#89b4fa;button=#313244;error=#f38ba8 --cmd niri-session"
 user = "greeter"
 ```
-Этот вызов автоматически запускает `tuigreet` на TTY1 с цветовой схемой, соответствующей теме Velvet Night (Catppuccin Mocha), отображает часы и запоминает выбор сессии пользователя.
+> [!IMPORTANT]
+> Обратите внимание: аргумент `--cmd` должен вызывать `niri-session`, а не просто `niri`. Запуск через `niri-session` инициализирует пользовательский системный менеджер systemd (`systemd --user`), который запускает службы `xdg-desktop-autostart.target` (благодаря чему срабатывают все приложения из автозапуска) и корректно импортирует переменные окружения Wayland.
 
 Включите службу `greetd` и отключите старый дисплейный менеджер (например, `gdm`):
 ```bash
 pkexec systemctl disable gdm
 pkexec systemctl enable greetd
 ```
+
+### Шаг 1.1. Настройка автоматического разблокирования GNOME Keyring
+Чтобы при входе через `greetd` автоматически разблокировалась связка ключей (GNOME Keyring), отредактируйте файл конфигурации PAM `/etc/pam.d/greetd` (потребуются root-привилегии):
+```pam
+#%PAM-1.0
+
+auth       required     pam_securetty.so
+auth       requisite    pam_nologin.so
+auth       include      system-local-login
+auth       optional     pam_gnome_keyring.so
+
+account    include      system-local-login
+
+password   include      system-local-login
+password   optional     pam_gnome_keyring.so use_authtok
+
+session    include      system-local-login
+session    optional     pam_gnome_keyring.so auto_start
+```
+Это позволит передавать пароль пользователя при входе в диспетчер ключей gnome-keyring-daemon.
 
 ### Шаг 2. Конфигурация hyprlock
 Настройки блокировщика экрана находятся в файле `~/.config/hypr/hyprlock.conf` (который ссылается на `~/dotfiles/hypr/hyprlock.conf`). Основные параметры:
