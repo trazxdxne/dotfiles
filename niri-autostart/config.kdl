@@ -13,7 +13,7 @@ autostart {
                 height { proportion 1.0; }
             }
             window app-id="discord" {
-                command "sh" "-c" "$HOME/Projects/discord-linux-bypass/discord_run.sh"
+                command "discord"
                 height { proportion 1.0; }
             }
         }
