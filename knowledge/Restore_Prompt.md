@@ -24,6 +24,9 @@
       • `~/.config/gtk-3.0/gtk.css` -> `~/dotfiles/gtk-3.0/gtk.css`
       • `~/.config/gtk-4.0/settings.ini` -> `~/dotfiles/gtk-4.0/settings.ini`
       • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
+      • `~/.config/gtk-4.0/libadwaita.css` -> `~/.themes/Velvet-Night/gtk-4.0/libadwaita.css`
+      • `~/.config/gtk-4.0/libadwaita-tweaks.css` -> `~/.themes/Velvet-Night/gtk-4.0/libadwaita-tweaks.css`
+      • `~/.config/gtk-4.0/assets` -> `~/.themes/Velvet-Night/gtk-4.0/assets`
       • `~/.config/qt5ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt5ct/colors/Velvet-Night.conf`
       • `~/.config/qt6ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt6ct/colors/Velvet-Night.conf`
       • `~/.themes/Velvet-Night` -> `~/dotfiles/.themes/Velvet-Night`

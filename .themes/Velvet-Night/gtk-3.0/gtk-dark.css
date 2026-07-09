@@ -7866,3 +7866,55 @@ window.background:not(.solid-csd):not(.csd) > notebook > stack:not(:only-child) 
 #settingsDialog .dialog-vbox.vertical tab:checked:hover {
   background-color: mix(@window_fg_color,@window_bg_color,0.65);
 }
+
+/* Velvet Night Theme Colors for GTK3 */
+@define-color accent_color #cba6f7;
+@define-color accent_bg_color #cba6f7;
+@define-color accent_fg_color #1e1e2e;
+@define-color theme_selected_bg_color #cba6f7;
+@define-color theme_selected_fg_color #1e1e2e;
+
+@define-color destructive_color #f38ba8;
+@define-color destructive_bg_color #f38ba8;
+@define-color destructive_fg_color #1e1e2e;
+
+@define-color success_color #a6e3a1;
+@define-color success_bg_color #a6e3a1;
+@define-color success_fg_color #1e1e2e;
+
+@define-color warning_color #fab387;
+@define-color warning_bg_color #fab387;
+@define-color warning_fg_color #1e1e2e;
+
+@define-color error_color #f38ba8;
+@define-color error_bg_color #f38ba8;
+@define-color error_fg_color #1e1e2e;
+
+@define-color window_bg_color #1e1e2e;
+@define-color window_fg_color #f5e0dc;
+
+@define-color view_bg_color #181825;
+@define-color view_fg_color #f5e0dc;
+
+@define-color headerbar_bg_color #11111b;
+@define-color headerbar_fg_color #f5e0dc;
+@define-color headerbar_border_color rgba(255, 255, 255, 0.08);
+@define-color headerbar_backdrop_color @window_bg_color;
+@define-color headerbar_shade_color rgba(0, 0, 0, 0.36);
+
+@define-color card_bg_color #181825;
+@define-color card_fg_color #f5e0dc;
+
+@define-color dialog_bg_color #1e1e2e;
+@define-color dialog_fg_color #f5e0dc;
+
+@define-color popover_bg_color #181825;
+@define-color popover_fg_color #f5e0dc;
+
+@define-color shade_color rgba(0,0,0,0.36);
+@define-color scrollbar_outline_color rgba(0,0,0,0.5);
+
+rubberband, .rubberband {
+  background-color: alpha(#cba6f7, 0.2);
+  border: 1px solid #cba6f7;
+}
