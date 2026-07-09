@@ -48,6 +48,35 @@
 @define-color shade_color rgba(0,0,0,0.36);
 @define-color scrollbar_outline_color rgba(0,0,0,0.5);
 
+:root {
+  --accent-bg-color: #cba6f7;
+  --accent-fg-color: #1e1e2e;
+  --accent-color: #cba6f7;
+  --window-bg-color: #1e1e2e;
+  --window-fg-color: #f5e0dc;
+  --view-bg-color: #181825;
+  --view-fg-color: #f5e0dc;
+  --headerbar-bg-color: #11111b;
+  --headerbar-fg-color: #f5e0dc;
+  --sidebar-bg-color: #181825;
+  --sidebar-fg-color: #f5e0dc;
+  --sidebar-backdrop-color: #181825;
+  --card-bg-color: #181825;
+  --card-fg-color: #f5e0dc;
+  --dialog-bg-color: #1e1e2e;
+  --dialog-fg-color: #f5e0dc;
+  --popover-bg-color: #181825;
+  --popover-fg-color: #f5e0dc;
+  --destructive-bg-color: #f38ba8;
+  --destructive-fg-color: #1e1e2e;
+  --success-bg-color: #a6e3a1;
+  --success-fg-color: #1e1e2e;
+  --warning-bg-color: #fab387;
+  --warning-fg-color: #1e1e2e;
+  --error-bg-color: #f38ba8;
+  --error-fg-color: #1e1e2e;
+}
+
 rubberband, .rubberband {
   background-color: alpha(#cba6f7, 0.2);
   border: 1px solid #cba6f7;
@@ -99,4 +128,33 @@ rubberband, .rubberband {
 
   @define-color shade_color rgba(0,0,0,0.36);
   @define-color scrollbar_outline_color rgba(0,0,0,0.5);
+
+  :root {
+    --accent-bg-color: #cba6f7;
+    --accent-fg-color: #1e1e2e;
+    --accent-color: #cba6f7;
+    --window-bg-color: #1e1e2e;
+    --window-fg-color: #f5e0dc;
+    --view-bg-color: #181825;
+    --view-fg-color: #f5e0dc;
+    --headerbar-bg-color: #11111b;
+    --headerbar-fg-color: #f5e0dc;
+    --sidebar-bg-color: #181825;
+    --sidebar-fg-color: #f5e0dc;
+    --sidebar-backdrop-color: #181825;
+    --card-bg-color: #181825;
+    --card-fg-color: #f5e0dc;
+    --dialog-bg-color: #1e1e2e;
+    --dialog-fg-color: #f5e0dc;
+    --popover-bg-color: #181825;
+    --popover-fg-color: #f5e0dc;
+    --destructive-bg-color: #f38ba8;
+    --destructive-fg-color: #1e1e2e;
+    --success-bg-color: #a6e3a1;
+    --success-fg-color: #1e1e2e;
+    --warning-bg-color: #fab387;
+    --warning-fg-color: #1e1e2e;
+    --error-bg-color: #f38ba8;
+    --error-fg-color: #1e1e2e;
+  }
 }
