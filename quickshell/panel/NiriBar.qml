@@ -72,19 +72,42 @@ PanelWindow {
                     var hasFullscreen = false
                     const screenWidth = root.screen ? root.screen.width : 1920
                     const screenHeight = root.screen ? root.screen.height : 1080
+                    const currentOutput = root.screen ? root.screen.name : ""
                     
-                    for (var i = 0; i < windows.length; i++) {
-                        var w = windows[i]
+                    var activeWorkspaceId = null
+                    var model = root.niriState && root.niriState.niri ? root.niriState.niri.workspaces : null
+                    if (model) {
+                        for (var i = 0; i < model.count; i++) {
+                            var ws = model.get(i)
+                            if (ws) {
+                                var match = false
+                                if (currentOutput !== "") {
+                                    match = (ws.output === currentOutput && ws.isActive)
+                                } else {
+                                    match = ws.isFocused || ws.isActive
+                                }
+                                if (match) {
+                                    activeWorkspaceId = ws.id
+                                    break
+                                }
+                            }
+                        }
+                    }
+                    
+                    for (var j = 0; j < windows.length; j++) {
+                        var w = windows[j]
                         if (w.is_focused) {
                             root.activeAppId = w.app_id || ""
                             root.notificationModel.markAsReadForApp(root.activeAppId)
+                        }
+                        
+                        if (activeWorkspaceId !== null && w.workspace_id === activeWorkspaceId) {
                             var layout = w.layout
                             if (layout && layout.window_size) {
                                 var width = layout.window_size[0]
                                 var height = layout.window_size[1]
                                 if (width === screenWidth && height === screenHeight) {
                                     hasFullscreen = true
-                                    break
                                 }
                             }
                         }
