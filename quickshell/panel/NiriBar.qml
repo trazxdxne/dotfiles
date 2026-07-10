@@ -194,10 +194,11 @@ PanelWindow {
                     required property bool isFocused
                     required property bool isActive
                     required property var activeWindowId
+                    required property string output
 
                     wsName: name !== "" ? name : String(index)
                     active: isFocused
-                    visible: isFocused || isActive || activeWindowId !== 0
+                    visible: (isFocused || isActive || activeWindowId !== 0) && (output === (root.screen ? root.screen.name : ""))
                     
                     onClicked: {
                         root.niriState.niri.focusWorkspaceById(id)
