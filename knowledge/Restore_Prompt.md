@@ -49,6 +49,7 @@
      • `pkexec cp ~/dotfiles/ly/ly-kmsconvt-override.conf /etc/systemd/system/ly-kmsconvt@.service.d/override.conf`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
      • `pkexec cp ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules`
+     • `pkexec mkdir -p /usr/lib/firmware/edid && pkexec cp ~/dotfiles/edid/1600x720.bin /usr/lib/firmware/edid/1600x720.bin`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`
      • `rclone copy gdrive:Antigravity/Skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ ~/.agents/skills/AAA-CRITICAL-KNOWLEDGE-CHECK/ --copy-links`
