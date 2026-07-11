@@ -685,63 +685,113 @@ xdg-mime default io.github.celluloid_player.Celluloid.desktop audio/mpeg audio/m
 
 ## 12. Как настроить виртуальный монитор с кастомным разрешением и EDID под пропорции телефона
 
-Для создания виртуального дисплея, который идеально подходит под соотношение сторон экрана телефона (например, 20:9 для разрешения 2400x1080), используется кастомный EDID. Это убирает черные полосы по бокам в VNC-клиенте (AVNC) при масштабировании «Fit to Screen» и снижает нагрузку на GPU.
+Для создания виртуального дисплея, который идеально подходит под соотношение сторон экрана телефона (например, 20:9 для разрешения 2400x1080) и поддерживает выбор между несколькими разрешениями (например, родным 2400x1080 для четкости и масштабированным 1600x720 для экономии ресурсов GPU), используется кастомный EDID с несколькими дескрипторами детального тайминга (Detailed Timing Descriptors).
 
-### Шаг 1. Получение Modeline
-Рассчитайте тайминги для нужного разрешения (например, 1600x720 для 20:9) с помощью `cvt`:
-```bash
-cvt 1600 720 60
-```
-Вывод будет содержать Modeline вида:
-`Modeline "1600x720_60.00"   93.25  1600 1680 1840 2080  720 723 733 748 -hsync +vsync`
+Это позволяет выбирать разрешения на лету (через конфигурацию Niri или динамически во время работы), как на обычном мониторе.
 
-### Шаг 2. Сборка бинарного файла EDID
-Используйте инструмент `edid-generator`:
+### Шаг 1. Сборка бинарного файла EDID с несколькими разрешениями
+Используйте инструмент `edid-generator` с модификацией шаблона ассемблера:
+
+1. Склонируйте генератор:
+   ```bash
+   git clone https://github.com/akatrevorjay/edid-generator.git ~/edid-generator
+   cd ~/edid-generator
+   ```
+2. Модифицируйте `edid.S`, чтобы разрешить переопределение блока `descriptor2` через макрос `DETAILED_TIMING2_BYTES`:
+   ```assembly
+   // В edid.S найдите descriptor2: и замените блок на:
+   descriptor2:
+   #ifdef DETAILED_TIMING2_BYTES
+                   .byte   DETAILED_TIMING2_BYTES
+   #else
+                   .byte   0,0     /* Not a detailed timing descriptor */
+                   .byte   0       /* Must be zero */
+                   .byte   0xff    /* Descriptor is monitor serial number (text) */
+                   .byte   0       /* Must be zero */
+   start1:         .ascii  "Linux #0"
+   end1:           .byte   0x0a    /* End marker */
+                   .fill   12-(end1-start1), 1, 0x20 /* Padded spaces */
+   #endif
+   ```
+3. Создайте файл `combined.S`, описывающий основной режим `2400x1080` (Preferred) и вспомогательный байтовый блок для `1600x720` в `DETAILED_TIMING2_BYTES`:
+   ```assembly
+   /* 2400x1080 + 1600x720: combined EDID assembly source */
+   #define HSYNC_POL 0
+   #define VSYNC_POL 1
+   #define YPULSE (63+10)
+   #define XPULSE 256
+   #define YPIX 1080
+   #define XPIX 2400
+   #define VFREQ 60
+   #define DPI 96
+   #define CLOCK 216000
+   #define VERSION 1
+   #define REVISION 3
+   #define XOFFSET 152
+   #define YOFFSET (63+3)
+   #define XY_RATIO XY_RATIO_16_9
+   #define YBLANK 40
+   #define XBLANK 816
+   #define TIMING_NAME "VirtualPhone"
+
+   /* Secondary detailed timing block (1600x720) extracted from compiled 1600x720.bin */
+   #define DETAILED_TIMING2_BYTES 0x6d, 0x24, 0x40, 0xe0, 0x61, 0xd0, 0x1c, 0x20, 0x50, 0xa0, 0x3a, 0x00, 0xa0, 0xbb, 0x10, 0x00, 0x00, 0x1c
+
+   #include "edid.S"
+   ```
+4. Скомпилируйте EDID:
+   ```bash
+   make combined.bin
+   ```
+5. Сохраните полученный файл `combined.bin` в `~/dotfiles/edid/combined.bin` и скопируйте в системную папку прошивок:
+   ```bash
+   pkexec mkdir -p /usr/lib/firmware/edid
+   pkexec cp ~/dotfiles/edid/combined.bin /usr/lib/firmware/edid/combined.bin
+   ```
+
+### Шаг 2. Добавление файла в Initramfs
+В файле `/etc/mkinitcpio.conf` найдите массив `FILES=(...)` и добавьте путь к бинарнику:
 ```bash
-git clone https://github.com/akatrevorjay/edid-generator.git ~/edid-generator
-cd ~/edid-generator
-echo 'Modeline "1600x720"   93.25  1600 1680 1840 2080  720 723 733 748 -hsync +vsync ratio=16:9' > my_modeline
-./modeline2edid my_modeline
-make 1600x720.bin
-```
-Сгенерированный файл `1600x720.bin` сохраните в `~/dotfiles/edid/1600x720.bin` и скопируйте в системную папку прошивок:
-```bash
-pkexec mkdir -p /usr/lib/firmware/edid
-pkexec cp ~/dotfiles/edid/1600x720.bin /usr/lib/firmware/edid/1600x720.bin
+FILES=(/usr/lib/firmware/edid/combined.bin)
 ```
 
-### Шаг 3. Добавление файла в Initramfs
-В файле `/etc/mkinitcpio.conf` найдите пустой массив `FILES=()` и добавьте путь к бинарнику:
-```bash
-FILES=(/usr/lib/firmware/edid/1600x720.bin)
-```
-
-### Шаг 4. Настройка параметров ядра в Limine
+### Шаг 3. Настройка параметров ядра в Limine
 В файле настроек генерации Limine `/etc/default/limine` пропишите загрузку EDID и принудительное включение коннектора:
 ```ini
-KERNEL_CMDLINE[default]+="... drm.edid_firmware=HDMI-A-1:edid/1600x720.bin video=HDMI-A-1:e"
+KERNEL_CMDLINE[default]+="... drm.edid_firmware=HDMI-A-1:edid/combined.bin video=HDMI-A-1:e"
 ```
 
-### Шаг 5. Применение и пересборка образов
+### Шаг 4. Применение и пересборка образов
 Пересоберите конфигурацию загрузчика и initramfs:
 ```bash
 pkexec limine-mkinitcpio
 ```
-После перезагрузки система создаст виртуальный монитор `HDMI-A-1` с разрешением 1600x720.
+После перезагрузки система создаст виртуальный монитор `HDMI-A-1` с поддержкой обоих разрешений: `2400x1080` и `1600x720`.
 
-### Шаг 6. Настройка Niri и VNC
-1. В файле [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl) укажите режим:
-   ```kdl
-   output "HDMI-A-1" {
-       mode "1600x720@60.000"
-       scale 1
-       position x=1920 y=0
-   }
-   ```
-2. Запустите VNC-сервер:
-   ```bash
-   wayvnc -r -v --output=HDMI-A-1 0.0.0.0
-   ```
-3. В клиенте AVNC на телефоне выберите режим масштабирования **«Fit to Screen»**.
+### Шаг 5. Выбор разрешения в Niri
+Поскольку виртуальный дисплей поддерживает оба разрешения, вы можете переключаться между ними в файле [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl):
+* **Для режима высокого качества (2400x1080):**
+  ```kdl
+  output "HDMI-A-1" {
+      mode "2400x1080"
+      scale 1
+      position x=1920 y=0
+  }
+  ```
+* **Для режима экономии ресурсов GPU (1600x720):**
+  ```kdl
+  output "HDMI-A-1" {
+      mode "1600x720"
+      scale 1
+      position x=1920 y=360
+  }
+  ```
+
+Для динамического переключения без перезапуска Niri выполните в терминале:
+```bash
+niri msg action set-mode HDMI-A-1 2400x1080
+# или
+niri msg action set-mode HDMI-A-1 1600x720
+```
 
 
