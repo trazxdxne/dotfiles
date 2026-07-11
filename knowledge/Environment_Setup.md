@@ -715,23 +715,23 @@ xdg-mime default io.github.celluloid_player.Celluloid.desktop audio/mpeg audio/m
    ```
 3. Создайте файл `combined.S`, описывающий основной режим `2400x1080` (Preferred) и вспомогательный байтовый блок для `1600x720` в `DETAILED_TIMING2_BYTES`:
    ```assembly
-   /* 2400x1080 + 1600x720: combined EDID assembly source */
+   /* 2400x1080 (low-clock) + 1600x720: combined EDID assembly source */
    #define HSYNC_POL 0
    #define VSYNC_POL 1
-   #define YPULSE (63+10)
-   #define XPULSE 256
+   #define YPULSE (63+5)
+   #define XPULSE 32
    #define YPIX 1080
    #define XPIX 2400
    #define VFREQ 60
    #define DPI 96
-   #define CLOCK 216000
+   #define CLOCK 164000
    #define VERSION 1
    #define REVISION 3
-   #define XOFFSET 152
+   #define XOFFSET 24
    #define YOFFSET (63+3)
    #define XY_RATIO XY_RATIO_16_9
-   #define YBLANK 40
-   #define XBLANK 816
+   #define YBLANK 18
+   #define XBLANK 96
    #define TIMING_NAME "VirtualPhone"
 
    /* Secondary detailed timing block (1600x720) extracted from compiled 1600x720.bin */
