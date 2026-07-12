@@ -38,6 +38,7 @@
       • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
+      • `~/.config/topgrade.toml` -> `~/dotfiles/topgrade/topgrade.toml`
       • `~/.agents/skills/review` -> `~/dotfiles/.agents/skills/review`
       • `~/.agents/skills/qt-qml` -> `~/dotfiles/.agents/skills/qt-qml`
       • `~/.agents/skills/qt-qml-docs` -> `~/dotfiles/.agents/skills/qt-qml-docs`
