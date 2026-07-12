@@ -39,6 +39,8 @@
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
       • `~/.config/topgrade.toml` -> `~/dotfiles/topgrade/topgrade.toml`
+      • `~/.config/fish/config.fish` -> `~/dotfiles/fish/config.fish`
+      • `~/.bashrc` -> `~/dotfiles/bash/.bashrc`
       • `~/.agents/skills/review` -> `~/dotfiles/.agents/skills/review`
       • `~/.agents/skills/qt-qml` -> `~/dotfiles/.agents/skills/qt-qml`
       • `~/.agents/skills/qt-qml-docs` -> `~/dotfiles/.agents/skills/qt-qml-docs`
@@ -50,6 +52,7 @@
      • `pkexec cp ~/dotfiles/ly/ly-kmsconvt-override.conf /etc/systemd/system/ly-kmsconvt@.service.d/override.conf`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
      • `pkexec cp ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules`
+     • `pkexec cp ~/dotfiles/polkit-1/org.freedesktop.Flatpak.rules /etc/polkit-1/rules.d/org.freedesktop.Flatpak.rules`
      • `pkexec mkdir -p /usr/lib/firmware/edid && pkexec cp ~/dotfiles/edid/combined.bin /usr/lib/firmware/edid/combined.bin`
    - Скачай файлы бэкапа с Google Drive:
      • `rclone copy gdrive:Antigravity/Knowledge/ ~/.gemini/antigravity-cli/knowledge/ --copy-links`

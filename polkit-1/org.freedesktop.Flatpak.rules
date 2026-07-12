@@ -1,0 +1,9 @@
+/* Allow users in the wheel group to install, update, and manage Flatpak without password prompts */
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.flatpak.") === 0 &&
+        subject.active === true &&
+        subject.local === true &&
+        subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
+    }
+});
