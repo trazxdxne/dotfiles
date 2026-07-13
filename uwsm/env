@@ -1,0 +1,11 @@
+# Принудительный запуск Qt-приложений в нативном Wayland с фолбеком на X11
+export QT_QPA_PLATFORM="wayland;xcb"
+
+# Включение единого генератора тем для Qt5/Qt6
+export QT_QPA_PLATFORMTHEME="qt5ct"
+
+# Отключение серверных заголовков окон под Wayland (декорации рисует клиент)
+export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+
+# Корректное скругление и отрисовка элементов Qt6 при дробном масштабировании
+export QT_SCALE_FACTOR_ROUNDING_POLICY="RoundPreferFloor"

@@ -12,7 +12,7 @@
    - Выведи мне инструкцию запустить `gh auth login` в терминале для авторизации в GitHub. После этого приостанови выполнение и жди моего подтверждения "Готово".
    - После подтверждения, автоматически склонируй мой приватный репозиторий дотфайлов: `git clone https://github.com/trazxdxne/dotfiles.git ~/dotfiles`.
 3. Восстановление и Симлинки:
-    - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents/skills`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`, `~/.config/hypr`.
+    - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents/skills`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`, `~/.config/hypr`, `~/.config/uwsm`.
     - Создай симлинки из `~/dotfiles` в систему:
       • `~/.config/niri/config.kdl` -> `~/dotfiles/niri/config.kdl`
       • `~/.config/niri-autostart/config.kdl` -> `~/dotfiles/niri-autostart/config.kdl`
@@ -47,6 +47,7 @@
       • `~/.agents/skills/qt-qml-docs` -> `~/dotfiles/.agents/skills/qt-qml-docs`
       • `~/.agents/skills/arch-linux-triage` -> `~/dotfiles/.agents/skills/arch-linux-triage`
       • `~/.agents/skills/baby` -> `~/dotfiles/.agents/skills/baby`
+      • `~/.config/uwsm/env` -> `~/dotfiles/uwsm/env`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/ly/config.ini /etc/ly/config.ini`
