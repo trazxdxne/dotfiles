@@ -89,7 +89,7 @@ ShellRoot {
             var screens = Quickshell.screens;
             if (screens) {
                 for (var i = 0; i < screens.length; i++) {
-                    if (screens[i].name === "HDMI-A1") {
+                    if (screens[i].name === "HDMI-A-1") {
                         return screens[i];
                     }
                 }
