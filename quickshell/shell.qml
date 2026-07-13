@@ -63,7 +63,7 @@ ShellRoot {
         panelWindow: panelWindow
     }
 
-    // ── Top bar ──────────────────────────────────────────────────────
+    // ── Top bar (Primary) ────────────────────────────────────────────
     NiriBar {
         id: panelWindow
 
@@ -75,7 +75,43 @@ ShellRoot {
         clipboardPopup:     clipboardPopup
         settingsWindow:     settingsWindow
 
-        onCalendarToggled: calendarPopup.visible = !calendarPopup.visible
+        onCalendarToggled: {
+            calendarPopup.barWindow = panelWindow
+            calendarPopup.visible = !calendarPopup.visible
+        }
+    }
+
+    // ── Top bar (HDMI-A1) ────────────────────────────────────────────
+    NiriBar {
+        id: panelWindowHdmi
+
+        property var hdmiScreen: {
+            var screens = Quickshell.screens;
+            if (screens) {
+                for (var i = 0; i < screens.length; i++) {
+                    if (screens[i].name === "HDMI-A1") {
+                        return screens[i];
+                    }
+                }
+            }
+            return null;
+        }
+
+        screen: hdmiScreen
+        visible: hdmiScreen !== null
+
+        niriState:          niriState
+        clock:              clock
+        volumeText:         sysModel.volumeText
+        batteryText:        sysModel.batteryText
+        notificationModel:  notificationModel
+        clipboardPopup:     clipboardPopup
+        settingsWindow:     settingsWindow
+
+        onCalendarToggled: {
+            calendarPopup.barWindow = panelWindowHdmi
+            calendarPopup.visible = !calendarPopup.visible
+        }
     }
 
     // ── Calendar popup ────────────────────────────────────────────────
