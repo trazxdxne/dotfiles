@@ -35,7 +35,7 @@ Scope {
             "label": "Reboot",
             "detail": "Restart this system",
             "icon": "system-reboot-symbolic",
-            "command": ["systemctl", "reboot"],
+            "command": ["sh", "-c", "uwsm stop; systemctl reboot"],
             "hotkey": Qt.Key_R,
             "hotkeyStr": "R",
             "confirm": false
@@ -45,7 +45,7 @@ Scope {
             "label": "Shutdown",
             "detail": "Power off this system",
             "icon": "system-shutdown-symbolic",
-            "command": ["systemctl", "poweroff"],
+            "command": ["sh", "-c", "uwsm stop; systemctl poweroff"],
             "hotkey": Qt.Key_S,
             "hotkeyStr": "S",
             "confirm": false
