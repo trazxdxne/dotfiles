@@ -57,5 +57,10 @@
      • `pkexec cp ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules`
      • `pkexec cp ~/dotfiles/polkit-1/org.freedesktop.Flatpak.rules /etc/polkit-1/rules.d/org.freedesktop.Flatpak.rules`
      • `pkexec mkdir -p /usr/lib/firmware/edid && pkexec cp ~/dotfiles/edid/combined.bin /usr/lib/firmware/edid/combined.bin`
+    - Настрой системные службы для Ly (потребуется pkexec):
+      • `pkexec systemctl disable greetd`
+      • `pkexec systemctl disable getty@tty1.service`
+      • `pkexec systemctl enable ly-kmsconvt@tty1.service`
+      • `pkexec systemctl enable ly-kmsconvt@tty2.service`
 4. Напиши мне красивый отчет, когда всё будет готово!
 ```

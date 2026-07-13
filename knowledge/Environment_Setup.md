@@ -546,9 +546,11 @@ Ly — это легковесный консольный дисплейный �
 > [!IMPORTANT]
 > Обратите внимание: Обычная Linux-консоль не поддерживает 24-битные цвета (TrueColor). Поэтому Ly запускается через `kmscon` (с помощью шаблона `ly-kmsconvt@.service`), который эмулирует терминал с поддержкой TrueColor поверх фреймбуфера.
 
-Включите службу `ly-kmsconvt` на нужном TTY (например, TTY2) и отключите старый дисплейный менеджер:
+Включите службу `ly-kmsconvt` на нужных TTY (например, tty1 и tty2) и отключите старый дисплейный менеджер / getty на tty1:
 ```bash
 pkexec systemctl disable greetd
+pkexec systemctl disable getty@tty1.service
+pkexec systemctl enable ly-kmsconvt@tty1.service
 pkexec systemctl enable ly-kmsconvt@tty2.service
 ```
 
