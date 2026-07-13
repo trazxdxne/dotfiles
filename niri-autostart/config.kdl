@@ -27,6 +27,9 @@ autostart {
                 height { proportion 1.0; }
             }
         }
+    }
+
+    workspace "1 " {
         column {
             width {
                 proportion 1.0
