@@ -470,11 +470,17 @@ Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
        '#89b4fa', -- 4 blue
        '#f5c2e7', -- 5 magenta -> pink
        '#f5e0dc', -- 6 cyan -> rosewater (текст в alsamixer)
-       '#45475a', -- 7 white -> dark grey (выделение фона)
+       '#a6adc8', -- 7 white -> light grey (subtext1)
      },
      brights = {
-       '#585b70', '#f38ba8', '#cba6f7', '#fab387',
-       '#89b4fa', '#f5c2e7', '#f5e0dc', '#585b70',
+       '#6c7086', -- 8 bright black -> medium grey (overlay0)
+       '#f38ba8', -- 9 bright red
+       '#cba6f7', -- 10 bright green -> mauve/purple
+       '#fab387', -- 11 bright yellow -> peach
+       '#89b4fa', -- 12 bright blue
+       '#f5c2e7', -- 13 bright magenta -> pink
+       '#f5e0dc', -- 14 bright cyan -> rosewater
+       '#bac2de', -- 15 bright white -> light grey (subtext0)
      }
    }
    ```

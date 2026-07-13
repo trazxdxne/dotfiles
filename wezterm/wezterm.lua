@@ -34,17 +34,17 @@ config.colors = {
     '#89b4fa', -- 4 blue
     '#f5c2e7', -- 5 magenta -> pink
     '#f5e0dc', -- 6 cyan -> rosewater (text in alsamixer)
-    '#45475a', -- 7 white -> dark grey (highlight background)
+    '#a6adc8', -- 7 white -> light grey (subtext1)
   },
   brights = {
-    '#585b70', -- 8
-    '#f38ba8', -- 9
-    '#cba6f7', -- 10
-    '#fab387', -- 11
-    '#89b4fa', -- 12
-    '#f5c2e7', -- 13
-    '#f5e0dc', -- 14
-    '#585b70', -- 15
+    '#6c7086', -- 8 bright black -> medium grey (overlay0)
+    '#f38ba8', -- 9 bright red
+    '#cba6f7', -- 10 bright green -> mauve/purple
+    '#fab387', -- 11 bright yellow -> peach
+    '#89b4fa', -- 12 bright blue
+    '#f5c2e7', -- 13 bright magenta -> pink
+    '#f5e0dc', -- 14 bright cyan -> rosewater
+    '#bac2de', -- 15 bright white -> light grey (subtext0)
   }
 }
 -- Optional: Window appearance
