@@ -61,6 +61,12 @@
                     "type": "boolean",
                     "title": "Show Battery",
                     "description": "Display battery in the bar."
+                },
+                {
+                    "id": "showHdmiBar",
+                    "type": "boolean",
+                    "title": "Show HDMI Bar",
+                    "description": "Display bar on the second HDMI monitor."
                 }
             ]
         },

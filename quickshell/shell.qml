@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.SystemTray
+import qs.core
 import "./panel"
 import "./state"
 import "./notifications"
@@ -98,7 +99,7 @@ ShellRoot {
         }
 
         screen: hdmiScreen
-        visible: hdmiScreen !== null
+        visible: hdmiScreen !== null && Config.showHdmiBar
 
         niriState:          niriState
         clock:              clock

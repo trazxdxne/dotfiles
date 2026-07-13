@@ -20,6 +20,7 @@ Singleton {
     property bool showClock: true
     property bool showVolume: true
     property bool showBattery: true
+    property bool showHdmiBar: true
 
     // Clipboard properties
     property int clipboardWidth: 960
@@ -43,6 +44,7 @@ Singleton {
             showClock: showClock,
             showVolume: showVolume,
             showBattery: showBattery,
+            showHdmiBar: showHdmiBar,
             clipboardWidth: clipboardWidth,
             clipboardHeight: clipboardHeight,
             clipboardFont: clipboardFont,
@@ -69,6 +71,7 @@ Singleton {
             if (obj.showClock !== undefined) showClock = obj.showClock;
             if (obj.showVolume !== undefined) showVolume = obj.showVolume;
             if (obj.showBattery !== undefined) showBattery = obj.showBattery;
+            if (obj.showHdmiBar !== undefined) showHdmiBar = obj.showHdmiBar;
             
             if (obj.clipboardWidth !== undefined) clipboardWidth = obj.clipboardWidth;
             if (obj.clipboardHeight !== undefined) clipboardHeight = obj.clipboardHeight;
@@ -116,6 +119,7 @@ Singleton {
     onShowClockChanged: save()
     onShowVolumeChanged: save()
     onShowBatteryChanged: save()
+    onShowHdmiBarChanged: save()
     onClipboardWidthChanged: save()
     onClipboardHeightChanged: save()
     onClipboardFontChanged: save()
