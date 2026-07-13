@@ -10,6 +10,13 @@ alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
 
+# Set default terminal editor
+export EDITOR=micro
+export VISUAL=micro
+
+# Aliases
+alias nano=micro
+
 # Added by Antigravity CLI installer
 export PATH="/home/trazxdxne/.local/bin:$PATH"
 

@@ -1,0 +1,58 @@
+filetype: kdl
+
+detect:
+    filename: "\\.kdl$"
+
+rules:
+    # Punctuation / brackets
+    - symbol: '[=;]'
+    - symbol.brackets: '[{\[\]}]'
+    
+    # Strings (double quoted)
+    - constant.string:
+        start: '"'
+        end: '"'
+        skip: '\\.'
+        rules:
+            - constant.specialChar: '\\u\{[[:xdigit:]]+\}'
+            - constant.specialChar: '\\[nrtbf"\\/]'
+
+    # Raw strings: r"..."
+    - constant.string:
+        start: 'r#*"'
+        end: '"#*'
+        rules: []
+
+    # Booleans
+    - constant.bool: '\b(true|false)\b'
+
+    # Null
+    - constant: '\bnull\b'
+
+    # Numbers
+    - constant.number: '\b[+-]?(\d+_?)*\d+(\.(\d+_?)*\d+)?([eE][+-]?\d+)?\b'
+    - constant.number: '\b0x[[:xdigit:]_]+\b'
+    - constant.number: '\b0o[0-7_]+\b'
+    - constant.number: '\b0b[01_]+\b'
+
+    # Node comment prefix
+    - comment: '/-'
+
+    # Comments
+    - comment:
+        start: '//'
+        end: '$'
+        rules:
+            - todo: "(TODO|XXX|FIXME):?"
+            
+    - comment:
+        start: '/\*'
+        end: '\*/'
+        rules:
+            - todo: "(TODO|XXX|FIXME):?"
+
+    # Properties (key=value)
+    - type: '\b[a-zA-Z_][a-zA-Z0-9_.-]*\s*='
+
+    # Node names (identifiers)
+    - identifier: '\b[a-zA-Z_][a-zA-Z0-9_.-]*\b'

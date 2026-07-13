@@ -7,6 +7,13 @@ source /usr/share/cachyos-fish-config/cachyos-config.fish
 #end
 
 
+# Set default terminal editor
+set -gx EDITOR micro
+set -gx VISUAL micro
+
+# Aliases
+alias nano micro
+
 # Added by Antigravity CLI installer
 set -gx PATH "/home/trazxdxne/.local/bin" $PATH
 
