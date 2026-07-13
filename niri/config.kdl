@@ -8,6 +8,9 @@
 // https://niri-wm.github.io/niri/Configuration:-Input
 workspace "1"
 workspace "2"
+workspace "3" {
+    open-on-output "HDMI-A-1"
+}
 
 input {
     keyboard {
@@ -100,7 +103,7 @@ output "DP-1" {
 }
 output "HDMI-A-1" {
     mode "2400x1080" // 1600x720/2400x1080
-    scale 2 // 1.5/2
+    scale 2.5 // 2/2.5
     position x=360 y=1080
 }
 
@@ -299,7 +302,7 @@ spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 // Android Monitor
-spawn-at-startup "wayvnc" "-r" "--output=HDMI-A-1" "0.0.0.0"
+spawn-at-startup "wayvnc" "-f" "60" "-r" "--output=HDMI-A-1" "0.0.0.0"
 
 hotkey-overlay {
     // Uncomment this line to disable the "Important Hotkeys" pop-up at startup.
