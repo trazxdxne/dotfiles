@@ -61,6 +61,6 @@
       • `pkexec systemctl disable greetd`
       • `pkexec systemctl disable getty@tty1.service`
       • `pkexec systemctl enable ly-kmsconvt@tty1.service`
-      • `pkexec systemctl enable ly-kmsconvt@tty2.service`
+      • `pkexec systemctl enable ly@tty2.service`
 4. Напиши мне красивый отчет, когда всё будет готово!
 ```

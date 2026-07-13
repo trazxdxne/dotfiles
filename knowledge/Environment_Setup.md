@@ -551,7 +551,7 @@ Ly — это легковесный консольный дисплейный �
 pkexec systemctl disable greetd
 pkexec systemctl disable getty@tty1.service
 pkexec systemctl enable ly-kmsconvt@tty1.service
-pkexec systemctl enable ly-kmsconvt@tty2.service
+pkexec systemctl enable ly@tty2.service
 ```
 
 > [!TIP]
