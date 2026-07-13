@@ -32,11 +32,17 @@ PanelWindow {
     implicitHeight: Theme.panelHeight
     color: root.isFullscreenActive ? "transparent" : "#fe1e1e2e"
     aboveWindows: true
-    exclusiveZone: root.isFullscreenActive ? 0 : Theme.panelHeight
+    exclusiveZone: root.isFullscreenActive ? 0 : Theme.panelHeight + Config.barMargins
     WlrLayershell.layer: WlrLayer.Overlay
     surfaceFormat: { "opaque": false }
 
     anchors { top: true; left: true; right: true }
+
+    margins {
+        top: Config.barMargins
+        left: Config.barMargins
+        right: Config.barMargins
+    }
 
     property bool isFullscreenActive: false
 
