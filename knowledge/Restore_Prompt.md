@@ -38,6 +38,7 @@
       • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
       • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
+      • `~/.config/hypr/hyprland.lua` -> `~/dotfiles/hypr/hyprland.lua`
       • `~/.config/topgrade.toml` -> `~/dotfiles/topgrade/topgrade.toml`
       • `~/.config/fish/config.fish` -> `~/dotfiles/fish/config.fish`
       • `~/.bashrc` -> `~/dotfiles/bash/.bashrc`
