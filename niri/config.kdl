@@ -360,6 +360,14 @@ window-rule {
 }
 
 window-rule {
+    match app-id="^brave-hkefmmngmojkjfpoboileofklaaahomk-Default$"
+    match app-id="^brave-agimnkijcaahngcdmfeangaknmldooml-Default$"
+
+    open-on-workspace "3"
+    default-column-display "tabbed"
+}
+
+window-rule {
      match title="Picture in picture"
      open-floating true
 }
