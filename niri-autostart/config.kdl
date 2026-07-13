@@ -28,20 +28,4 @@ autostart {
             }
         }
     }
-
-    workspace "3" {
-        column {
-            width {
-                proportion 1.0
-            }
-            window app-id="brave-hkefmmngmojkjfpoboileofklaaahomk-Default" {
-                command "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=hkefmmngmojkjfpoboileofklaaahomk"
-                height { proportion 1.0; }
-            }
-            window app-id="brave-agimnkijcaahngcdmfeangaknmldooml-Default" {
-                command "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=agimnkijcaahngcdmfeangaknmldooml"
-                height { proportion 1.0; }
-            }
-        }
-    }
 }

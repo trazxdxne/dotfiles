@@ -8,9 +8,7 @@
 // https://niri-wm.github.io/niri/Configuration:-Input
 workspace "1"
 workspace "2"
-workspace "3" {
-    open-on-output "HDMI-A-1"
-}
+
 
 input {
     keyboard {
@@ -303,6 +301,8 @@ spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 // Android Monitor
 spawn-at-startup "wayvnc" "-f" "60" "-r" "--output=HDMI-A-1" "0.0.0.0"
+spawn-at-startup "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=hkefmmngmojkjfpoboileofklaaahomk"
+spawn-at-startup "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=agimnkijcaahngcdmfeangaknmldooml"
 
 hotkey-overlay {
     // Uncomment this line to disable the "Important Hotkeys" pop-up at startup.
@@ -363,7 +363,7 @@ window-rule {
     match app-id="^brave-hkefmmngmojkjfpoboileofklaaahomk-Default$"
     match app-id="^brave-agimnkijcaahngcdmfeangaknmldooml-Default$"
 
-    open-on-workspace "3"
+    open-on-output "HDMI-A-1"
     default-column-display "tabbed"
 }
 
