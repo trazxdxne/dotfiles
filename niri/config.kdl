@@ -86,7 +86,7 @@ layout {
     struts {
         left 0
         right 0
-        top 0
+        top 36
         bottom 0
     }
 }
@@ -170,7 +170,7 @@ window-rule {
 }
 
 window-rule {
-    geometry-corner-radius 0 
+    geometry-corner-radius 12
     clip-to-geometry true
     draw-border-with-background false
 }
