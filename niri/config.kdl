@@ -86,13 +86,14 @@ layout {
     struts {
         left 0
         right 0
-        top 36
+        top 0
         bottom 0
     }
 }
 
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY" "XDG_CURRENT_DESKTOP"
 spawn-at-startup "noctalia"
+spawn-at-startup "ags" "run"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 spawn-sh-at-startup "sleep 2 && niri-autostart"
 spawn-at-startup "wayvnc" "-f" "60" "-r" "--output=HDMI-A-1" "0.0.0.0"
@@ -119,7 +120,7 @@ window-rule {
 }
 
 window-rule {
-    match app-id="^brave-hkefmmngmojkjfpoboileofklaaahomk-Default$"
+    match app-id="^brave-chddojmiiokipokdfcabeikjhljgcafd-Default$"
     match app-id="^brave-agimnkijcaahngcdmfeangaknmldooml-Default$"
     open-on-workspace "1 "
     default-column-display "tabbed"

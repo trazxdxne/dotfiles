@@ -34,8 +34,8 @@ autostart {
             width {
                 proportion 1.0
             }
-            window app-id="brave-hkefmmngmojkjfpoboileofklaaahomk-Default" {
-                command "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=hkefmmngmojkjfpoboileofklaaahomk"
+            window app-id="brave-chddojmiiokipokdfcabeikjhljgcafd-Default" {
+                command "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=chddojmiiokipokdfcabeikjhljgcafd"
                 height { proportion 1.0; }
             }
             window app-id="brave-agimnkijcaahngcdmfeangaknmldooml-Default" {

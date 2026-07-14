@@ -1,16 +1,22 @@
+[backdrop]
+blur_intensity = 0.0
+enabled = false
+
 [bar]
 order = [ "default", "bar" ]
 
     [bar.bar]
+    auto_hide = false
+    background_opacity = 0.99999997764825821
     border = "on_primary"
     capsule_radius = 6
+    enabled = false
     end = []
     layer = "overlay"
-    margin_edge = 6
+    margin_edge = 8
     margin_ends = 930
     margin_opposite_edge = 6
     padding = 0
-    radius = 6
     reserve_space = false
     shadow = false
     show_on_workspace_switch = false
@@ -20,12 +26,9 @@ order = [ "default", "bar" ]
     [bar.default]
     capsule = true
     capsule_radius = 12
-    center = []
+    center = [ "clock" ]
     contact_shadow = true
     end = [
-        "media",
-        "tray",
-        "notifications",
         "clipboard",
         "network",
         "bluetooth",
@@ -34,18 +37,30 @@ order = [ "default", "bar" ]
         "battery",
         "control-center",
         "session",
-        "ram"
+        "ram",
+        "tray",
+        "keyboard_layout",
+        "notifications"
     ]
+    font_family = "Adwaita Sans"
     margin_edge = 6
     margin_ends = 6
-    reserve_space = false
+    panel_overlap = 1
+    reserve_space = true
     shadow = false
+    start = [ "launcher", "wallpaper", "workspaces" ]
     thickness = 30
 
         [bar.default.monitor.DP-1]
 
         [bar.default.monitor.HDMI-A-1]
         enabled = false
+
+[control_center]
+hidden_tabs = [ "power", "weather" ]
+shortcuts = []
+sidebar = "full"
+sidebar_section = "compact"
 
 [desktop_widgets]
 schema_version = 2
@@ -64,20 +79,20 @@ monitors = [ "DP-1" ]
 radius = 12
 
 [lockscreen_widgets]
-enabled = false
+enabled = true
 schema_version = 2
-widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@HDMI-A-1" ]
+widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@HDMI-A-1", "lockscreen-widget-0000000000000001" ]
 
     [lockscreen_widgets.grid]
-    cell_size = 16
+    cell_size = 64
     major_interval = 4
     visible = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
-    box_height = 70.0
-    box_width = 400.0
+    box_height = 120.0
+    box_width = 384.0
     cx = 960.0
-    cy = 961.0
+    cy = 600.0
     output = "DP-1"
     rotation = 0.0
     type = "login_box"
@@ -87,7 +102,7 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@HDMI-A-1" ]
         background_opacity = 0.88
         background_radius = 12.0
         input_opacity = 1.0
-        input_radius = 6.0
+        input_radius = 32.0
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
@@ -97,7 +112,7 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@HDMI-A-1" ]
     box_height = 70.0
     box_width = 400.0
     cx = 1200.0
-    cy = 961.0
+    cy = 720.0
     output = "HDMI-A-1"
     rotation = 0.0
     type = "login_box"
@@ -113,53 +128,158 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@HDMI-A-1" ]
         show_login_button = true
         show_password_hint = true
 
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 256.0
+    box_width = 512.0
+    cx = 960.0
+    cy = 412.0
+    output = "DP-1"
+    rotation = -0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        background = false
+        background_color = "on_primary"
+        background_opacity = 0.33000000000000002
+        background_padding = 12
+        background_radius = 32
+        center_text = true
+        clock_style = "digital"
+        color = "primary"
+        shadow = false
+
+[notification]
+layer = "overlay"
+
+[osd]
+offset_x = 20
+offset_y = 8
+orientation = "horizontal"
+position = "top_center"
+position_vertical = "top_center"
+
+    [osd.kinds]
+    keyboard_layout = false
+
+[plugin_settings."noctalia/true-transparency"]
+transparency_panel_open_near_click = true
+transparency_panel_placement = "floating"
+transparency_panel_position = "auto"
+
+[plugins]
+enabled = []
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/official-plugins"
+    name = "official"
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/community-plugins"
+    name = "community"
+
 [shell]
 niri_overview_type_to_launch_enabled = true
 polkit_agent = true
+settings_show_advanced = true
 
     [shell.animation]
     speed = 4.0
 
+    [shell.launcher]
+    app_grid = false
+    categories = false
+    compact = true
+    session_search = false
+    show_icons = true
+
+    [shell.panel]
+    control_center_placement = "attached"
+    launcher_placement = "floating"
+    launcher_position = "center"
+    open_near_click_control_center = true
+    open_near_click_session = true
+    session_placement = "floating"
+    session_position = "center"
+    transparency_mode = "solid"
+    wallpaper_placement = "attached"
+
     [shell.screen_corners]
     size = 90
 
+    [shell.shadow]
+    alpha = 0.4999999888241291
+
 [theme]
 builtin = "Catppuccin"
-community_palette = "Catppuccin Macchiato Pink"
+community_palette = "ADW"
+mode = "dark"
 source = "wallpaper"
+wallpaper_scheme = "m3-rainbow"
 
     [theme.templates]
-    builtin_ids = [ "gtk3", "kcolorscheme", "niri", "qt", "wezterm" ]
+    builtin_ids = [ "gtk3", "gtk4", "kcolorscheme", "niri", "qt", "wezterm" ]
     community_ids = [ "obsidian", "zed", "antigravity", "telegram", "micro" ]
 
-[wallpaper.default]
-path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+[wallpaper]
+enabled = true
+transition_on_startup = false
 
-[wallpaper.last]
-path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+    [wallpaper.default]
+    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
 
-[wallpaper.monitors.DP-1]
-path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+    [wallpaper.last]
+    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
 
-[wallpaper.monitors.HDMI-A-1]
-path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+    [wallpaper.monitors.DP-1]
+    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+
+    [wallpaper.monitors.HDMI-A-1]
+    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+
+[widget.bluetooth]
+enabled = false
 
 [widget.clipboard]
 enabled = false
 
 [widget.clock]
-enabled = true
+enabled = false
 tooltip_format = "%A, %d %B %Y г."
 
 [widget.control-center]
 anchor = true
 enabled = false
 
+[widget.date]
+enabled = true
+
+[widget.keyboard_layout]
+display = "short"
+show_icon = false
+
+    [widget.keyboard_layout.custom_labels]
+    "English (US)" = "EN"
+    Russian = "RU"
+
 [widget.launcher]
+enabled = false
+
+[widget.network]
 enabled = false
 
 [widget.session]
 enabled = false
+
+[widget.spacer_2]
+length = 141
+type = "spacer"
+
+[widget.transparent_widget]
+color = "#000000"
+enabled = true
+type = "noctalia/true-transparency:transparent_widget"
 
 [widget.wallpaper]
 enabled = false

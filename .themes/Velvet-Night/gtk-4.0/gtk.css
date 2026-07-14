@@ -158,3 +158,5 @@ rubberband, .rubberband {
     --error-fg-color: #1e1e2e;
   }
 }
+
+@import url("noctalia.css");

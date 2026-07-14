@@ -49,3 +49,5 @@ rubberband, .rubberband {
   background-color: alpha(#cba6f7, 0.2);
   border: 1px solid #cba6f7;
 }
+
+@import url("noctalia.css");
