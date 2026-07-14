@@ -38,9 +38,9 @@ output "DP-1" {
     position x=0 y=0
 }
 output "HDMI-A-1" {
-    mode "2400x1080"
-    scale 2.5
-    position x=360 y=1080
+    mode "1600x720"
+    scale 1
+    position x=0 y=1080
 }
 
 layout {
@@ -184,7 +184,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal: wezterm" { spawn "wezterm" "start" "--always-new-process"; }
-    Mod+Space hotkey-overlay-title="Run an Application: fuzzel" { spawn-sh "pkill fuzzel || fuzzel"; }
+    Mod+Space hotkey-overlay-title="Run an Application: Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
     Mod+E hotkey-overlay-title="Open a File Manager: nautilus" { spawn "nautilus"; }
 
@@ -335,9 +335,9 @@ binds {
     Mod+Shift+S { spawn "screenshot" "direct-area"; }
     Alt+Print { screenshot-window; }
 
-    Mod+V cooldown-ms=500 { spawn "qs" "ipc" "call" "clipboard" "toggle"; }
+    Mod+V cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
 
-    Mod+BackSpace cooldown-ms=500 { spawn "qs" "ipc" "call" "power" "toggle"; }
+    Mod+BackSpace cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "power"; }
 
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
