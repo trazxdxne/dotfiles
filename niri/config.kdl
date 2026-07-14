@@ -337,7 +337,7 @@ binds {
 
     Mod+V cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
 
-    Mod+BackSpace cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "power"; }
+    Mod+BackSpace cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "session"; }
 
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
