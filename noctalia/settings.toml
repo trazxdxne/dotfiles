@@ -1,0 +1,169 @@
+[bar]
+order = [ "default", "bar" ]
+
+    [bar.bar]
+    border = "on_primary"
+    capsule_radius = 6
+    end = []
+    layer = "overlay"
+    margin_edge = 6
+    margin_ends = 930
+    margin_opposite_edge = 6
+    padding = 0
+    radius = 6
+    reserve_space = false
+    shadow = false
+    show_on_workspace_switch = false
+    start = []
+    thickness = 25
+
+    [bar.default]
+    capsule = true
+    capsule_radius = 12
+    center = []
+    contact_shadow = true
+    end = [
+        "media",
+        "tray",
+        "notifications",
+        "clipboard",
+        "network",
+        "bluetooth",
+        "volume",
+        "brightness",
+        "battery",
+        "control-center",
+        "session",
+        "ram"
+    ]
+    margin_edge = 6
+    margin_ends = 6
+    reserve_space = false
+    shadow = false
+    thickness = 30
+
+        [bar.default.monitor.DP-1]
+
+        [bar.default.monitor.HDMI-A-1]
+        enabled = false
+
+[desktop_widgets]
+schema_version = 2
+widget_order = []
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [desktop_widgets.widget]
+
+[dock]
+active_monitor_only = true
+monitors = [ "DP-1" ]
+radius = 12
+
+[lockscreen_widgets]
+enabled = false
+schema_version = 2
+widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@HDMI-A-1" ]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 960.0
+    cy = 961.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 1200.0
+    cy = 961.0
+    output = "HDMI-A-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+[shell]
+niri_overview_type_to_launch_enabled = true
+polkit_agent = true
+
+    [shell.animation]
+    speed = 4.0
+
+    [shell.screen_corners]
+    size = 90
+
+[theme]
+builtin = "Catppuccin"
+community_palette = "Catppuccin Macchiato Pink"
+source = "wallpaper"
+
+    [theme.templates]
+    builtin_ids = [ "gtk3", "kcolorscheme", "niri", "qt", "wezterm" ]
+    community_ids = [ "obsidian", "zed", "antigravity", "telegram", "micro" ]
+
+[wallpaper.default]
+path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+
+[wallpaper.last]
+path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+
+[wallpaper.monitors.DP-1]
+path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+
+[wallpaper.monitors.HDMI-A-1]
+path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+
+[widget.clipboard]
+enabled = false
+
+[widget.clock]
+enabled = true
+tooltip_format = "%A, %d %B %Y г."
+
+[widget.control-center]
+anchor = true
+enabled = false
+
+[widget.launcher]
+enabled = false
+
+[widget.session]
+enabled = false
+
+[widget.wallpaper]
+enabled = false
+
+[widget.workspaces]
+active_pill_size = 2.0
+enabled = true

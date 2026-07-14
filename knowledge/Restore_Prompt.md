@@ -66,3 +66,6 @@
       • `pkexec systemctl enable ly@tty2.service`
 4. Напиши мне красивый отчет, когда всё будет готово!
 ```
+ln -s ~/dotfiles/noctalia/settings.toml ~/.local/state/noctalia/settings.toml
+ln -s ~/dotfiles/noctalia/patches/telegram.tdesktop-theme ~/.local/state/noctalia/community-templates/telegram/telegram.tdesktop-theme
+ln -s ~/dotfiles/noctalia/custom-templates/micro ~/.local/state/noctalia/community-templates/micro
