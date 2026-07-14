@@ -91,12 +91,6 @@ layout {
     }
 }
 
-environment {
-    QT_QPA_PLATFORMTHEME "qt5ct"
-    QT_QPA_PLATFORM "wayland;xcb"
-    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
-}
-
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY" "XDG_CURRENT_DESKTOP"
 spawn-at-startup "noctalia"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
