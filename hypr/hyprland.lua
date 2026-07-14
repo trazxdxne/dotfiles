@@ -32,10 +32,10 @@ hl.monitor({
     output   = "HDMI-A-1",
     mode     = "2400x1080",
     position = "360x1080",
-    scale    = "2.5",
+    scale    = "1",
 })
 
-hl.workspace_rule({ workspace = "1 ", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "1 ", monitor = "DP-1" })
 
 
 ---------------------
@@ -62,10 +62,6 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("noctalia")
     hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
     hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
-    hl.exec_cmd("swaybg -i ~/Pictures/Wallpapers/mountains.jpg -m fill")
-    hl.exec_cmd("sleep 2 && niri-autostart")
-    hl.exec_cmd("wl-paste --type text --watch cliphist store")
-    hl.exec_cmd("wl-paste --type image --watch cliphist store")
     hl.exec_cmd("wayvnc -f 60 -r --output=HDMI-A-1 0.0.0.0")
 end)
 
@@ -240,18 +236,19 @@ hl.config({
 
 hl.config({
     input = {
-        kb_layout  = "us",
+        kb_layout  = "us,ru",
         kb_variant = "",
         kb_model   = "",
-        kb_options = "",
+        kb_options = "grp:caps_toggle,lv3:ralt_switch,misc:typo",
         kb_rules   = "",
 
         follow_mouse = 1,
 
         sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
+        accel_profile = "flat",
 
         touchpad = {
-            natural_scroll = false,
+            natural_scroll = true,
         },
     },
 })
