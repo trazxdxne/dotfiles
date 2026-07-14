@@ -317,12 +317,26 @@ hl.bind(mainMod .. " + CTRL + K",    hl.dsp.window.move({ direction = "u" }))
 hl.bind(mainMod .. " + CTRL + J",  hl.dsp.window.move({ direction = "d" }))
 
 -- Switch workspaces with mainMod + [0-9]
--- Move active window to a workspace with mainMod + SHIFT + [0-9]
+-- Move active window to a workspace with mainMod + SHIFT + [0-9] (and mainMod + CTRL + [0-9] to match Niri)
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
     hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i}))
     hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
+    hl.bind(mainMod .. " + CTRL + " .. key,      hl.dsp.window.move({ workspace = i }))
 end
+
+-- Relative workspace navigation (matching Niri's Mod + U/I and Mod + Page_Down/Page_Up)
+hl.bind(mainMod .. " + U",              hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + I",              hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + Page_Down",      hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + Page_Up",        hl.dsp.focus({ workspace = "e-1" }))
+
+-- Relative window move to workspace (matching Niri's Mod + CTRL + U/I and Mod + CTRL + Page_Down/Page_Up)
+hl.bind(mainMod .. " + CTRL + U",         hl.dsp.window.move({ workspace = "e+1" }))
+hl.bind(mainMod .. " + CTRL + I",         hl.dsp.window.move({ workspace = "e-1" }))
+hl.bind(mainMod .. " + CTRL + Page_Down", hl.dsp.window.move({ workspace = "e+1" }))
+hl.bind(mainMod .. " + CTRL + Page_Up",   hl.dsp.window.move({ workspace = "e-1" }))
+
 
 -- Example special workspace (scratchpad)
 hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
