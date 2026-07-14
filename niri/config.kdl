@@ -94,6 +94,7 @@ layout {
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY" "XDG_CURRENT_DESKTOP"
 spawn-at-startup "noctalia"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
+spawn-sh-at-startup "sleep 2 && niri-autostart"
 spawn-at-startup "wayvnc" "-f" "60" "-r" "--output=HDMI-A-1" "0.0.0.0"
 
 prefer-no-csd
