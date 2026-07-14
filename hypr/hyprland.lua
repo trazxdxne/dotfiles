@@ -45,7 +45,7 @@ hl.workspace_rule({ workspace = "1 ", monitor = "DP-1" })
 -- Set programs that you use
 local terminal    = "wezterm"
 local fileManager = "nautilus"
-local menu        = "pkill fuzzel || fuzzel"
+local menu        = "noctalia msg panel-toggle launcher"
 
 
 -------------------
