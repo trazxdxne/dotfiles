@@ -18,35 +18,7 @@ config.max_fps = 200
 config.harfbuzz_features = { 'calt=1', 'clig=1', 'liga=1' }
 
 
-config.colors = {
-  background = '#1e1e2e',
-  foreground = '#cdd6f4',
-  cursor_bg = '#f5e0dc',
-  cursor_fg = '#1e1e2e',
-  cursor_border = '#f5e0dc',
-  selection_bg = '#585b70',
-  selection_fg = '#cdd6f4',
-  ansi = {
-    '#1e1e2e', -- 0 black
-    '#f38ba8', -- 1 red (high usage)
-    '#cba6f7', -- 2 green -> mauve/purple (low usage in fastfetch, bars in alsamixer)
-    '#fab387', -- 3 yellow -> peach (mid usage)
-    '#89b4fa', -- 4 blue
-    '#f5c2e7', -- 5 magenta -> pink
-    '#f5e0dc', -- 6 cyan -> rosewater (text in alsamixer)
-    '#a6adc8', -- 7 white -> light grey (subtext1)
-  },
-  brights = {
-    '#6c7086', -- 8 bright black -> medium grey (overlay0)
-    '#f38ba8', -- 9 bright red
-    '#cba6f7', -- 10 bright green -> mauve/purple
-    '#fab387', -- 11 bright yellow -> peach
-    '#89b4fa', -- 12 bright blue
-    '#f5c2e7', -- 13 bright magenta -> pink
-    '#f5e0dc', -- 14 bright cyan -> rosewater
-    '#bac2de', -- 15 bright white -> light grey (subtext0)
-  }
-}
+config.color_scheme = 'Noctalia'
 -- Optional: Window appearance
 config.window_background_opacity = 0.99
 config.window_close_confirmation = 'NeverPrompt'
