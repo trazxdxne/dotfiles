@@ -8,85 +8,85 @@
     "source": "CachyOS"
   },
   "display": {
-    "separator": "   "
+    "separator": "  "
   },
   "modules": [
     "break",
     {
       "type": "os",
-      "key": " DISTRO",
+      "key": "DISTRO",
       "keyColor": "yellow"
     },
     {
       "type": "kernel",
-      "key": "│  ",
+      "key": "│ Kernel",
       "keyColor": "yellow"
     },
     {
       "type": "packages",
-      "key": "│  󰏖",
+      "key": "│ Packages",
       "keyColor": "yellow"
     },
     {
       "type": "command",
-      "key": "│  ",
+      "key": "│ Install",
       "keyColor": "yellow",
       "text": "birth_install=$(stat -c %W / 2>/dev/null || stat -f %B / 2>/dev/null || echo 0); case $birth_install in ''|0|-1) echo unknown;; *) current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days;; esac"
     },
     {
       "type": "shell",
-      "key": "│  ",
+      "key": "│ Shell",
       "keyColor": "yellow"
     },
     {
       "type": "wm",
-      "key": " DE/WM",
+      "key": "DE/WM",
       "keyColor": "blue"
     },
     {
       "type": "wmtheme",
-      "key": "│  󰉼",
+      "key": "│ Theme",
       "keyColor": "blue"
     },
     {
       "type": "icons",
-      "key": "│  󰀻",
+      "key": "│ Icons",
       "keyColor": "blue"
     },
     {
       "type": "cursor",
-      "key": "│  ",
+      "key": "│ Cursor",
       "keyColor": "blue"
     },
     {
       "type": "terminalfont",
-      "key": "│  ",
+      "key": "│ Font",
       "keyColor": "blue"
     },
     {
       "type": "terminal",
-      "key": "│  ",
+      "key": "│ Terminal",
       "keyColor": "blue"
     },
     {
       "type": "host",
-      "key": "󰌢 SYSTEM",
+      "key": "SYSTEM",
       "keyColor": "green"
     },
     {
       "type": "cpu",
-      "key": "│  󰻠",
+      "key": "│ CPU",
       "keyColor": "green"
     },
     {
       "type": "gpu",
-      "key": "│  󰻑",
+      "key": "│ GPU",
       "format": "{2}",
       "keyColor": "green"
     },
     {
       "type": "display",
-      "key": "│  󰍹",
+      "key": "│ Display",
       "keyColor": "green",
       "compactType": "original-with-refresh-rate"
     },
@@ -94,17 +94,17 @@
     "physicaldisk",
     {
       "type": "memory",
-      "key": "│  󰾆",
+      "key": "│ Memory",
       "keyColor": "green"
     },
     {
       "type": "swap",
-      "key": "│  󰓡",
+      "key": "│ Swap",
       "keyColor": "green"
     },
     {
       "type": "uptime",
-      "key": "│  󰅐",
+      "key": "│ Uptime",
       "keyColor": "green"
     },
     "break"

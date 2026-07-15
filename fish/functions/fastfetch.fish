@@ -40,7 +40,7 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
     set -l disks_json "    {
       \"type\": \"disk\",
       \"folders\": \"/\",
-      \"key\": \"│  󱛟 $root_model (/)\",
+      \"key\": \"│ 󱛟 $root_model (/)\",
       \"keyColor\": \"green\"
     }"
 
@@ -49,7 +49,7 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
     {
       \"type\": \"disk\",
       \"folders\": \"/mnt/HDD_Linux\",
-      \"key\": \"│  󱛟 $hdd_model (/mnt/HDD_Linux)\",
+      \"key\": \"│ 󱛟 $hdd_model (/mnt/HDD_Linux)\",
       \"keyColor\": \"green\"
     }"
     end
