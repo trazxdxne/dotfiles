@@ -36,15 +36,15 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
         end
     end
 
-    # 3. Build two-module format for each disk dynamically (prevents alignment shifts)
+    # 3. Build two-module format for each disk dynamically (with separator embedded in key)
     set -l key1_name "  󱛟 $root_model (/)"
-    set -l key1_len (string length "$key1_name")
+    set -l key1_len (math (string length "$key1_name") + 3)
     set -l key1_spaces (string repeat -n $key1_len " ")
 
     set -l disks_json "    {
       \"type\": \"disk\",
       \"folders\": \"/\",
-      \"key\": \"$key1_name\",
+      \"key\": \"$key1_name • \",
       \"keyColor\": \"green\",
       \"format\": \"{size-used} / {size-total} ({size-percentage})\"
     },
@@ -53,19 +53,19 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
       \"folders\": \"/\",
       \"key\": \"$key1_spaces\",
       \"keyColor\": \"green\",
-      \"format\": \"{size-percentage-bar}\"
+      \"format\": \"  {size-percentage-bar}\"
     }"
 
     if test -n "$hdd_dev"; and test -n "$hdd_model"
         set -l key2_name "  󱛟 $hdd_model (/mnt/HDD_Linux)"
-        set -l key2_len (string length "$key2_name")
+        set -l key2_len (math (string length "$key2_name") + 3)
         set -l key2_spaces (string repeat -n $key2_len " ")
 
         set disks_json "$disks_json,
     {
       \"type\": \"disk\",
       \"folders\": \"/mnt/HDD_Linux\",
-      \"key\": \"$key2_name\",
+      \"key\": \"$key2_name • \",
       \"keyColor\": \"green\",
       \"format\": \"{size-used} / {size-total} ({size-percentage})\"
     },
@@ -74,7 +74,7 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
       \"folders\": \"/mnt/HDD_Linux\",
       \"key\": \"$key2_spaces\",
       \"keyColor\": \"green\",
-      \"format\": \"{size-percentage-bar}\"
+      \"format\": \"  {size-percentage-bar}\"
     }"
     end
 
