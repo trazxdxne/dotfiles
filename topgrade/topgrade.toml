@@ -137,7 +137,7 @@ disable = ["hyprpm"]
 # Custom commands
 [commands]
 "niri-autostart" = "cargo install --path ~/Projects/niri-autostart --root ~/.local --locked --force"
-"Equicord" = "git -C ~/Programs/Equicord checkout -- package.json pnpm-lock.yaml && git -C ~/Programs/Equicord pull && cp -f ~/Projects/equicord-os-display-name/osDisplayName.ts ~/Programs/Equicord/src/userplugins/osDisplayName.ts && cd ~/Programs/Equicord && pnpm install && pnpm build"
+"Equicord" = "git -C ~/Programs/Equicord checkout -- package.json pnpm-lock.yaml && git -C ~/Programs/Equicord pull && cp -f ~/Projects/equicord-os-display-name/osDisplayName.ts ~/Programs/Equicord/src/userplugins/osDisplayName.ts && cd ~/Programs/Equicord && pnpm install && pnpm build && pnpm inject"
 "anicli-ru-patch" = "~/Projects/anicli-ru-celluloid/patch.sh"
 "ly-dm" = "cd ~/Projects/ly && zig build installexe -Ddest_directory=/tmp/ly-build -Dname=ly-dm -Doptimize=ReleaseSafe && pkexec cp -f /tmp/ly-build/usr/bin/ly-dm /usr/bin/ly-dm && rm -rf /tmp/ly-build"
 
