@@ -49,6 +49,9 @@
       • `~/.agents/skills/arch-linux-triage` -> `~/dotfiles/.agents/skills/arch-linux-triage`
       • `~/.agents/skills/baby` -> `~/dotfiles/.agents/skills/baby`
       • `~/.config/uwsm/env` -> `~/dotfiles/uwsm/env`
+      • `~/.config/fish/functions/fastfetch.fish` -> `~/dotfiles/fish/functions/fastfetch.fish`
+      • `~/.config/fastfetch/config.jsonc` -> `~/dotfiles/fastfetch/config.jsonc`
+      • `~/.config/fastfetch/config.jsonc.template` -> `~/dotfiles/fastfetch/config.jsonc.template`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/ly/config.ini /etc/ly/config.ini`
