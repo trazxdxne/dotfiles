@@ -1,17 +1,28 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
-    "type": "data",
-    "printRemaining": false,
+    "type": "auto",
+    "source": "CachyOS",
     "padding": {
-      "top": 2,
-      "left": 2
-    },
-    "source": "\u001b[32m     ...........\n    /,,,,...../\n   /,,,..,,../   ()\n  /,,,,../\n /,,,.../     /'\\\n/,...../      \\,/\n\\,,,,,,\\             _\n \\,,....\\           / \\\n  \\...,..\\          \\_/\n   \\..,,,,,,,,,,,,/\n    \\,,........,,/\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+      "top": 1
+    }
   },
   "display": {
     "separator": " • ",
+    "percent": {
+      "type": 11
+    },
     "bar": {
+      "border": {
+        "left": "",
+        "leftElapsed": "",
+        "right": "",
+        "rightElapsed": ""
+      },
+      "char": {
+        "total": "",
+        "elapsed": ""
+      },
       "width": 30
     }
   },
@@ -134,22 +145,30 @@
         {
       "type": "disk",
       "folders": "/",
-      "key": "  󱛟 Apacer AS2280P4 256GB (/)        ",
+      "key": "  󱛟 Apacer AS2280P4 256GB (/)",
       "keyColor": "green",
-      "percent": {
-        "type": 3
-      },
-      "format": "{size-used} / {size-total} ({size-percentage})\n                              {size-percentage-bar}"
+      "format": "{size-used} / {size-total} ({size-percentage})"
+    },
+    {
+      "type": "disk",
+      "folders": "/",
+      "key": "                             ",
+      "keyColor": "green",
+      "format": "{size-percentage-bar}"
     },
     {
       "type": "disk",
       "folders": "/mnt/HDD_Linux",
       "key": "  󱛟 WDC WD10EZEX-22M (/mnt/HDD_Linux)",
       "keyColor": "green",
-      "percent": {
-        "type": 3
-      },
-      "format": "{size-used} / {size-total} ({size-percentage})\n                              {size-percentage-bar}"
+      "format": "{size-used} / {size-total} ({size-percentage})"
+    },
+    {
+      "type": "disk",
+      "folders": "/mnt/HDD_Linux",
+      "key": "                                     ",
+      "keyColor": "green",
+      "format": "{size-percentage-bar}"
     },
     {
       "type": "custom",
