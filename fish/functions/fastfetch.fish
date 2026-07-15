@@ -69,7 +69,7 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
         end
     end
 
-    # 4. Build the disk modules block
+    # 4. Build the disk modules block (with 30 spaces padding for progress bar alignment)
     set -l disks_json "    {
       \"type\": \"disk\",
       \"folders\": \"/\",
@@ -78,7 +78,7 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
       \"percent\": {
         \"type\": 3
       },
-      \"format\": \"{size-used} / {size-total} ({size-percentage})\\n                                                          {size-percentage-bar}\"
+      \"format\": \"{size-used} / {size-total} ({size-percentage})\\n                              {size-percentage-bar}\"
     }"
 
     if test -n "$key2"
@@ -91,7 +91,7 @@ function fastfetch --description 'Run fastfetch with auto-detected disks'
       \"percent\": {
         \"type\": 3
       },
-      \"format\": \"{size-used} / {size-total} ({size-percentage})\\n                                                          {size-percentage-bar}\"
+      \"format\": \"{size-used} / {size-total} ({size-percentage})\\n                              {size-percentage-bar}\"
     }"
     end
 

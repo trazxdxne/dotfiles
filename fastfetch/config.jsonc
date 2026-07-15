@@ -1,11 +1,13 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
+    "type": "data",
+    "printRemaining": false,
     "padding": {
-      "top": 1
+      "top": 2,
+      "left": 2
     },
-    "type": "auto",
-    "source": "CachyOS"
+    "source": "\u001b[32m     ...........\n    /,,,,...../\n   /,,,..,,../   ()\n  /,,,,../\n /,,,.../     /'\\\n/,...../      \\,/\n\\,,,,,,\\             _\n \\,,....\\           / \\\n  \\...,..\\          \\_/\n   \\..,,,,,,,,,,,,/\n    \\,,........,,/\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
   },
   "display": {
     "separator": " • ",
@@ -17,7 +19,7 @@
     "break",
     {
       "type": "custom",
-      "format": "┌─────────────────────────────── System Info ───────────────────────────────┐"
+      "format": "┌─────────────────────────────────────────────────────────────────────────────┐"
     },
     {
       "type": "os",
@@ -44,6 +46,10 @@
       "type": "shell",
       "key": "   Shell     ",
       "keyColor": "yellow"
+    },
+    {
+      "type": "custom",
+      "format": "├─────────────────────────────────────────────────────────────────────────────┤"
     },
     {
       "type": "wm",
@@ -79,6 +85,10 @@
       "type": "terminal",
       "key": "   Terminal  ",
       "keyColor": "blue"
+    },
+    {
+      "type": "custom",
+      "format": "├─────────────────────────────────────────────────────────────────────────────┤"
     },
     {
       "type": "host",
@@ -119,7 +129,7 @@
     },
     {
       "type": "custom",
-      "format": "──────────────────────────────────────────────────────────────────────────────"
+      "format": "├─────────────────────────────────────────────────────────────────────────────┤"
     },
         {
       "type": "disk",
@@ -129,7 +139,7 @@
       "percent": {
         "type": 3
       },
-      "format": "{size-used} / {size-total} ({size-percentage})\n                                                          {size-percentage-bar}"
+      "format": "{size-used} / {size-total} ({size-percentage})\n                              {size-percentage-bar}"
     },
     {
       "type": "disk",
@@ -139,7 +149,7 @@
       "percent": {
         "type": 3
       },
-      "format": "{size-used} / {size-total} ({size-percentage})\n                                                          {size-percentage-bar}"
+      "format": "{size-used} / {size-total} ({size-percentage})\n                              {size-percentage-bar}"
     },
     {
       "type": "custom",
