@@ -8,109 +8,124 @@
     "source": "CachyOS"
   },
   "display": {
-    "separator": "  "
+    "separator": " • ",
+    "bar": {
+      "width": 30
+    }
   },
   "modules": [
     "break",
     {
+      "type": "custom",
+      "format": "┌─────────────────────────────── System Info ───────────────────────────────┐"
+    },
+    {
       "type": "os",
-      "key": " DISTRO",
+      "key": "   DISTRO    ",
       "keyColor": "yellow"
     },
     {
       "type": "kernel",
-      "key": "│  Kernel",
+      "key": "   Kernel    ",
       "keyColor": "yellow"
     },
     {
       "type": "packages",
-      "key": "│ 󰏖 Packages",
+      "key": "  󰏖 Packages  ",
       "keyColor": "yellow"
     },
     {
       "type": "command",
-      "key": "│  Install",
+      "key": "   Install   ",
       "keyColor": "yellow",
       "text": "birth_install=$(stat -c %W / 2>/dev/null || stat -f %B / 2>/dev/null || echo 0); case $birth_install in ''|0|-1) echo unknown;; *) current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days;; esac"
     },
     {
       "type": "shell",
-      "key": "│  Shell",
+      "key": "   Shell     ",
       "keyColor": "yellow"
     },
     {
       "type": "wm",
-      "key": " DE/WM",
+      "key": "   DE/WM     ",
       "keyColor": "blue"
     },
     {
       "type": "wmtheme",
-      "key": "│ 󰉼 WM Theme",
+      "key": "  󰉼 WM Theme  ",
       "keyColor": "blue"
     },
     {
       "type": "theme",
-      "key": "│ 󰉼 Theme",
+      "key": "  󰉼 Theme     ",
       "keyColor": "blue"
     },
     {
       "type": "icons",
-      "key": "│ 󰀻 Icons",
+      "key": "  󰀻 Icons     ",
       "keyColor": "blue"
     },
     {
       "type": "cursor",
-      "key": "│  Cursor",
+      "key": "   Cursor    ",
       "keyColor": "blue"
     },
     {
       "type": "terminalfont",
-      "key": "│  Font",
+      "key": "   Font      ",
       "keyColor": "blue"
     },
     {
       "type": "terminal",
-      "key": "│  Terminal",
+      "key": "   Terminal  ",
       "keyColor": "blue"
     },
     {
       "type": "host",
-      "key": "󰌢 SYSTEM",
+      "key": "  󰌢 SYSTEM    ",
       "keyColor": "green"
     },
     {
       "type": "cpu",
-      "key": "│ 󰻠 CPU",
+      "key": "  󰻠 CPU       ",
       "keyColor": "green"
     },
     {
       "type": "gpu",
-      "key": "│ 󰻑 GPU",
+      "key": "  󰻑 GPU       ",
       "format": "{2}",
       "keyColor": "green"
     },
     {
       "type": "display",
-      "key": "│ 󰍹 Display",
+      "key": "  󰍹 Display   ",
       "keyColor": "green",
       "compactType": "original-with-refresh-rate"
     },
-    "disk",
-    "physicaldisk",
     {
       "type": "memory",
-      "key": "│ 󰾆 Memory",
+      "key": "  󰾆 Memory    ",
       "keyColor": "green"
     },
     {
       "type": "swap",
-      "key": "│ 󰓡 Swap",
+      "key": "  󰓡 Swap      ",
       "keyColor": "green"
     },
     {
       "type": "uptime",
-      "key": "│ 󰅐 Uptime",
+      "key": "  󰅐 Uptime    ",
       "keyColor": "green"
+    },
+    {
+      "type": "custom",
+      "format": "──────────────────────────────────────────────────────────────────────────────"
+    },
+    "disk",
+    "physicaldisk",
+    {
+      "type": "custom",
+      "format": "└─────────────────────────────────────────────────────────────────────────────┘"
     },
     "break"
   ]
