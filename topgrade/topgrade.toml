@@ -139,7 +139,7 @@ disable = ["hyprpm"]
 "niri-autostart" = "cargo install --path ~/Projects/niri-autostart --root ~/.local --locked --force"
 "Equicord" = "git -C ~/Programs/Equicord checkout -- package.json pnpm-lock.yaml && git -C ~/Programs/Equicord pull && cp -f ~/Projects/equicord-os-display-name/osDisplayName.ts ~/Programs/Equicord/src/userplugins/osDisplayName.ts && cd ~/Programs/Equicord && pnpm install && pnpm build && echo | pnpm inject"
 "anicli-ru-patch" = "~/Projects/anicli-ru-celluloid/patch.sh"
-
+"noctalia-greeter" = "cd ~/Projects/noctalia-greeter && git pull && meson setup build-release --prefix=/usr --buildtype=release --reconfigure && meson compile -C build-release && pkexec sh -c 'cd /home/trazxdxne/Projects/noctalia-greeter && meson install -C build-release && ./scripts/setup_greeter_system.sh'"
 
 
 [python]
