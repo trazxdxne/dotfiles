@@ -50,6 +50,7 @@
       • `~/.agents/skills/baby` -> `~/dotfiles/.agents/skills/baby`
       • `~/.config/uwsm/env` -> `~/dotfiles/uwsm/env`
       • `~/.config/fish/functions/fastfetch.fish` -> `~/dotfiles/fish/functions/fastfetch.fish`
+      • `~/.config/fish/functions/dotpush.fish` -> `~/dotfiles/fish/functions/dotpush.fish`
       • `~/.config/fastfetch/config.jsonc` -> `~/dotfiles/fastfetch/config.jsonc`
       • `~/.config/fastfetch/config.jsonc.template` -> `~/dotfiles/fastfetch/config.jsonc.template`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
