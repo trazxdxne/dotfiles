@@ -2,19 +2,19 @@
 
 # Отправляем мягкий сигнал завершения всем процессам Brave, 
 # чтобы он успел сохранить состояние сессии и закрыть базы данных.
-killall -15 brave-origin 2>/dev/null
+killall -15 brave 2>/dev/null
 
 # Даем ему время корректно завершиться (максимум 5 секунд).
 # Без этого цикла система может оборвать Wayland-соединение до того,
 # как браузер закончит сохранение, и он все равно решит, что "вылетел".
 TIMEOUT=50
 COUNT=0
-while pgrep -x "brave-origin" > /dev/null; do
+while pgrep -x "brave" > /dev/null; do
     sleep 0.1
     COUNT=$((COUNT + 1))
     if [ "$COUNT" -ge "$TIMEOUT" ]; then
         # Если за 5 секунд не закрылся, убиваем жестко
-        killall -9 brave-origin 2>/dev/null
+        killall -9 brave 2>/dev/null
         break
     fi
 done
