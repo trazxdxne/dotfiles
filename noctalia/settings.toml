@@ -1,3 +1,5 @@
+config_version = 2
+
 [backdrop]
 blur_intensity = 0.0
 enabled = false
@@ -24,6 +26,7 @@ order = [ "default", "bar" ]
     thickness = 25
 
     [bar.default]
+    auto_hide = false
     capsule = true
     capsule_radius = 12
     center = [ "clock" ]
@@ -48,6 +51,7 @@ order = [ "default", "bar" ]
     panel_overlap = 1
     reserve_space = true
     shadow = false
+    show_on_workspace_switch = false
     start = [ "launcher", "wallpaper", "workspaces" ]
     thickness = 30
 
@@ -77,6 +81,11 @@ widget_order = []
 active_monitor_only = true
 monitors = [ "DP-1" ]
 radius = 12
+
+[hooks]
+logging_out = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
+rebooting = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
+shutting_down = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
 
 [lockscreen_widgets]
 enabled = true
@@ -186,6 +195,9 @@ settings_show_advanced = true
 
     [shell.animation]
     speed = 4.0
+
+    [shell.greeter_sync]
+    auto_sync = true
 
     [shell.launcher]
     app_grid = false
