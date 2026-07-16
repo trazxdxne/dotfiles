@@ -213,9 +213,9 @@ settings_show_advanced = true
 
 [theme]
 builtin = "Catppuccin"
-community_palette = "ADW"
+community_palette = "Murata"
 mode = "dark"
-source = "wallpaper"
+source = "community"
 wallpaper_scheme = "m3-rainbow"
 
     [theme.templates]
@@ -224,19 +224,20 @@ wallpaper_scheme = "m3-rainbow"
 
 [wallpaper]
 enabled = true
+fill_mode = "fit"
 transition_on_startup = false
 
     [wallpaper.default]
-    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-portrait-bi.jpg"
 
     [wallpaper.last]
-    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-portrait-bi.jpg"
 
     [wallpaper.monitors.DP-1]
-    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-portrait-bi.jpg"
 
     [wallpaper.monitors.HDMI-A-1]
-    path = "/home/trazxdxne/Pictures/Wallpapers/mountains.jpg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-portrait-bi.jpg"
 
 [widget.bluetooth]
 enabled = false

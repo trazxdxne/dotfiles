@@ -54,19 +54,15 @@
       • `~/.config/fastfetch/config.jsonc.template` -> `~/dotfiles/fastfetch/config.jsonc.template`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
-     • `pkexec cp ~/dotfiles/ly/config.ini /etc/ly/config.ini`
-     • `pkexec cp ~/dotfiles/ly/niri-uwsm.desktop /usr/share/wayland-sessions/niri-uwsm.desktop`
-     • `pkexec mkdir -p /etc/systemd/system/ly-kmsconvt@.service.d`
-     • `pkexec cp ~/dotfiles/ly/ly-kmsconvt-override.conf /etc/systemd/system/ly-kmsconvt@.service.d/override.conf`
+     • `pkexec cp ~/dotfiles/noctalia-greeter/config.toml /etc/greetd/config.toml`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
      • `pkexec cp ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules`
      • `pkexec cp ~/dotfiles/polkit-1/org.freedesktop.Flatpak.rules /etc/polkit-1/rules.d/org.freedesktop.Flatpak.rules`
      • `pkexec mkdir -p /usr/lib/firmware/edid && pkexec cp ~/dotfiles/edid/combined.bin /usr/lib/firmware/edid/combined.bin`
-    - Настрой системные службы для Ly (потребуется pkexec):
-      • `pkexec systemctl disable greetd`
+    - Настрой системные службы для Noctalia Greeter (потребуется pkexec):
+      • `pkexec systemctl disable ly`
       • `pkexec systemctl disable getty@tty1.service`
-      • `pkexec systemctl enable ly-kmsconvt@tty1.service`
-      • `pkexec systemctl enable ly@tty2.service`
+      • `pkexec systemctl enable greetd`
 4. Напиши мне красивый отчет, когда всё будет готово!
 ```
 ln -s ~/dotfiles/noctalia/settings.toml ~/.local/state/noctalia/settings.toml

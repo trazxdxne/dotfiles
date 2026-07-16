@@ -109,6 +109,7 @@ window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     default-column-width {}
     open-maximized true
+    open-focused true
 }
 
 window-rule {
@@ -140,6 +141,7 @@ window-rule {
 window-rule {
     match app-id=r#"^steam$"#
     open-on-workspace "2"
+    open-focused true
 }
 
 window-rule {
@@ -179,6 +181,10 @@ window-rule {
 window-rule {
     match title="(?i)Blacklist"
     open-maximized true
+}
+window-rule {
+	match app-id=r#"^org\.gnome\.nautilus$"#
+	open-focused true
 }
 
 binds {
