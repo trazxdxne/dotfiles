@@ -58,6 +58,7 @@
      • `pkexec cp ~/dotfiles/noctalia-greeter/config.toml /etc/greetd/config.toml`
      • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
      • `pkexec cp ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules`
+     • `pkexec cp ~/dotfiles/polkit-1/20-noctalia-greeter.rules /etc/polkit-1/rules.d/20-noctalia-greeter.rules`
      • `pkexec cp ~/dotfiles/polkit-1/org.freedesktop.Flatpak.rules /etc/polkit-1/rules.d/org.freedesktop.Flatpak.rules`
      • `pkexec mkdir -p /usr/lib/firmware/edid && pkexec cp ~/dotfiles/edid/combined.bin /usr/lib/firmware/edid/combined.bin`
     - Настрой системные службы для Noctalia Greeter (потребуется pkexec):
