@@ -97,6 +97,9 @@ spawn-at-startup "ags" "run"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 spawn-sh-at-startup "sleep 2 && niri-autostart"
 spawn-at-startup "wayvnc" "-f" "60" "-r" "--output=HDMI-A-1" "0.0.0.0"
+hotkey-overlay {
+    skip-at-startup
+}
 
 prefer-no-csd
 screenshot-path null
