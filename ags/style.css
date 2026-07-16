@@ -12,7 +12,7 @@ window {
     border: 1px solid transparent;
     padding: 2px 10px; /* Оставляем таблетку компактной */
     border-radius: 12px;
-    transition: all 0.2s ease;
+    transition: all 0.05s ease;
 }
 
 .clock-time {

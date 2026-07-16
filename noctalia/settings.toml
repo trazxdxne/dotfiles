@@ -1,11 +1,15 @@
 config_version = 2
 
+[accessibility]
+high_contrast = false
+
 [audio]
 enable_sounds = false
 
 [backdrop]
-blur_intensity = 0.0
+blur_intensity = 0.14999999664723873
 enabled = false
+tint_intensity = 0.21999999508261681
 
 [bar]
 order = [ "default", "bar" ]
@@ -17,18 +21,20 @@ order = [ "default", "bar" ]
     capsule_radius = 6
     enabled = false
     end = []
+    font_family = "Adwaita Sans"
     layer = "overlay"
     margin_edge = 8
-    margin_ends = 930
+    margin_ends = 0
     margin_opposite_edge = 6
     padding = 0
     reserve_space = false
     shadow = false
     show_on_workspace_switch = false
     start = []
-    thickness = 25
+    thickness = 10
 
     [bar.default]
+    background_opacity = 0.99999997764825821
     capsule = true
     capsule_radius = 12
     center = [ "clock" ]
@@ -48,9 +54,12 @@ order = [ "default", "bar" ]
         "notifications"
     ]
     font_family = "Adwaita Sans"
+    font_weight = 500
     margin_edge = 6
     margin_ends = 6
+    padding = 6
     panel_overlap = 1
+    position = "top"
     reserve_space = true
     shadow = false
     show_on_workspace_switch = false
@@ -58,10 +67,9 @@ order = [ "default", "bar" ]
     start = [ "launcher", "wallpaper", "workspaces" ]
     thickness = 30
 
-        [bar.default.monitor.DP-1]
-
         [bar.default.monitor.HDMI-A-1]
         enabled = false
+        font_family = "Adwaita Sans"
 
 [calendar]
 enabled = false
@@ -85,8 +93,20 @@ widget_order = []
 
 [dock]
 active_monitor_only = true
+auto_hide = false
+concave_edge_corners = true
+cross_axis_padding = 9
+enabled = false
+inactive_opacity = 0.65999998524785042
+item_spacing = 0
+launcher_position = "none"
+main_axis_padding = 16
 monitors = [ "DP-1" ]
+pinned = []
+position = "bottom"
 radius = 12
+reserve_space = false
+show_dots = true
 
 [hooks]
 logging_out = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
@@ -168,6 +188,9 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@HDMI-A-1", "
         color = "primary"
         shadow = false
 
+[nightlight]
+enabled = false
+
 [notification]
 layer = "overlay"
 
@@ -200,6 +223,10 @@ enabled = []
     name = "community"
 
 [shell]
+app_icon_color = "primary"
+app_icon_colorize = false
+avatar_path = "/home/trazxdxne/Pictures/Avatars/whats-your-opinion-on-hatake-kakashi-is-he-overrated-v0-54lk9zp713kc1.webp"
+font_family = "Adwaita Sans"
 niri_overview_type_to_launch_enabled = true
 polkit_agent = true
 screen_time_enabled = true
@@ -210,6 +237,7 @@ settings_show_advanced = true
 
     [shell.greeter_sync]
     auto_sync = true
+    privilege_command = "pkexec"
 
     [shell.launcher]
     app_grid = false
@@ -239,6 +267,7 @@ settings_show_advanced = true
 builtin = "Catppuccin"
 community_palette = "Murata"
 mode = "dark"
+pure_black_dark = false
 source = "community"
 wallpaper_scheme = "m3-rainbow"
 
@@ -248,8 +277,8 @@ wallpaper_scheme = "m3-rainbow"
 
 [wallpaper]
 enabled = true
-fill_mode = "fit"
-transition_on_startup = false
+fill_mode = "crop"
+transition_on_startup = true
 
     [wallpaper.default]
     path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-portrait-bi.jpg"
@@ -263,6 +292,9 @@ transition_on_startup = false
     [wallpaper.monitors.HDMI-A-1]
     path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-portrait-bi.jpg"
 
+[weather]
+enabled = false
+
 [widget.bluetooth]
 enabled = false
 
@@ -270,8 +302,10 @@ enabled = false
 enabled = false
 
 [widget.clock]
-enabled = false
-tooltip_format = "%A, %d %B %Y г."
+enabled = true
+format = "            "
+scale = 1.1000000000000001
+tooltip_format = "{:%A, %d %B %Y г.}"
 
 [widget.control-center]
 anchor = true
