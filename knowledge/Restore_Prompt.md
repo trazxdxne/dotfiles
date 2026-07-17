@@ -48,6 +48,7 @@
       • `~/.agents/skills/qt-qml-docs` -> `~/dotfiles/.agents/skills/qt-qml-docs`
       • `~/.agents/skills/arch-linux-triage` -> `~/dotfiles/.agents/skills/arch-linux-triage`
       • `~/.agents/skills/baby` -> `~/dotfiles/.agents/skills/baby`
+      • `~/.agents/skills/obsidian-task-organizer` -> `~/dotfiles/.agents/skills/obsidian-task-organizer`
       • `~/.config/uwsm/env` -> `~/dotfiles/uwsm/env`
       • `~/.config/fish/functions/fastfetch.fish` -> `~/dotfiles/fish/functions/fastfetch.fish`
       • `~/.config/fish/functions/dotpush.fish` -> `~/dotfiles/fish/functions/dotpush.fish`
