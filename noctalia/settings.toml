@@ -139,11 +139,14 @@ widget_order = [
     "lockscreen-login-box@winit",
     "lockscreen-login-box@DP-1",
     "lockscreen-login-box@HDMI-A-1",
-    "lockscreen-widget-0000000000000001"
+    "lockscreen-widget-0000000000000001",
+    "lockscreen-widget-0000000000000003",
+    "lockscreen-widget-0000000000000004",
+    "lockscreen-widget-0000000000000005"
 ]
 
     [lockscreen_widgets.grid]
-    cell_size = 64
+    cell_size = 16
     major_interval = 4
     visible = true
 
@@ -230,6 +233,51 @@ widget_order = [
         color = "primary"
         shadow = false
 
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
+    box_height = 48.0
+    box_width = 48.0
+    cx = 1872.0
+    cy = 932.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
+        background = true
+        color = "primary"
+        glyph = "reboot"
+        variant = "default"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
+    box_height = 48.0
+    box_width = 48.0
+    cx = 1872.0
+    cy = 988.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
+        background = true
+        color = "primary"
+        glyph = "suspend"
+        variant = "default"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000005]
+    box_height = 48.0
+    box_width = 48.0
+    cx = 1872.0
+    cy = 1044.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000005.settings]
+        background = true
+        color = "secondary"
+        glyph = "shutdown"
+        variant = "primary"
+
 [nightlight]
 enabled = false
 
@@ -271,8 +319,8 @@ app_icon_color = "primary"
 app_icon_colorize = false
 avatar_path = "/home/trazxdxne/Pictures/Avatars/whats-your-opinion-on-hatake-kakashi-is-he-overrated-v0-54lk9zp713kc1.webp"
 button_borders = false
-clipboard_auto_paste = "auto"
-clipboard_history_max_entries = 100
+clipboard_auto_paste = "off"
+clipboard_history_max_entries = 150
 font_family = "Adwaita Sans"
 niri_overview_type_to_launch_enabled = false
 password_style = "default"
