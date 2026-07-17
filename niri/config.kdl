@@ -144,6 +144,15 @@ window-rule {
 window-rule {
     match app-id=r#"^steam$"#
     open-on-workspace "2"
+    open-maximized true
+    open-focused true
+}
+
+window-rule {
+    match app-id=r#"^steam$"# title="Friends List"
+    open-on-workspace "2"
+    open-maximized false
+    default-column-width { proportion 0.33; }
     open-focused true
 }
 
