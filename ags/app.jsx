@@ -9,16 +9,15 @@ import style from "./style.css"
 const timeVal = createPoll("", 1000, 'date +"%H:%M"')
 
 const barWindows = []
+const fileMonitors = [] // держим ссылки живыми, иначе GC их убьёт
 let cssProvider = null
 
-function readNiriAccentColor() {
-    const pathsToTry = [
-        GLib.build_filenamev([GLib.get_home_dir(), ".config", "niri", "noctalia.kdl"]),
-        GLib.build_filenamev([GLib.get_home_dir(), ".config", "niri", "config.kdl"])
-    ]
+const NIRI_CONFIG_FILES = ["noctalia.kdl", "config.kdl"]
 
-    for (const path of pathsToTry) {
+function readNiriAccentColor() {
+    for (const filename of NIRI_CONFIG_FILES) {
         try {
+            const path = GLib.build_filenamev([GLib.get_home_dir(), ".config", "niri", filename])
             const file = Gio.File.new_for_path(path)
             const [ok, content] = file.load_contents(null)
             if (ok) {
@@ -31,14 +30,16 @@ function readNiriAccentColor() {
                     }
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            console.error(`[bar] failed to read ${filename}: ${e.message}`)
+        }
     }
     return "#f5c2e7" // fallback
 }
 
 function updateAccentColor() {
     const accentColor = readNiriAccentColor()
-    
+
     if (!cssProvider) {
         cssProvider = new Gtk.CssProvider()
         Gtk.StyleContext.add_provider_for_screen(
@@ -47,7 +48,7 @@ function updateAccentColor() {
             Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
     }
-    
+
     try {
         cssProvider.load_from_data(`
             .Bar.fullscreen .clock-box {
@@ -57,7 +58,9 @@ function updateAccentColor() {
                 border-width: 1px;
             }
         `)
-    } catch (e) {}
+    } catch (e) {
+        console.error(`[bar] failed to update accent color CSS: ${e.message}`)
+    }
 }
 
 function monitorConfig(filename) {
@@ -72,22 +75,34 @@ function monitorConfig(filename) {
                 return GLib.SOURCE_REMOVE
             })
         })
-    } catch (e) {}
+        fileMonitors.push(monitor) // важно: без этого monitor может быть собран GC
+    } catch (e) {
+        console.error(`[bar] failed to watch ${filename}: ${e.message}`)
+    }
 }
 
 const handleWindows = (windows) => {
     if (!windows) return
-    
+
     barWindows.forEach(win => {
         if (!win) return
-        
-        let monitorWidth = 1920
-        let monitorHeight = 1080
+
+        let monitorWidth = null
+        let monitorHeight = null
         try {
             const rect = win.monitor.get_geometry()
             monitorWidth = rect.width
             monitorHeight = rect.height
-        } catch (e) {}
+        } catch (e) {
+            console.error(`[bar] failed to get monitor geometry: ${e.message}`)
+        }
+
+        const context = win.get_style_context()
+
+        if (monitorWidth === null || monitorHeight === null) {
+            context.remove_class("fullscreen")
+            return
+        }
 
         const hasFullscreen = windows.some(w => {
             if (!w.is_focused) return false
@@ -97,7 +112,6 @@ const handleWindows = (windows) => {
             return width >= monitorWidth && height >= monitorHeight
         })
 
-        const context = win.get_style_context()
         if (hasFullscreen) {
             context.add_class("fullscreen")
         } else {
@@ -111,9 +125,13 @@ const checkFullscreen = () => {
         .then(out => {
             try {
                 handleWindows(JSON.parse(out))
-            } catch (e) {}
+            } catch (e) {
+                console.error(`[bar] failed to parse windows JSON: ${e.message}`)
+            }
         })
-        .catch(() => {})
+        .catch(e => {
+            console.error(`[bar] niri msg windows failed: ${e.message}`)
+        })
 }
 
 const processNiriEvent = (event) => {
@@ -131,7 +149,9 @@ subprocess("niri msg --json event-stream", (line) => {
     if (!trimmed) return
     try {
         processNiriEvent(JSON.parse(trimmed))
-    } catch (e) {}
+    } catch (e) {
+        console.error(`[bar] failed to parse event-stream line: ${e.message}`)
+    }
 })
 
 function Clock() {
@@ -144,7 +164,7 @@ function Clock() {
 
 function Bar(gdkmonitor) {
     const { TOP } = Astal.WindowAnchor
-    
+
     const barWindow = (
         <window
             class="Bar"
@@ -158,17 +178,12 @@ function Bar(gdkmonitor) {
             <Clock />
         </window>
     )
-    
+
     barWindow.monitor = gdkmonitor
     barWindows.push(barWindow)
-    
+
     Astal.widget_set_click_through(barWindow, true)
-    
-    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
-        checkFullscreen()
-        return GLib.SOURCE_REMOVE
-    })
-    
+
     return barWindow
 }
 
@@ -176,10 +191,15 @@ app.start({
     css: style,
     main() {
         app.get_monitors().map(Bar)
-        
+
         // Первичная настройка цвета и запуск мониторинга конфигов для hot-reload
         updateAccentColor()
-        monitorConfig("noctalia.kdl")
-        monitorConfig("config.kdl")
+        NIRI_CONFIG_FILES.forEach(monitorConfig)
+
+        // Один общий вызов после создания всех окон, а не по разу на монитор
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+            checkFullscreen()
+            return GLib.SOURCE_REMOVE
+        })
     }
 })
