@@ -1,34 +1,29 @@
 function dotpush
-    # Спрашиваем сообщение
     set -l commit_msg $argv
     if test -z "$commit_msg"
-        read -P "📝 Сообщение коммита (или Enter, чтобы скрипт сам определил файлы): " commit_msg
+        read -P "📝 Commit (Enter fot auto): " commit_msg
     end
     
-    echo "⚙️  Сбор измененных файлов..."
-    # Сначала добавляем все изменения в память
+    echo "⚙️  Get info..."
     git -C ~/dotfiles add .
     
-    # Получаем список измененных файлов через запятую
     set -l changed_files (git -C ~/dotfiles diff --name-only --cached | string join ', ')
     
-    # Если изменений нет вообще - отменяем
     if test -z "$changed_files"
-        echo "❌ Нет изменений для сохранения. Конфиги и так актуальны!"
+        echo "❌ No news"
         return 1
     end
     
-    # Если вы нажали Enter и ничего не написали, генерируем текст коммита
     if test -z "$commit_msg"
         set commit_msg "update $changed_files"
-        echo "🤖 Сгенерировано сообщение: $commit_msg"
+        echo "🤖 Generated commit: $commit_msg"
     end
     
-    echo "📦  Создание коммита..."
+    echo "📦  Creating commit..."
     git -C ~/dotfiles commit -m "$commit_msg"
     
-    echo "🚀  Отправка на GitHub..."
+    echo "🚀  Push to GitHub..."
     git -C ~/dotfiles push
     
-    echo "✅  Всё готово и отправлено!"
+    echo "✅  Done!"
 end
