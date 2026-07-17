@@ -284,6 +284,8 @@ settings_show_advanced = true
 
     [shell.screenshot]
     confirm_region = true
+    pipe_to_command = false
+    save_to_file = false
 
     [shell.session]
     grid = false
