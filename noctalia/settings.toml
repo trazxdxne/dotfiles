@@ -337,7 +337,7 @@ wallpaper_scheme = "m3-rainbow"
 
     [theme.templates]
     builtin_ids = [ "gtk3", "gtk4", "kcolorscheme", "niri", "qt", "wezterm" ]
-    community_ids = [ "obsidian", "zed", "antigravity", "telegram", "micro" ]
+    community_ids = [ "obsidian", "zed", "micro", "antigravity", "obs", "steam", "telegram" ]
 
 [wallpaper]
 enabled = true
