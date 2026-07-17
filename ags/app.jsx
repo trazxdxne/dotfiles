@@ -87,12 +87,16 @@ const handleWindows = (windows) => {
     barWindows.forEach(win => {
         if (!win) return
 
-        let monitorWidth = null
-        let monitorHeight = null
+        let monitorWidth = 1920
+        let monitorHeight = 1080
         try {
-            const rect = win.monitor.get_geometry()
-            monitorWidth = rect.width
-            monitorHeight = rect.height
+            // Astal Window uses gdkmonitor property
+            const monitor = win.gdkmonitor || win.monitor
+            if (monitor) {
+                const rect = monitor.get_geometry()
+                monitorWidth = rect.width
+                monitorHeight = rect.height
+            }
         } catch (e) {
             console.error(`[bar] failed to get monitor geometry: ${e.message}`)
         }

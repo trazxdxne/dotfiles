@@ -264,7 +264,7 @@ settings_show_advanced = true
     alpha = 0.4999999888241291
 
 [theme]
-builtin = "Catppuccin"
+builtin = "Gruvbox"
 community_palette = "Murata"
 mode = "dark"
 pure_black_dark = false
