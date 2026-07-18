@@ -7,7 +7,6 @@ const ALARMS_FILE = GLib.build_filenamev([GLib.get_home_dir(), ".config", "ags",
 const SNOOZE_MINUTES = 5
 const AUTO_SNOOZE_MINUTES = 1
 const MISSED_THRESHOLD_MINUTES = 30
-const SYNC_SCRIPT = GLib.build_filenamev([GLib.get_home_dir(), ".config", "ags", "sync-wake.py"])
 
 let alarms = []
 let currentRingingAlarm = null
@@ -57,7 +56,6 @@ function saveAlarms() {
         })
         
         GLib.file_set_contents(ALARMS_FILE, JSON.stringify(alarms, null, 2))
-        execAsync([SYNC_SCRIPT]).catch(() => {})
     } catch (e) {
         console.error(e)
     }
