@@ -5,11 +5,13 @@ import { createPoll } from "ags/time"
 import GLib from "gi://GLib"
 import Gio from "gi://Gio"
 import style from "./style.css"
+import { toggleAlarmMenu, setupAlarmWindows } from "./alarms.jsx"
+
 
 const timeVal = createPoll("", 1000, 'date +"%H:%M"')
 
 const barWindows = []
-const fileMonitors = [] // держим ссылки живыми, иначе GC их убьёт
+const fileMonitors = []
 let cssProvider = null
 
 const NIRI_CONFIG_FILES = ["noctalia.kdl", "config.kdl"]
@@ -34,7 +36,7 @@ function readNiriAccentColor() {
             console.error(`[bar] failed to read ${filename}: ${e.message}`)
         }
     }
-    return "#f5c2e7" // fallback
+    return "#f5c2e7"
 }
 
 function updateAccentColor() {
@@ -52,7 +54,6 @@ function updateAccentColor() {
     try {
         cssProvider.load_from_data(`
             .Bar.fullscreen .clock-box {
-                background-color: rgba(36, 33, 48, 0.7);
                 border-color: ${accentColor};
                 border-style: solid;
                 border-width: 1px;
@@ -63,22 +64,56 @@ function updateAccentColor() {
     }
 }
 
-function monitorConfig(filename) {
+function setupNiriMonitor() {
     try {
-        const path = GLib.build_filenamev([GLib.get_home_dir(), ".config", "niri", filename])
+        const path = GLib.build_filenamev([GLib.get_home_dir(), ".config", "niri"])
         const file = Gio.File.new_for_path(path)
-        const monitor = file.monitor_file(Gio.FileMonitorFlags.NONE, null)
-        monitor.connect("changed", () => {
-            // Небольшая задержка, чтобы файл успел записаться на диск
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
-                updateAccentColor()
-                return GLib.SOURCE_REMOVE
-            })
+        const monitor = file.monitor_directory(Gio.FileMonitorFlags.NONE, null)
+        monitor.connect("changed", (monitor, file, other_file, event_type) => {
+            if (event_type === Gio.FileMonitorEvent.CHANGES_DONE_HINT || event_type === Gio.FileMonitorEvent.CREATED) {
+                const name = file.get_basename()
+                if (NIRI_CONFIG_FILES.includes(name)) {
+                    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+                        updateAccentColor()
+                        return GLib.SOURCE_REMOVE
+                    })
+                }
+            }
         })
-        fileMonitors.push(monitor) // важно: без этого monitor может быть собран GC
+        fileMonitors.push(monitor)
     } catch (e) {
-        console.error(`[bar] failed to watch ${filename}: ${e.message}`)
+        console.error(`[bar] failed to watch niri dir: ${e.message}`)
     }
+}
+
+let reloadTimeout = null;
+
+function setupHotReload() {
+    const watchDir = (dirPath) => {
+        try {
+            const monitor = Gio.File.new_for_path(dirPath).monitor_directory(Gio.FileMonitorFlags.NONE, null)
+            monitor.connect("changed", (monitor, file, other_file, event_type) => {
+                if (event_type === Gio.FileMonitorEvent.CHANGES_DONE_HINT || event_type === Gio.FileMonitorEvent.CREATED) {
+                    const path = file.get_path()
+                    if (path && (path.endsWith(".js") || path.endsWith(".jsx") || path.endsWith(".ts") || path.endsWith(".css"))) {
+                        if (reloadTimeout) GLib.source_remove(reloadTimeout);
+                        reloadTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
+                            console.log(`[hot-reload] File changed: ${path}, restarting ags via systemd...`)
+                            GLib.spawn_command_line_async('systemctl --user restart ags.service')
+                            reloadTimeout = null;
+                            return GLib.SOURCE_REMOVE;
+                        });
+                    }
+                }
+            })
+            fileMonitors.push(monitor)
+        } catch (e) {
+            console.error(`[hot-reload] failed to watch ${dirPath}: ${e.message}`)
+        }
+    }
+    
+    watchDir(GLib.build_filenamev([GLib.get_home_dir(), ".config", "ags"]))
+    watchDir(GLib.build_filenamev([GLib.get_home_dir(), ".config", "gtk-3.0"]))
 }
 
 const handleWindows = (windows) => {
@@ -105,6 +140,7 @@ const handleWindows = (windows) => {
 
         if (monitorWidth === null || monitorHeight === null) {
             context.remove_class("fullscreen")
+            Astal.widget_set_click_through(win, false)
             return
         }
 
@@ -118,8 +154,10 @@ const handleWindows = (windows) => {
 
         if (hasFullscreen) {
             context.add_class("fullscreen")
+            Astal.widget_set_click_through(win, true)
         } else {
             context.remove_class("fullscreen")
+            Astal.widget_set_click_through(win, false)
         }
     })
 }
@@ -160,9 +198,31 @@ subprocess("niri msg --json event-stream", (line) => {
 
 function Clock() {
     return (
-        <box class="clock-box" halign={Gtk.Align.CENTER}>
+        <button
+            class="clock-box"
+            halign={Gtk.Align.CENTER}
+            onButtonReleaseEvent={(self, event) => {
+                const btn = event.get_button()[1]
+                if (btn === 1) {
+                    execAsync(["bash", "-c", "noctalia msg panel-toggle control-center calendar"]).catch(() => {})
+                } else if (btn === 3) {
+                    toggleAlarmMenu()
+                }
+            }}
+            onEnterNotifyEvent={(self) => {
+                const display = self.get_display()
+                const window = self.get_window()
+                if (window) window.set_cursor(Gdk.Cursor.new_from_name(display, "pointer"))
+                return false
+            }}
+            onLeaveNotifyEvent={(self) => {
+                const window = self.get_window()
+                if (window) window.set_cursor(null)
+                return false
+            }}
+        >
             <label class="clock-time" label={timeVal} />
-        </box>
+        </button>
     )
 }
 
@@ -186,7 +246,6 @@ function Bar(gdkmonitor) {
     barWindow.monitor = gdkmonitor
     barWindows.push(barWindow)
 
-    Astal.widget_set_click_through(barWindow, true)
 
     return barWindow
 }
@@ -194,13 +253,13 @@ function Bar(gdkmonitor) {
 app.start({
     css: style,
     main() {
+        setupAlarmWindows()
         app.get_monitors().map(Bar)
 
-        // Первичная настройка цвета и запуск мониторинга конфигов для hot-reload
         updateAccentColor()
-        NIRI_CONFIG_FILES.forEach(monitorConfig)
+        setupNiriMonitor()
+        setupHotReload()
 
-        // Один общий вызов после создания всех окон, а не по разу на монитор
         GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             checkFullscreen()
             return GLib.SOURCE_REMOVE

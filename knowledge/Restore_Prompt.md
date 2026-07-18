@@ -17,6 +17,7 @@
       • `~/.config/niri/config.kdl` -> `~/dotfiles/niri/config.kdl`
       • `~/.config/niri-autostart/config.kdl` -> `~/dotfiles/niri-autostart/config.kdl`
       • `~/.config/ags` -> `~/dotfiles/ags`
+      • `~/.config/systemd/user/ags.service` -> `~/dotfiles/ags/ags.service`
       • `~/.config/fuzzel/fuzzel.ini` -> `~/dotfiles/fuzzel/fuzzel.ini`
       • `~/.wezterm.lua` -> `~/dotfiles/wezterm/wezterm.lua`
       • `~/.config/gtk-3.0/settings.ini` -> `~/dotfiles/gtk-3.0/settings.ini`

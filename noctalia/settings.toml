@@ -246,10 +246,10 @@ widget_order = [
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
         background = true
         background_radius = 18.0
-        radius = 18.0
         color = "primary"
         command = "noctalia msg session reboot"
         glyph = "reboot"
+        radius = 18.0
         variant = "default"
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
@@ -264,10 +264,10 @@ widget_order = [
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
         background = true
         background_radius = 18.0
-        radius = 18.0
         color = "primary"
         command = "noctalia msg session lock-and-suspend"
         glyph = "suspend"
+        radius = 18.0
         variant = "default"
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000005]
@@ -282,10 +282,10 @@ widget_order = [
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000005.settings]
         background = true
         background_radius = 18.0
-        radius = 18.0
         color = "secondary"
         command = "noctalia msg session shutdown"
         glyph = "shutdown"
+        radius = 18.0
         variant = "primary"
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000006]
@@ -300,10 +300,10 @@ widget_order = [
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000006.settings]
         background = true
         background_radius = 18.0
-        radius = 18.0
         color = "primary"
         command = "systemctl reboot --firmware-setup"
         glyph = "cpu"
+        radius = 18.0
         variant = "default"
 
 [nightlight]
@@ -477,7 +477,7 @@ enabled = false
 enabled = false
 
 [widget.clock]
-enabled = true
+enabled = false
 format = "            "
 scale = 1.1000000000000001
 tooltip_format = "{:%A, %d %B %Y г.}"
