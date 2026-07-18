@@ -142,7 +142,8 @@ widget_order = [
     "lockscreen-widget-0000000000000001",
     "lockscreen-widget-0000000000000003",
     "lockscreen-widget-0000000000000004",
-    "lockscreen-widget-0000000000000005"
+    "lockscreen-widget-0000000000000005",
+    "lockscreen-widget-0000000000000006"
 ]
 
     [lockscreen_widgets.grid]
@@ -234,40 +235,44 @@ widget_order = [
         shadow = false
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
-    box_height = 48.0
-    box_width = 48.0
-    cx = 1872.0
-    cy = 932.0
+    box_height = 36.0
+    box_width = 36.0
+    cx = 1828.0
+    cy = 1044.0
     output = "DP-1"
     rotation = 0.0
     type = "button"
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
         background = true
+        background_radius = 18.0
+        radius = 18.0
         color = "primary"
         command = "noctalia msg session reboot"
         glyph = "reboot"
         variant = "default"
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
-    box_height = 48.0
-    box_width = 48.0
-    cx = 1872.0
-    cy = 988.0
+    box_height = 36.0
+    box_width = 36.0
+    cx = 1740.0
+    cy = 1044.0
     output = "DP-1"
     rotation = 0.0
     type = "button"
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
         background = true
+        background_radius = 18.0
+        radius = 18.0
         color = "primary"
-        command = "noctalia msg session suspend"
+        command = "noctalia msg session lock-and-suspend"
         glyph = "suspend"
         variant = "default"
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000005]
-    box_height = 48.0
-    box_width = 48.0
+    box_height = 36.0
+    box_width = 36.0
     cx = 1872.0
     cy = 1044.0
     output = "DP-1"
@@ -276,10 +281,30 @@ widget_order = [
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000005.settings]
         background = true
+        background_radius = 18.0
+        radius = 18.0
         color = "secondary"
         command = "noctalia msg session shutdown"
         glyph = "shutdown"
         variant = "primary"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000006]
+    box_height = 36.0
+    box_width = 36.0
+    cx = 1784.0
+    cy = 1044.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000006.settings]
+        background = true
+        background_radius = 18.0
+        radius = 18.0
+        color = "primary"
+        command = "systemctl reboot --firmware-setup"
+        glyph = "cpu"
+        variant = "default"
 
 [nightlight]
 enabled = false
@@ -373,7 +398,7 @@ settings_show_advanced = true
     grid_columns = 3
 
         [[shell.session.actions]]
-        action = "lock"
+        action = "lock_and_suspend"
         countdown_seconds = 0.0
         enabled = true
         shortcut = "1"
@@ -387,9 +412,12 @@ settings_show_advanced = true
         variant = "default"
 
         [[shell.session.actions]]
-        action = "lock_and_suspend"
+        action = "command"
+        command = "systemctl reboot --firmware-setup"
         countdown_seconds = 0.0
         enabled = true
+        glyph = "cpu"
+        label = "UEFI"
         shortcut = "3"
         variant = "default"
 
@@ -405,7 +433,7 @@ settings_show_advanced = true
         countdown_seconds = 0.0
         enabled = true
         shortcut = "5"
-        variant = "destructive"
+        variant = "default"
 
     [shell.shadow]
     alpha = 0.4999999888241291
@@ -464,10 +492,6 @@ enabled = true
 [widget.keyboard_layout]
 display = "short"
 show_icon = false
-
-    [widget.keyboard_layout.custom_labels]
-    "English (US)" = "EN"
-    Russian = "RU"
 
 [widget.launcher]
 enabled = false
