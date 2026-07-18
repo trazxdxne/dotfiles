@@ -25,13 +25,25 @@ config.window_close_confirmation = 'NeverPrompt'
 config.hide_tab_bar_if_only_one_tab = true
 
 local act = wezterm.action
+
+local function smart_copy()
+  return wezterm.action_callback(function(window, pane)
+    local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+    if has_selection then
+      window:perform_action(act.CopyTo('ClipboardAndClearSelection'), pane)
+    else
+      window:perform_action(act.SendKey{key='c', mods='CTRL'}, pane)
+    end
+  end)
+end
+
 config.keys = {
   -- Вставка на обеих раскладках
   { key = 'v', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
   { key = 'м', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
-  -- Копирование
-  { key = 'c', mods = 'CTRL', action = act.CopyTo('Clipboard') },
-  { key = 'с', mods = 'CTRL', action = act.CopyTo('Clipboard') },
+  -- Копирование (умное: если нет выделения мышью, отправляет Ctrl-c в терминал)
+  { key = 'c', mods = 'CTRL', action = smart_copy() },
+  { key = 'с', mods = 'CTRL', action = smart_copy() },
   -- Прерывание программы (как старый Ctrl+C)
   { key = 'C', mods = 'CTRL|SHIFT', action = act.SendKey { key = 'c', mods = 'CTRL' } },
   { key = 'С', mods = 'CTRL|SHIFT', action = act.SendKey { key = 'c', mods = 'CTRL' } },
