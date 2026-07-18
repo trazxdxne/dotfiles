@@ -245,6 +245,7 @@ widget_order = [
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
         background = true
         color = "primary"
+        command = "noctalia msg session reboot"
         glyph = "reboot"
         variant = "default"
 
@@ -260,6 +261,7 @@ widget_order = [
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
         background = true
         color = "primary"
+        command = "noctalia msg session suspend"
         glyph = "suspend"
         variant = "default"
 
@@ -275,6 +277,7 @@ widget_order = [
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000005.settings]
         background = true
         color = "secondary"
+        command = "noctalia msg session shutdown"
         glyph = "shutdown"
         variant = "primary"
 
