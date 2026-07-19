@@ -40,20 +40,7 @@ order = [ "default", "bar" ]
     capsule_radius = 12
     center = [ "clock" ]
     contact_shadow = true
-    end = [
-        "clipboard",
-        "network",
-        "bluetooth",
-        "volume",
-        "brightness",
-        "battery",
-        "control-center",
-        "session",
-        "ram",
-        "tray",
-        "keyboard_layout",
-        "notifications"
-    ]
+    end = [ "battery", "tray", "ram", "group:g1", "keyboard_layout", "notifications" ]
     font_family = "Adwaita Sans"
     font_weight = 500
     margin_edge = 6
@@ -65,12 +52,21 @@ order = [ "default", "bar" ]
     shadow = false
     show_on_workspace_switch = false
     smart_auto_hide = false
-    start = [ "launcher", "wallpaper", "workspaces" ]
+    start = [ "workspaces" ]
     thickness = 30
 
         [bar.default.monitor.HDMI-A-1]
         enabled = false
         font_family = "Adwaita Sans"
+
+        [[bar.default.capsule_group]]
+        enabled = true
+        fill = "surface_variant"
+        id = "g1"
+        members = [ "media", "volume" ]
+        opacity = 1.0
+        padding = 6.0
+        radius = 12.0
 
 [calendar]
 enabled = false
@@ -314,12 +310,13 @@ border = false
 layer = "overlay"
 
 [osd]
-border = false
-offset_x = 20
+border = true
+offset_x = 0
 offset_y = 8
 orientation = "horizontal"
 position = "top_center"
-position_vertical = "top_center"
+position_vertical = "top_right"
+scale = 1.0000000074505806
 
     [osd.kinds]
     keyboard_layout = false
@@ -470,17 +467,27 @@ transition_on_startup = true
 [weather]
 enabled = false
 
+[widget.audio_visualizer]
+bands = 32
+centered = false
+enabled = true
+mirrored = false
+scale = 1.0
+width = 32
+
 [widget.bluetooth]
+enabled = false
+
+[widget.brightness]
 enabled = false
 
 [widget.clipboard]
 enabled = false
 
 [widget.clock]
-enabled = false
-format = "            "
+anchor = true
+enabled = true
 scale = 1.1000000000000001
-tooltip_format = "{:%A, %d %B %Y г.}"
 
 [widget.control-center]
 anchor = true
@@ -494,10 +501,21 @@ display = "short"
 show_icon = false
 
 [widget.launcher]
-enabled = false
+enabled = true
+
+[widget.media]
+hide_artist = true
+hide_when_no_media = true
+max_length = 160
+min_length = 40
+title_scroll = "on_hover"
 
 [widget.network]
 enabled = false
+
+[widget.ram]
+display = "gauge"
+stat = "ram_used"
 
 [widget.session]
 enabled = false

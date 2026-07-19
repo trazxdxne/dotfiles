@@ -46,6 +46,28 @@ function loadAlarms() {
     }
 }
 
+function syncWakealarm() {
+    let nextRingTs = null
+    const nowTs = Math.floor(Date.now() / 1000)
+    alarms.forEach(a => {
+        if (!a.enabled) return
+        let ts = a.nextRingTs
+        if (!ts || ts < nowTs) {
+            ts = calculateNextRingTs(a.time, a.days, nowTs)
+        }
+        if (ts && (!nextRingTs || ts < nextRingTs)) {
+            nextRingTs = ts
+        }
+    })
+    
+    execAsync(["bash", "-c", "echo 0 | sudo tee /sys/class/rtc/rtc0/wakealarm >/dev/null"]).then(() => {
+        if (nextRingTs) {
+            const wakeTs = nextRingTs - 5
+            execAsync(["bash", "-c", `echo ${wakeTs} | sudo tee /sys/class/rtc/rtc0/wakealarm >/dev/null`]).catch(e => console.error(e))
+        }
+    }).catch(e => console.error(e))
+}
+
 function saveAlarms() {
     try {
         const nowTs = Math.floor(Date.now() / 1000)
@@ -56,6 +78,7 @@ function saveAlarms() {
         })
         
         GLib.file_set_contents(ALARMS_FILE, JSON.stringify(alarms, null, 2))
+        syncWakealarm()
     } catch (e) {
         console.error(e)
     }

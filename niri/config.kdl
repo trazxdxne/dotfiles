@@ -15,17 +15,9 @@ input {
         numlock
     }
 
-    touchpad {
-        tap
-        natural-scroll
-    }
-
     mouse {
         accel-speed 0
         accel-profile "flat"
-    }
-
-    trackpoint {
     }
 
     focus-follows-mouse max-scroll-amount="0%"
@@ -84,10 +76,10 @@ layout {
     }
 
     struts {
-        left 0
-        right 0
-        top 0
-        bottom 0
+        // left 0
+        // right 0
+        // top 0
+        // bottom 0
     }
 }
 
@@ -97,12 +89,13 @@ spawn-at-startup "ags" "run"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 spawn-sh-at-startup "sleep 2 && niri-autostart"
 spawn-at-startup "wayvnc" "-f" "60" "-r" "--output=HDMI-A-1" "0.0.0.0"
+
 hotkey-overlay {
     skip-at-startup
 }
 
 prefer-no-csd
-screenshot-path null
+//screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 animations {
     slowdown 0.1
@@ -159,13 +152,14 @@ window-rule {
 window-rule {
     match app-id=r#"^Solo Leveling:ARISE OVERDRIVE$"#
     open-on-workspace "2"
+    open-fullscreen true
 }
 
 window-rule {
     match app-id=r#"^org\.vinegarhq\.Sober$"#
     exclude title="^Servers$"
     open-on-workspace "2"
-    open-maximized true
+    open-maximized-to-edges true
 }
 
 window-rule {
@@ -176,7 +170,7 @@ window-rule {
 window-rule {
      match app-id=r#"^steam_app_381210$"#
      open-on-workspace "2"
-     open-maximized true
+     open-fullscreen true
 }
 
 window-rule {
@@ -207,21 +201,15 @@ binds {
     Mod+L hotkey-overlay-title="Lock the Screen" { spawn "noctalia" "msg" "session lock"; }
     Mod+E hotkey-overlay-title="Open a File Manager" { spawn "nautilus"; }
 
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
-    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    //Mod+Alt+X   	     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    Mod+Alt+Z     		 allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
 
-    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
     Pause                allow-when-locked=true { spawn-sh "playerctl play-pause"; }
-    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
-    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
-    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
+    Mod+Alt+Space        allow-when-locked=true { spawn-sh "playerctl stop"; }
+    Mod+Alt+Minus        allow-when-locked=true { spawn-sh "playerctl previous"; }
+    Mod+Alt+Equal        allow-when-locked=true { spawn-sh "playerctl next"; }		
 
-    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
-
-    Mod+Tab repeat=false { toggle-overview; }
+    Mod+Tab repeat=false { toggle-overview; }	
 
     Mod+Q repeat=false { close-window; }
 
@@ -230,8 +218,8 @@ binds {
     Mod+Up    { focus-window-up; }
     Mod+Right { focus-column-right; }
     //Mod+H     { focus-column-left; }
-    Mod+Alt+WheelScrollDown   { focus-window-down; }
-    Mod+Alt+WheelScrollUp     { focus-window-up; }
+    //Mod+Alt+WheelScrollDown   { focus-window-down; }
+    //Mod+Alt+WheelScrollUp     { focus-window-up; }
     //Mod+L     { focus-column-right; }
 
     Mod+Ctrl+Left  { move-column-left; }
