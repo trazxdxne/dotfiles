@@ -343,6 +343,10 @@ scale = 1.0000000074505806
     [osd.kinds]
     keyboard_layout = false
 
+[plugin_settings."apex077/eyecare"]
+active_duration_minutes = 60
+break_duration_seconds = 300
+
 [plugin_settings."noctalia/true-transparency"]
 transparency_panel_open_near_click = true
 transparency_panel_placement = "floating"
@@ -508,7 +512,7 @@ enabled = false
 
 [widget.clock]
 anchor = true
-enabled = false
+enabled = true
 scale = 1.1000000000000001
 
 [widget.control-center]
