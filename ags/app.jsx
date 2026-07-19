@@ -155,9 +155,11 @@ const handleWindows = (windows) => {
         if (hasFullscreen) {
             context.add_class("fullscreen")
             Astal.widget_set_click_through(win, true)
+            win.set_layer(Astal.Layer.OVERLAY)
         } else {
             context.remove_class("fullscreen")
             Astal.widget_set_click_through(win, false)
+            win.set_layer(Astal.Layer.BOTTOM)
         }
     })
 }
