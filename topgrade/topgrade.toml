@@ -140,7 +140,7 @@ disable = ["hyprpm"]
 "Equicord" = "git -C ~/Programs/Equicord checkout -- package.json pnpm-lock.yaml && git -C ~/Programs/Equicord pull && cp -f ~/Projects/equicord-os-display-name/osDisplayName.ts ~/Programs/Equicord/src/userplugins/osDisplayName.ts && cd ~/Programs/Equicord && COREPACK_ENABLE_STRICT=0 pnpm install && COREPACK_ENABLE_STRICT=0 pnpm build && echo | COREPACK_ENABLE_STRICT=0 pnpm inject"
 "anicli-ru-patch" = "~/Projects/anicli-ru-celluloid/patch.sh"
 "noctalia-greeter" = "cd ~/Projects/noctalia-greeter && git pull && meson setup build-release --prefix=/usr --buildtype=release --reconfigure && meson compile -C build-release && pkexec sh -c 'cd /home/trazxdxne/Projects/noctalia-greeter && meson install -C build-release && ./scripts/setup_greeter_system.sh'"
-
+"noctalia-patch" = "cd ~/Projects/noctalia && git pull --rebase && meson setup --reconfigure build --buildtype=release && meson compile -C build && pkexec sh -c 'cd /home/trazxdxne/Projects/noctalia && meson install -C build'"
 
 [python]
 # enable_pip_review = true                         ###disabled by default
