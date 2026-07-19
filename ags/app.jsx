@@ -163,17 +163,34 @@ const handleWindows = (windows) => {
 }
 
 const checkFullscreen = () => {
-    execAsync("niri msg --json windows")
-        .then(out => {
-            try {
-                handleWindows(JSON.parse(out))
-            } catch (e) {
-                console.error(`[bar] failed to parse windows JSON: ${e.message}`)
-            }
-        })
-        .catch(e => {
-            console.error(`[bar] niri msg windows failed: ${e.message}`)
-        })
+    if (GLib.getenv("XDG_CURRENT_DESKTOP") === "Hyprland") {
+        execAsync("hyprctl clients -j")
+            .then(out => {
+                try {
+                    const clients = JSON.parse(out)
+                    const mapped = clients.map(w => ({
+                        is_focused: w.focusHistoryID === 0,
+                        layout: { window_size: w.size }
+                    }))
+                    handleWindows(mapped)
+                } catch(e) {
+                    console.error(`[bar] failed to parse hyprctl: ${e.message}`)
+                }
+            })
+            .catch(e => console.error(`[bar] hyprctl failed: ${e.message}`))
+    } else {
+        execAsync("niri msg --json windows")
+            .then(out => {
+                try {
+                    handleWindows(JSON.parse(out))
+                } catch (e) {
+                    console.error(`[bar] failed to parse windows JSON: ${e.message}`)
+                }
+            })
+            .catch(e => {
+                console.error(`[bar] niri msg windows failed: ${e.message}`)
+            })
+    }
 }
 
 const processNiriEvent = (event) => {
@@ -185,16 +202,26 @@ const processNiriEvent = (event) => {
     }
 }
 
-subprocess("niri msg --json event-stream", (line) => {
-    if (!line) return
-    const trimmed = line.trim()
-    if (!trimmed) return
-    try {
-        processNiriEvent(JSON.parse(trimmed))
-    } catch (e) {
-        console.error(`[bar] failed to parse event-stream line: ${e.message}`)
+const desktop = GLib.getenv("XDG_CURRENT_DESKTOP")
+if (desktop === "Hyprland") {
+    const sig = GLib.getenv("HYPRLAND_INSTANCE_SIGNATURE")
+    if (sig) {
+        subprocess(["bash", "-c", `socat -U - UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/${sig}/.socket2.sock`], (line) => {
+            if (line) checkFullscreen()
+        })
     }
-})
+} else {
+    subprocess("niri msg --json event-stream", (line) => {
+        if (!line) return
+        const trimmed = line.trim()
+        if (!trimmed) return
+        try {
+            processNiriEvent(JSON.parse(trimmed))
+        } catch (e) {
+            console.error(`[bar] failed to parse event-stream line: ${e.message}`)
+        }
+    })
+}
 
 function Clock() {
     return (
@@ -233,6 +260,7 @@ function Bar(gdkmonitor) {
         <window
             class="Bar"
             gdkmonitor={gdkmonitor}
+            monitor={gdkmonitor}
             exclusivity={Astal.Exclusivity.IGNORE}
             anchor={TOP}
             layer={Astal.Layer.OVERLAY}
@@ -243,7 +271,7 @@ function Bar(gdkmonitor) {
         </window>
     )
 
-    barWindow.monitor = gdkmonitor
+    barWindow.gdkmonitor = gdkmonitor
     barWindows.push(barWindow)
 
 
@@ -254,7 +282,19 @@ app.start({
     css: style,
     main() {
         setupAlarmWindows()
-        app.get_monitors().map(Bar)
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
+            const monitors = app.get_monitors();
+            const primary = monitors.find(m => {
+                const rect = m.get_geometry();
+                return rect.x === 0 && rect.y === 0;
+            }) || monitors[0];
+            
+            if (primary) {
+                console.log("[bar] creating bar on primary monitor (0,0)");
+                Bar(primary);
+            }
+            return GLib.SOURCE_REMOVE;
+        });
 
         updateAccentColor()
         setupNiriMonitor()

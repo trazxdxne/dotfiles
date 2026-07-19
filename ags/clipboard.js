@@ -19,10 +19,19 @@ const copyItem = async (id, isImage) => {
         
         if (isImage) {
             try {
-                const windowsOut = await execAsync("niri msg -j windows");
-                const windows = JSON.parse(windowsOut);
-                const focused = windows.find(w => w.is_focused);
-                if (focused && focused.app_id === "org.wezfurlong.wezterm") {
+                let isWezterm = false;
+                if (GLib.getenv("XDG_CURRENT_DESKTOP") === "Hyprland") {
+                    const activeOut = await execAsync("hyprctl activewindow -j");
+                    const active = JSON.parse(activeOut);
+                    isWezterm = (active && active.class === "org.wezfurlong.wezterm");
+                } else {
+                    const windowsOut = await execAsync("niri msg -j windows");
+                    const windows = JSON.parse(windowsOut);
+                    const focused = windows.find(w => w.is_focused);
+                    isWezterm = (focused && focused.app_id === "org.wezfurlong.wezterm");
+                }
+                
+                if (isWezterm) {
                     const tempFile = "/tmp/pasted_screenshot.png";
                     await execAsync(`sh -c "echo -n '${id}' | cliphist decode > ${tempFile}"`);
                     await execAsync(`sh -c "echo -n '${tempFile}' | wl-copy"`);
