@@ -130,8 +130,9 @@ enabled = false
 pre_action_fade_seconds = 2
 
 [lockscreen]
-blur_intensity = 0.99999997764825821
-blurred_desktop = true
+blur_intensity = 0.0
+blurred_desktop = false
+tint_intensity = 0.74999998323619366
 
 [lockscreen_widgets]
 enabled = true
@@ -331,6 +332,9 @@ widget_order = [
 
 [nightlight]
 enabled = false
+force = true
+temperature_day = 6500
+temperature_night = 3000
 
 [notification]
 border = false
@@ -478,7 +482,7 @@ builtin = "Catppuccin"
 community_palette = "Atuel"
 mode = "dark"
 pure_black_dark = false
-source = "community"
+source = "builtin"
 wallpaper_scheme = "m3-rainbow"
 
     [theme.templates]
@@ -491,16 +495,16 @@ fill_mode = "crop"
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/trazxdxne/Pictures/Wallpapers/DvZl9bv.jpeg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
 
     [wallpaper.last]
-    path = "/home/trazxdxne/Pictures/Wallpapers/DvZl9bv.jpeg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
 
     [wallpaper.monitors.DP-1]
-    path = "/home/trazxdxne/Pictures/Wallpapers/DvZl9bv.jpeg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
 
     [wallpaper.monitors.HDMI-A-1]
-    path = "/home/trazxdxne/Pictures/Wallpapers/DvZl9bv.jpeg"
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
 
 [weather]
 enabled = false
