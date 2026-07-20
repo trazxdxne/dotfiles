@@ -44,7 +44,6 @@
       • `~/.config/fish/config.fish` -> `~/dotfiles/fish/config.fish`
       • `~/.bashrc` -> `~/dotfiles/bash/.bashrc`
       • `~/.config/micro` -> `~/dotfiles/micro`
-      • `~/.agents/skills/review` -> `~/dotfiles/.agents/skills/review`
       • `~/.agents/skills/qt-qml` -> `~/dotfiles/.agents/skills/qt-qml`
       • `~/.agents/skills/qt-qml-docs` -> `~/dotfiles/.agents/skills/qt-qml-docs`
       • `~/.agents/skills/arch-linux-triage` -> `~/dotfiles/.agents/skills/arch-linux-triage`
