@@ -23,10 +23,10 @@ micro/backups/
 micro/buffers/
 
 # Obsidian LiveSync secrets & data
-obsidian-livesync/.env
-obsidian-livesync/data/
-obsidian-livesync/caddy_data/
-obsidian-livesync/caddy_config/
+iac/obsidian-livesync/.env
+iac/obsidian-livesync/data/
+iac/obsidian-livesync/caddy_data/
+iac/obsidian-livesync/caddy_config/
 .config/niri/noctalia.kdl
 .config/hypr/noctalia.lua
 .config/fish/fish_variables
