@@ -1,4 +1,4 @@
-color-link default "{{colors.on_background.default.hex}},{{colors.background.default.hex}}"
+color-link default "{{colors.on_background.default.hex}},default"
 color-link comment "{{colors.outline.default.hex}}"
 
 color-link identifier "{{colors.primary.default.hex}}"
