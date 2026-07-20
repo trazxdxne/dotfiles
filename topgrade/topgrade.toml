@@ -420,7 +420,7 @@ repos = [
 
 # Use sudo for updating containers. Necessary for non-rootless installs.
 # (default: false)
-# use_sudo = false
+use_sudo = true
 
 [lensfun]
 # If disabled, Topgrade invokes `lensfun‑update‑data` without root privilege,
