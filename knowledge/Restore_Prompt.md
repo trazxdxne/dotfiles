@@ -86,3 +86,4 @@
 ln -s ~/dotfiles/noctalia/settings.toml ~/.local/state/noctalia/settings.toml
 ln -s ~/dotfiles/noctalia/patches/telegram.tdesktop-theme ~/.local/state/noctalia/community-templates/telegram/telegram.tdesktop-theme
 ln -s ~/dotfiles/noctalia/custom-templates/micro ~/.local/state/noctalia/community-templates/micro
+ln -s ~/dotfiles/noctalia/custom-templates/obsidian ~/.local/state/noctalia/community-templates/obsidian
