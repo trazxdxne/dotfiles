@@ -1,0 +1,157 @@
+// AGS Configuration File
+// Edit this file to customize your AGS bar and related widgets.
+// All values shown here are the defaults — you only need to include the
+// ones you actually want to change.
+//
+// Supported comment styles:  // single-line   and   /* block */
+
+{
+  // ── Bar ─────────────────────────────────────────────────────────────────
+  "bar": {
+    // Wayland layer the bar renders on.
+    // Values: "BACKGROUND" | "BOTTOM" | "TOP" | "OVERLAY"
+    "layer": "TOP",
+
+    // Screen edges the bar is anchored to.
+    // Values: any combination of "TOP" | "BOTTOM" | "LEFT" | "RIGHT"
+    "anchor": ["TOP"],
+
+    // Margin (px) from the top edge of the screen.
+    "marginTop": 9,
+
+    // Which monitor to show the bar on.
+    // Values: "primary" or the connector name e.g. "DP-1", "HDMI-A-1"
+    "monitor": "primary"
+  },
+
+  // ── Clock ────────────────────────────────────────────────────────────────
+  "clock": {
+    // strftime format string for the clock label.
+    // "%H:%M" → 14:05   |   "%I:%M %p" → 02:05 PM
+    "format": "%H:%M",
+
+    // How often (ms) the clock label is refreshed.
+    "interval": 1000,
+
+    // Shell command to run on left-click of the clock.
+    "leftClick": "noctalia msg panel-toggle control-center calendar",
+
+    // Shell command to run on right-click of the clock.
+    "rightClick": "alarm-menu"
+  },
+
+  // ── Fullscreen border ────────────────────────────────────────────────────
+  // Shown around the clock button when the focused window is fullscreen.
+  "fullscreen": {
+    "border": {
+      // Border width in pixels.
+      "width": 1,
+
+      // CSS border-style value: "solid" | "dashed" | "dotted" | "none" …
+      "style": "solid",
+
+      // Fallback color used when no GTK theme color is available.
+      // Any valid CSS color string: "#rrggbb", "rgba(…)", etc.
+      "fallbackColor": "#f5c2e7"
+    },
+
+    // Wayland layer for the fullscreen indicator window.
+    "layer": "OVERLAY"
+  },
+
+  // ── Appearance ───────────────────────────────────────────────────────────
+  "appearance": {
+    // CSS font-family stack applied globally across all AGS widgets.
+    "fontFamily": "'Adwaita Sans', 'Noto Sans', sans-serif",
+
+    // Base font size in pixels for all widgets.
+    "fontSize": 12,
+
+    // Font size in pixels specifically for the clock label.
+    "clockFontSize": 14,
+
+    // CSS color for the clock text. Any valid CSS color string.
+    "clockColor": "#f2f2f3",
+
+    // Border-radius in pixels for the clock button (and other rounded elements).
+    "borderRadius": 12,
+
+    // CSS file to import from ~/.config/gtk-3.0/.
+    // Used to pull in your GTK theme colors / variables.
+    "themeImport": "noctalia.css"
+  },
+
+  // ── Alarms ───────────────────────────────────────────────────────────────
+  "alarms": {
+    // How many minutes to snooze when the user presses "Snooze".
+    "snoozeDuration": 5,
+
+    // How many minutes to auto-snooze if the alarm OSD is ignored.
+    "autoSnoozeDuration": 1,
+
+    // Alarms older than this many minutes are treated as "missed" and skipped.
+    "missedThreshold": 30,
+
+    // How often (seconds) to poll for upcoming alarms in the background.
+    "checkInterval": 60,
+
+    // Path to the audio file played when an alarm fires.
+    "sound": "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga",
+
+    // Command used to play the sound file (receives the path as an argument).
+    "player": "pw-play",
+
+    // Wake the system this many minutes before the alarm time (for reliability).
+    "wakeBeforeAlarm": 5,
+
+    // Default time pre-filled in the "new alarm" dialog.  Format: "HH:MM"
+    "defaultTime": "08:00",
+
+    // Default recurrence pre-filled in the "new alarm" dialog.
+    // Values: "All" | "Weekdays" | "Weekends" | "Mon" | "Tue" | … | "Sun"
+    "defaultDays": "All"
+  },
+
+  // ── Alarm OSD ────────────────────────────────────────────────────────────
+  // The small on-screen notification shown when an alarm fires.
+  "alarmOSD": {
+    // Wayland layer for the OSD window.
+    "layer": "OVERLAY",
+
+    // Screen edges the OSD is anchored to.
+    "anchor": ["TOP"],
+
+    // Margin (px) from the top edge — leave room for the bar.
+    "marginTop": 84
+  },
+
+  // ── Alarm Menu ───────────────────────────────────────────────────────────
+  // The full alarm-management panel (list, add, edit, delete alarms).
+  "alarmMenu": {
+    // Wayland layer for the menu window.
+    "layer": "OVERLAY",
+
+    // Anchor to all four edges to center the panel on screen.
+    "anchor": ["TOP", "BOTTOM", "LEFT", "RIGHT"],
+
+    // Margins (px) that shrink the panel away from the screen edges.
+    "marginTop": 24,
+    "marginBottom": 40,
+
+    // Fixed panel width in pixels.
+    "width": 360,
+
+    // Maximum height (px) of the scrollable alarm list before it clips.
+    "maxScrollHeight": 600
+  },
+
+  // ── Hot Reload ───────────────────────────────────────────────────────────
+  // Watches config.jsonc for changes and reloads AGS automatically.
+  "hotReload": {
+    // Set to false to disable hot-reload entirely.
+    "enabled": true,
+
+    // Debounce delay (ms) — avoids reloading on every keystroke while saving.
+    "debounce": 200
+  }
+}

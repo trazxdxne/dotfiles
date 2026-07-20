@@ -1,7 +1,7 @@
 import GLib from "gi://GLib"
 import { Gtk, Gdk } from "ags/gtk3"
 
-export const CONFIG_PATH = `${GLib.get_home_dir()}/.config/ags/config.json`
+export const CONFIG_PATH = `${GLib.get_home_dir()}/.config/ags/config.jsonc`
 
 const DEFAULT_CONFIG = {
   bar: {
@@ -71,11 +71,19 @@ function deepMerge(target, source) {
   return { ...target, ...source }
 }
 
+// Strip // line comments and /* block comments */ so JSONC can be fed to JSON.parse.
+function stripJsonComments(text) {
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, "")   // block comments
+    .replace(/\/\/[^\n]*/g, "")          // line comments
+}
+
 export function getConfig() {
   try {
     const [ok, contents] = GLib.file_get_contents(CONFIG_PATH)
     if (ok) {
-      const userConfig = JSON.parse(new TextDecoder("utf-8").decode(contents))
+      const raw = new TextDecoder("utf-8").decode(contents)
+      const userConfig = JSON.parse(stripJsonComments(raw))
       return deepMerge(DEFAULT_CONFIG, userConfig)
     }
   } catch (e) {
