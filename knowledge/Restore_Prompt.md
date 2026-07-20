@@ -12,7 +12,7 @@
    - Выведи мне инструкцию запустить `gh auth login` в терминале для авторизации в GitHub. После этого приостанови выполнение и жди моего подтверждения "Готово".
    - После подтверждения, автоматически склонируй мой приватный репозиторий дотфайлов: `git clone https://github.com/trazxdxne/dotfiles.git ~/dotfiles`.
 3. Восстановление и Симлинки:
-    - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents/skills`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`, `~/.config/hypr`, `~/.config/uwsm`, `~/.config/autostart`.
+    - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents/skills`, `~/.gemini/antigravity-cli/knowledge/`, `~/.local/bin`, `~/.config/hypr`, `~/.config/uwsm`, `~/.config/autostart`.
     - Создай симлинки из `~/dotfiles` в систему:
       • `~/.config/niri/config.kdl` -> `~/dotfiles/niri/config.kdl`
       • `~/.config/niri-autostart/config.kdl` -> `~/dotfiles/niri-autostart/config.kdl`
@@ -24,20 +24,11 @@
       • `~/.config/gtk-3.0/gtk.css` -> `~/dotfiles/gtk-3.0/gtk.css`
       • `~/.config/gtk-4.0/settings.ini` -> `~/dotfiles/gtk-4.0/settings.ini`
       • `~/.config/gtk-4.0/gtk.css` -> `~/dotfiles/gtk-4.0/gtk.css`
-      • `~/.config/gtk-4.0/libadwaita.css` -> `~/.themes/Velvet-Night/gtk-4.0/libadwaita.css`
-      • `~/.config/gtk-4.0/libadwaita-tweaks.css` -> `~/.themes/Velvet-Night/gtk-4.0/libadwaita-tweaks.css`
-      • `~/.config/gtk-4.0/assets` -> `~/.themes/Velvet-Night/gtk-4.0/assets`
-      • `~/.config/qt5ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt5ct/colors/Velvet-Night.conf`
-      • `~/.config/qt6ct/colors/Velvet-Night.conf` -> `~/dotfiles/qt6ct/colors/Velvet-Night.conf`
-      • `~/.themes/Velvet-Night` -> `~/dotfiles/.themes/Velvet-Night`
       • `~/.config/wireplumber/wireplumber.conf.d` -> `~/dotfiles/wireplumber/wireplumber.conf.d`
-      • `~/.config/quickshell` -> `~/dotfiles/quickshell`
       • `~/.agents/AGENTS.md` -> `~/dotfiles/AGENTS.md`
       • `~/.gemini/antigravity-cli/knowledge/Environment_Setup.md` -> `~/dotfiles/knowledge/Environment_Setup.md`
       • `~/.gemini/antigravity-cli/knowledge/Clipboard_Guide.md` -> `~/dotfiles/knowledge/Clipboard_Guide.md`
       • `~/.gemini/antigravity-cli/knowledge/Equicord_Setup_Guide.md` -> `~/dotfiles/knowledge/Equicord_Setup_Guide.md`
-      • `~/.config/swappy/config` -> `~/dotfiles/swappy/config`
-      • `~/.local/bin/screenshot` -> `~/dotfiles/scripts/screenshot`
       • `~/.config/hypr/hyprlock.conf` -> `~/dotfiles/hypr/hyprlock.conf`
       • `~/.config/hypr/hyprland.lua` -> `~/dotfiles/hypr/hyprland.lua`
       • `~/.config/topgrade.toml` -> `~/dotfiles/topgrade/topgrade.toml`
@@ -59,12 +50,9 @@
       • `~/.config/fish/functions/dotpush.fish` -> `~/dotfiles/fish/functions/dotpush.fish`
       • `~/.config/fastfetch/config.jsonc` -> `~/dotfiles/fastfetch/config.jsonc`
       • `~/.config/fastfetch/config.jsonc.template` -> `~/dotfiles/fastfetch/config.jsonc.template`
-      • `~/obsidian-livesync/docker-compose.yml` -> `~/dotfiles/obsidian-livesync/docker-compose.yml`
-      • `~/obsidian-livesync/local.d` -> `~/dotfiles/obsidian-livesync/local.d`
    - Скопируй системные конфигурации и файлы тем (потребуется pkexec):
      • `pkexec cp ~/dotfiles/modprobe.d/disable-hda.conf /etc/modprobe.d/disable-hda.conf`
      • `pkexec cp ~/dotfiles/noctalia-greeter/config.toml /etc/greetd/config.toml`
-     • `pkexec cp -r ~/.themes/Velvet-Night /usr/share/themes/Velvet-Night`
      • `pkexec cp ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules`
      • `pkexec cp ~/dotfiles/polkit-1/20-noctalia-greeter.rules /etc/polkit-1/rules.d/20-noctalia-greeter.rules`
      • `pkexec cp ~/dotfiles/polkit-1/30-wakealarm.rules /etc/polkit-1/rules.d/30-wakealarm.rules`

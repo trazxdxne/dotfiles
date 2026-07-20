@@ -53,6 +53,7 @@ order = [ "default", "bar" ]
     padding = 6
     panel_overlap = 1
     position = "top"
+    radius_top_left = 12
     reserve_space = true
     shadow = false
     show_on_workspace_switch = false
