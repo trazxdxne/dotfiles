@@ -1,0 +1,583 @@
+config_version = 2
+
+[accessibility]
+high_contrast = false
+
+[audio]
+enable_overdrive = false
+enable_sounds = false
+
+[backdrop]
+blur_intensity = 0.0
+enabled = false
+tint_intensity = 0.099999997764825821
+
+[bar]
+order = [ "default", "bar" ]
+
+    [bar.bar]
+    auto_hide = false
+    background_opacity = 0.99999997764825821
+    border = "on_primary"
+    capsule_radius = 6
+    enabled = false
+    end = []
+    font_family = "Adwaita Sans"
+    hover_highlight = true
+    layer = "overlay"
+    margin_edge = 8
+    margin_ends = 0
+    margin_opposite_edge = 6
+    padding = 0
+    reserve_space = false
+    shadow = false
+    show_on_workspace_switch = false
+    start = []
+    thickness = 10
+
+    [bar.default]
+    auto_hide = false
+    background_opacity = 0.89999997988343239
+    capsule = true
+    capsule_radius = 12
+    center = [ "clock" ]
+    contact_shadow = true
+    enabled = true
+    end = [ "battery", "tray", "ram", "group:g1", "keyboard_layout", "notifications" ]
+    font_family = "Adwaita Sans"
+    font_weight = 500
+    hover_highlight = true
+    layer = "top"
+    margin_edge = 6
+    margin_ends = 6
+    padding = 6
+    panel_overlap = 1
+    position = "top"
+    radius_top_left = 12
+    reserve_space = true
+    shadow = false
+    show_on_workspace_switch = false
+    start = [ "workspaces" ]
+    thickness = 30
+
+        [bar.default.monitor.HDMI-A-1]
+        enabled = false
+        font_family = "Adwaita Sans"
+
+        [[bar.default.capsule_group]]
+        enabled = true
+        fill = "surface_variant"
+        id = "g1"
+        members = [ "media", "volume" ]
+        opacity = 1.0
+        padding = 6.0
+        radius = 12.0
+
+[calendar]
+enabled = false
+
+[control_center]
+hidden_tabs = [ "power", "weather" ]
+shortcuts = []
+sidebar = "full"
+sidebar_section = "none"
+
+    [control_center.calendar]
+    show_events_card = false
+
+[desktop_widgets]
+schema_version = 2
+widget_order = []
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [desktop_widgets.widget]
+
+[dock]
+active_monitor_only = true
+auto_hide = false
+concave_edge_corners = true
+cross_axis_padding = 9
+enabled = false
+inactive_opacity = 0.65999998524785042
+item_spacing = 0
+launcher_position = "none"
+main_axis_padding = 16
+monitors = [ "DP-1" ]
+pinned = []
+position = "bottom"
+radius = 12
+reserve_space = false
+show_dots = true
+
+[hooks]
+logging_out = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
+rebooting = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
+shutting_down = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
+
+[hot_corners]
+enabled = false
+
+    [hot_corners.top_left]
+    action = "none"
+
+    [hot_corners.top_right]
+    action = "none"
+
+[idle]
+pre_action_fade_seconds = 2
+
+[lockscreen]
+blur_intensity = 0.74999998323619366
+blurred_desktop = false
+tint_intensity = 0.24999999441206455
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [
+    "lockscreen-login-box@WAYLAND-1",
+    "lockscreen-login-box@winit",
+    "lockscreen-login-box@DP-1",
+    "lockscreen-login-box@HDMI-A-1",
+    "lockscreen-widget-0000000000000001",
+    "lockscreen-widget-0000000000000003",
+    "lockscreen-widget-0000000000000004",
+    "lockscreen-widget-0000000000000005",
+    "lockscreen-widget-0000000000000006"
+]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 120.0
+    box_width = 384.0
+    cx = 960.0
+    cy = 600.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = true
+        input_opacity = 1.0
+        input_radius = 32.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 1200.0
+    cy = 720.0
+    output = "HDMI-A-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@WAYLAND-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 236.0
+    cy = 391.0
+    output = "WAYLAND-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@WAYLAND-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@winit"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 471.0
+    cy = 901.0
+    output = "winit"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@winit".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 256.0
+    box_width = 512.0
+    cx = 960.0
+    cy = 412.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        background = false
+        background_color = "on_primary"
+        background_opacity = 0.33000000000000002
+        background_padding = 12
+        background_radius = 32
+        center_text = true
+        clock_style = "digital"
+        color = "primary"
+        shadow = false
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
+    box_height = 36.0
+    box_width = 36.0
+    cx = 1828.0
+    cy = 1044.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
+        background = true
+        background_radius = 18.0
+        color = "primary"
+        command = "noctalia msg session reboot"
+        glyph = "reboot"
+        radius = 18.0
+        variant = "default"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
+    box_height = 36.0
+    box_width = 36.0
+    cx = 1740.0
+    cy = 1044.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
+        background = true
+        background_radius = 18.0
+        color = "primary"
+        command = "noctalia msg session lock-and-suspend"
+        glyph = "suspend"
+        radius = 18.0
+        variant = "default"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000005]
+    box_height = 36.0
+    box_width = 36.0
+    cx = 1872.0
+    cy = 1044.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000005.settings]
+        background = true
+        background_radius = 18.0
+        color = "secondary"
+        command = "noctalia msg session shutdown"
+        glyph = "shutdown"
+        radius = 18.0
+        variant = "primary"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000006]
+    box_height = 36.0
+    box_width = 36.0
+    cx = 1784.0
+    cy = 1044.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "button"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000006.settings]
+        background = true
+        background_radius = 18.0
+        color = "primary"
+        command = "systemctl reboot --firmware-setup"
+        glyph = "cpu"
+        radius = 18.0
+        variant = "default"
+
+[nightlight]
+enabled = false
+force = true
+temperature_day = 6500
+temperature_night = 3000
+
+[notification]
+border = false
+layer = "overlay"
+
+[osd]
+border = true
+offset_x = 0
+offset_y = 8
+orientation = "horizontal"
+position = "top_center"
+position_vertical = "top_right"
+scale = 1.0000000074505806
+
+    [osd.kinds]
+    keyboard_layout = false
+
+[plugin_settings."apex077/eyecare"]
+active_duration_minutes = 60
+break_duration_seconds = 300
+
+[plugin_settings."local/alarm"]
+menu_open_near_click = true
+menu_placement = "floating"
+menu_position = "auto"
+
+[plugin_settings."noctalia/true-transparency"]
+transparency_panel_open_near_click = true
+transparency_panel_placement = "floating"
+transparency_panel_position = "auto"
+
+[plugins]
+auto_update = true
+enabled = []
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/official-plugins"
+    name = "official"
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/community-plugins"
+    name = "community"
+
+[shell]
+app_icon_color = "primary"
+app_icon_colorize = false
+avatar_path = "/home/trazxdxne/Pictures/Avatars/whats-your-opinion-on-hatake-kakashi-is-he-overrated-v0-54lk9zp713kc1.webp"
+button_borders = false
+clipboard_auto_paste = "off"
+clipboard_history_max_entries = 150
+font_family = "Adwaita Sans"
+niri_overview_type_to_launch_enabled = false
+offline_mode = false
+password_style = "default"
+polkit_agent = true
+screen_time_enabled = true
+settings_show_advanced = true
+
+    [shell.animation]
+    enabled = true
+    speed = 2.0000000298023224
+
+    [shell.greeter_sync]
+    auto_sync = true
+    privilege_command = "pkexec"
+
+    [shell.launcher]
+    app_grid = false
+    categories = false
+    compact = true
+    session_search = false
+    show_icons = true
+
+    [shell.panel]
+    borders = false
+    control_center_placement = "attached"
+    launcher_placement = "floating"
+    launcher_position = "center"
+    open_near_click_control_center = true
+    open_near_click_launcher = true
+    open_near_click_session = true
+    open_near_click_wallpaper = true
+    session_placement = "floating"
+    session_position = "center"
+    transparency_mode = "solid"
+    wallpaper_placement = "attached"
+
+    [shell.screen_corners]
+    enabled = false
+
+    [shell.screenshot]
+    confirm_region = true
+    pipe_to_command = false
+    save_to_file = false
+
+    [shell.session]
+    grid = false
+    grid_columns = 3
+
+        [[shell.session.actions]]
+        action = "lock_and_suspend"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "1"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "logout"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "2"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "command"
+        command = "systemctl reboot --firmware-setup"
+        countdown_seconds = 0.0
+        enabled = true
+        glyph = "cpu"
+        label = "UEFI"
+        shortcut = "3"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "reboot"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "4"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "shutdown"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "5"
+        variant = "primary"
+
+    [shell.shadow]
+    alpha = 0.4999999888241291
+
+[theme]
+builtin = "Catppuccin"
+community_palette = "Atuel"
+mode = "dark"
+pure_black_dark = false
+source = "builtin"
+wallpaper_scheme = "m3-rainbow"
+
+    [theme.templates]
+    builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "niri", "qt", "wezterm" ]
+    community_ids = [ "obsidian", "zed", "micro", "antigravity", "obs", "steam", "telegram" ]
+
+[wallpaper]
+enabled = true
+fill_mode = "crop"
+transition_on_startup = true
+
+    [wallpaper.default]
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
+
+    [wallpaper.last]
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
+
+    [wallpaper.monitors.DP-1]
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
+
+    [wallpaper.monitors.HDMI-A-1]
+    path = "/home/trazxdxne/Pictures/Wallpapers/sasuke-uchiha-neon-5120x2880-22582.png"
+
+[weather]
+enabled = false
+
+[widget.audio_visualizer]
+bands = 32
+centered = false
+enabled = true
+mirrored = false
+scale = 1.0
+width = 32
+
+[widget.bluetooth]
+enabled = false
+
+[widget.brightness]
+enabled = false
+
+[widget.clipboard]
+enabled = false
+
+[widget.clock]
+anchor = true
+enabled = false
+scale = 1.1000000000000001
+
+[widget.control-center]
+anchor = true
+enabled = false
+
+[widget.date]
+enabled = true
+
+[widget.keyboard_layout]
+display = "short"
+show_icon = false
+
+[widget.launcher]
+enabled = true
+
+[widget.media]
+hide_artist = true
+hide_when_no_media = true
+max_length = 160
+min_length = 40
+title_scroll = "on_hover"
+
+[widget.network]
+enabled = false
+
+[widget.ram]
+display = "gauge"
+stat = "ram_used"
+
+[widget.session]
+enabled = false
+
+[widget.spacer_2]
+length = 141
+type = "spacer"
+
+[widget.transparent_widget]
+color = "#000000"
+enabled = true
+type = "noctalia/true-transparency:transparent_widget"
+
+[widget."trazxdxne/alarms-panel:clock"]
+enabled = true
+
+[widget.wallpaper]
+enabled = false
+
+[widget.workspaces]
+active_pill_size = 2.0
+enabled = true

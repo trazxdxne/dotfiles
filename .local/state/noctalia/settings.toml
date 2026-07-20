@@ -131,9 +131,7 @@ enabled = false
 pre_action_fade_seconds = 2
 
 [lockscreen]
-blur_intensity = 0.0
 blurred_desktop = false
-tint_intensity = 0.74999998323619366
 
 [lockscreen_widgets]
 enabled = true
