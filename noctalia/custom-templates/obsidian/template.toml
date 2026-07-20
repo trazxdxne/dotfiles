@@ -1,7 +1,0 @@
-[catalog.obsidian]
-name = "Obsidian"
-category = "apps"
-
-[templates.obsidian]
-input_path = "obsidian.css"
-output_path = "$HOME/Documents/Obsidian Vault/.obsidian/snippets/noctalia.css"

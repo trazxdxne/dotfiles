@@ -138,7 +138,7 @@
   // The full alarm-management panel (list, add, edit, delete alarms).
   "alarmMenu": {
     // Wayland layer for the menu window.
-    "layer": "OVERLAY",
+    "layer": "TOP",
 
     // Anchor to all four edges to center the panel on screen.
     "anchor": ["TOP", "BOTTOM", "LEFT", "RIGHT"],
