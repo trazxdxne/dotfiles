@@ -1,0 +1,11 @@
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.policykit.exec" &&
+        action.lookup("program") == "/usr/bin/tee") {
+        var cmd = action.lookup("command_line");
+        if ((cmd == "/usr/bin/tee /sys/class/rtc/rtc0/wakealarm" ||
+             cmd == "tee /sys/class/rtc/rtc0/wakealarm") &&
+            subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
+        }
+    }
+});
