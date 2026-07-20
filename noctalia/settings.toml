@@ -114,9 +114,9 @@ reserve_space = false
 show_dots = true
 
 [hooks]
-logging_out = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
-rebooting = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
-shutting_down = "/home/trazxdxne/dotfiles/scripts/graceful-session-exit"
+logging_out = "/home/trazxdxne/.local/bin/graceful-session-exit"
+rebooting = "/home/trazxdxne/.local/bin/graceful-session-exit"
+shutting_down = "/home/trazxdxne/.local/bin/graceful-session-exit"
 
 [hot_corners]
 enabled = false

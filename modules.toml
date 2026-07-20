@@ -7,6 +7,7 @@ packages.fedora = []
 
 [modules.base.links]
 ".config/fish"          = "~/.config/fish"
+".local/bin/graceful-session-exit" = "~/.local/bin/graceful-session-exit"
 ".config/fastfetch"     = "~/.config/fastfetch"
 ".config/micro"         = "~/.config/micro"
 ".config/topgrade"      = "~/.config/topgrade"
