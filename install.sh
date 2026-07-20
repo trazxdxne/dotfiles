@@ -162,7 +162,10 @@ for src in "${!USER_SYMLINKS[@]}"; do
     dest="${USER_SYMLINKS[$src]}"
     eval dest="$dest" # expand ~
     mkdir -p "$(dirname "$dest")"
-    ln -sf "$DOTFILES_DIR/$src" "$dest"
+    if [ -d "$dest" ] && [ ! -L "$dest" ]; then
+        mv "$dest" "${dest}.bak_\$(date +%Y%m%d_%H%M%S)"
+    fi
+    ln -sfn "$DOTFILES_DIR/$src" "$dest"
 done
 
 if [ ${#USER_SERVICES[@]} -gt 0 ]; then
