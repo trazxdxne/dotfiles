@@ -19,6 +19,7 @@
 11. [Как настроить ассоциации файлов и приложения по умолчанию (MIME-типы)](#11-как-настроить-ассоциации-файлов-и-приложения-по-умолчанию-mime-типы)
 12. [Как настроить виртуальный монитор с кастомным разрешением и EDID под пропорции телефона](#12-как-настроить-виртуальный-монитор-с-кастомным-разрешением-и-edid-под-пропорции-телефона)
 13. [Как настроить корректное разрешение имен Tailscale (systemd-resolved)](#13-как-настроить-корректное-разрешение-имен-tailscale-systemd-resolved)
+14. [Как развернуть Obsidian LiveSync (Self-hosted) для синхронизации через Tailscale](#14-как-развернуть-obsidian-livesync-self-hosted-для-синхронизации-через-tailscale)
 
 ---
 
@@ -823,3 +824,41 @@ sudo bash -c 'systemctl enable --now systemd-resolved && mkdir -p /etc/NetworkMa
 ```
 
 После выполнения команды предупреждения в Health check исчезнут, а адреса Tailscale начнут корректно работать прямо на вашем компьютере.
+
+---
+
+## 14. Как развернуть Obsidian LiveSync (Self-hosted) для синхронизации через Tailscale
+
+Полная инструкция от нуля, включая:
+
+1. **Предварительные требования** — Docker, Tailscale, systemd-resolved (см. [секцию 13](#13-как-настроить-корректное-разрешение-имен-tailscale-systemd-resolved)).
+2. **Установка Docker** — `pkexec pacman -S docker docker-compose`, добавление в группу `docker`, включение сервиса `docker`.
+3. **Развёртывание CouchDB** — клонирование dotfiles, создание `.env`, `docker compose -f ~/obsidian-livesync/docker-compose.yml up -d`.
+4. **Инициализация CouchDB** — для настройки базы данных и пользователя admin:
+   ```bash
+   # Выполните этот скрипт инициализации CouchDB (замените admin и password на ваши)
+   curl -X PUT http://admin:password@127.0.0.1:5984/_users
+   curl -X PUT http://admin:password@127.0.0.1:5984/_replicator
+   curl -X PUT http://admin:password@127.0.0.1:5984/_global_changes
+   # Проверка
+   curl -X GET http://admin:password@127.0.0.1:5984/_all_dbs
+   ```
+5. **Настройка Tailscale Serve** — `tailscale serve --bg http://127.0.0.1:5984`.
+6. **Настройка Exit Node** — копирование `99-tailscale.conf`, `sysctl --system`, `tailscale set --advertise-exit-node`.
+7. **Настройка Obsidian LiveSync плагина** — URI, логин/пароль, выбор Live/Periodic, первая синхронизация PC→Android.
+8. **Автозапуск после перезагрузки** — весь стек поднимается сам, `sudo tailscale up` **не нужен** повторно:
+
+   | Компонент | Автозапуск | Механизм |
+   |---|---|---|
+   | `tailscaled` | ✅ | systemd unit (`systemctl enable tailscaled`) |
+   | `docker` | ✅ | systemd unit (`systemctl enable docker`) |
+   | CouchDB контейнер | ✅ | `restart: unless-stopped` в compose |
+   | Tailscale Serve | ✅ | `--bg` сохраняет конфиг навсегда в Tailscale state |
+   | Tailscale авторизация | ✅ одноразовая | `tailscale up` нужен **только при первом** подключении к tailnet |
+
+9. **Нюансы и решение проблем**:
+   - Caddy не нужен — Tailscale Serve даёт HTTPS бесплатно.
+   - Если DNS не работает — см. секцию 13.
+   - Docker socket permission denied — проверить группу `docker` и перелогиниться.
+   - CouchDB `max_document_size` и `max_http_request_size` (50МБ и 4ГБ) — требуются для обработки вложений Obsidian.
+   - `tailscale up` после ребута — **не требуется**, демон `tailscaled` поднимается автоматически и восстанавливает подключение.

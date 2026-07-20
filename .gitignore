@@ -21,3 +21,9 @@ qml-niri/build/
 ags/alarms.json
 micro/backups/
 micro/buffers/
+
+# Obsidian LiveSync secrets & data
+obsidian-livesync/.env
+obsidian-livesync/data/
+obsidian-livesync/caddy_data/
+obsidian-livesync/caddy_config/
