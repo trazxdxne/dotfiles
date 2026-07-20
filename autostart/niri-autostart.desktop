@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Niri Autostart Script
-Exec=uwsm app -- /home/trazxdxne/.local/bin/niri-autostart
+Exec=/home/trazxdxne/.local/bin/niri-autostart
 Type=Application
 Terminal=false

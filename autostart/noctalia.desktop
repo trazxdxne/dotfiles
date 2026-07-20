@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Noctalia
-Exec=uwsm app -- noctalia
+Exec=noctalia
 Type=Application
 Terminal=false
