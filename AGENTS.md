@@ -6,16 +6,18 @@
 
 ## Dotfiles
 
-User configurations live in the Git repository `~/dotfiles`. Configs reach the system via symlinks.
+The repository follows a strict domain structure:
+- `~/.config/` and `~/.local/` configs go to `~/dotfiles/.config/` and `~/dotfiles/.local/`.
+- `/etc/` and `/usr/` system files go to `~/dotfiles/system/` (requires root).
+- Home root files (`~/.bashrc`, etc.) go to `~/dotfiles/<app>/` at the repo root.
 
 ### Onboarding a new config
 
-1. Move the original file into `~/dotfiles/<app>/` (create the subdirectory if needed).
-2. Create a symlink: original location → `~/dotfiles/<app>/<file>`.
-3. Add the new symlink line to `~/dotfiles/knowledge/Restore_Prompt.md`, under step 4 ("Создай симлинки").
-4. Commit all changes in a single commit.
+1. Move the original file into the corresponding domain directory in `~/dotfiles/` (e.g., `~/dotfiles/.config/<app>/`).
+2. Add the path mapping to `~/dotfiles/modules.toml` under the appropriate module.
+3. Commit all changes in a single commit.
 
-**Completion criterion**: the diff shows the new file in `~/dotfiles/` AND Restore_Prompt.md contains the new symlink line. Both present — or the step is not done.
+**Completion criterion**: the diff shows the new file in the correct domain directory AND `modules.toml` contains the new mapping. Both present — or the step is not done.
 
 ### Committing changes
 

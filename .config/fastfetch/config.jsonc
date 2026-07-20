@@ -146,6 +146,11 @@
     },
     {
       "type": "disk",
+      "folders": [
+        "/",
+        "/home/trazxdxne/Games",
+        "/home/trazxdxne/Videos"
+      ],
       "key": "  󱛟 Disk ({mountpoint}) • ",
       "keyColor": "green",
       "format": "{size-used} / {size-total} ({size-percentage})"
