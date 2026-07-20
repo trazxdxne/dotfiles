@@ -35,3 +35,8 @@ Commit when a **coherent unit of work** is complete — the full task the user a
 ## Web Research
 
 **Bail-fast**: if a fetched page returns empty, a JS skeleton, or a load error — pivot to another source or ask the user. Never retry broken pages.
+
+## Code Style & Comments
+
+- **Zero-comment policy by default:** Do not add explanatory comments to code unless explicitly asked. The code should be self-documenting.
+- **Unified language:** If comments must be added (or when modifying existing files with inconsistent comments), ensure all comments are in concise English. Avoid mixing languages (e.g. Russian and English) or varying comment lengths to maintain visual cleanliness.
