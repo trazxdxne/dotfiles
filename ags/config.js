@@ -97,14 +97,23 @@ export function applyCssVariables() {
     ${themeImport}
 
     * {
-      --panel-font-family: ${a.fontFamily};
-      --panel-font-size: ${a.fontSize}px;
-      --panel-clock-font-size: ${a.clockFontSize}px;
-      --panel-clock-color: ${a.clockColor ?? 'inherit'};
-      --panel-border-radius: ${a.borderRadius}px;
-      --panel-fs-border-width: ${cfg.fullscreen.border.width}px;
-      --panel-fs-border-style: ${cfg.fullscreen.border.style};
-      --panel-fs-border-color: ${cfg.fullscreen.border.fallbackColor};
+      font-family: ${a.fontFamily};
+      font-size: ${a.fontSize}px;
+    }
+    
+    button.clock-box {
+      border-radius: ${a.borderRadius}px;
+    }
+    
+    .clock-time {
+      color: ${a.clockColor ?? 'inherit'};
+      font-size: ${a.clockFontSize}px;
+    }
+
+    .Bar.fullscreen .clock-box {
+      border-width: ${cfg.fullscreen.border.width}px;
+      border-style: ${cfg.fullscreen.border.style};
+      border-color: ${cfg.fullscreen.border.fallbackColor};
     }
   `
   

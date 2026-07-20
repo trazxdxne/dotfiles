@@ -58,8 +58,8 @@ function updateAccentColor() {
         cssProvider.load_from_data(`
             .Bar.fullscreen .clock-box {
                 border-color: ${accentColor};
-                border-style: var(--panel-fs-border-style);
-                border-width: var(--panel-fs-border-width);
+                border-style: ${config.fullscreen.border.style};
+                border-width: ${config.fullscreen.border.width}px;
             }
         `)
     } catch (e) {
