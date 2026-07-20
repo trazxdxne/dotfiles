@@ -18,6 +18,7 @@
 10. [Как настроить дисплейный менеджер (ly), автоблокировку сессии (hyprlock) и управление питанием (Polkit)](#10-как-настроить-дисплейный-менеджер-ly-автоблокировку-сессии-hyprlock-и-управление-питанием-polkit)
 11. [Как настроить ассоциации файлов и приложения по умолчанию (MIME-типы)](#11-как-настроить-ассоциации-файлов-и-приложения-по-умолчанию-mime-типы)
 12. [Как настроить виртуальный монитор с кастомным разрешением и EDID под пропорции телефона](#12-как-настроить-виртуальный-монитор-с-кастомным-разрешением-и-edid-под-пропорции-телефона)
+13. [Как настроить корректное разрешение имен Tailscale (systemd-resolved)](#13-как-настроить-корректное-разрешение-имен-tailscale-systemd-resolved)
 
 ---
 
@@ -802,4 +803,23 @@ niri msg action set-mode HDMI-A-1 2400x1080
 niri msg action set-mode HDMI-A-1 1600x720
 ```
 
+---
 
+## 13. Как настроить корректное разрешение имен Tailscale (systemd-resolved)
+
+При использовании Tailscale (в частности, для доступа к Obsidian LiveSync по адресам вида `имя-машины.домен.ts.net`), Health check может выдавать предупреждения о проблемах с DNS, а локальные имена машин могут не резолвиться. 
+
+Официальное решение от Tailscale — использовать `systemd-resolved` в связке с `NetworkManager`.
+
+### Шаг 1. Настройка systemd-resolved и NetworkManager
+Выполните следующую команду в терминале. Она автоматически:
+1. Включит службу `systemd-resolved`.
+2. Настроит `NetworkManager` на работу с `systemd-resolved`.
+3. Создаст правильную символическую ссылку для `/etc/resolv.conf`.
+4. Перезапустит обе сетевые службы для применения настроек.
+
+```bash
+sudo bash -c 'systemctl enable --now systemd-resolved && mkdir -p /etc/NetworkManager/conf.d && echo -e "[main]\ndns=systemd-resolved" > /etc/NetworkManager/conf.d/systemd-resolved.conf && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf && systemctl restart systemd-resolved NetworkManager'
+```
+
+После выполнения команды предупреждения в Health check исчезнут, а адреса Tailscale начнут корректно работать прямо на вашем компьютере.
