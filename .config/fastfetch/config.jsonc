@@ -147,12 +147,21 @@
     {
       "type": "disk",
       "folders": [
-        "/",
-        "/home/trazxdxne/Games",
-        "/home/trazxdxne/Videos"
+        "/"
       ],
-      "key": "  󱛟 Disk ({mountpoint}) • ",
+      "key": "  󱛟 Disk (nvme0n1p6) • ",
       "keyColor": "green",
+      "showSubvolumes": true,
+      "format": "{size-used} / {size-total} ({size-percentage})"
+    },
+    {
+      "type": "disk",
+      "folders": [
+        "/home/trazxdxne/Games"
+      ],
+      "key": "  󱛟 Disk (sda2)      • ",
+      "keyColor": "green",
+      "showSubvolumes": true,
       "format": "{size-used} / {size-total} ({size-percentage})"
     },
     {
