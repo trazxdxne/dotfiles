@@ -20,6 +20,7 @@ const DEFAULT_CONFIG = {
     border: {
       width: 1,
       style: "solid",
+      opacity: 1.0,
       fallbackColor: "#f5c2e7"
     },
     background: {

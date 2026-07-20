@@ -50,6 +50,9 @@
       // CSS border-style value: "solid" | "dashed" | "dotted" | "none" …
       "style": "solid",
 
+      // Border opacity (0.0 to 1.0)
+      "opacity": 1.0,
+
       // Fallback color used when no GTK theme color is available.
       // Any valid CSS color string: "#rrggbb", "rgba(…)", etc.
       "fallbackColor": "#f5c2e7"
@@ -57,7 +60,7 @@
 
     // Background style when fullscreen
     "background": {
-      "color": "rgba(37, 38, 39, 0.5)",
+      "color": "rgba(37, 38, 39, 0.8)",
       "transition": "0.15s"
     },
 

@@ -48,11 +48,15 @@ export function applyFullscreenStyles() {
     }
 
     const { border, background } = config.fullscreen
+    
+    // Apply opacity if specified
+    const opacity = border.opacity !== undefined ? border.opacity : 1.0
+    const borderColor = opacity < 1.0 ? `alpha(${accentColor}, ${opacity})` : accentColor
 
     try {
         cssProvider.load_from_data(`
             .Bar.fullscreen .clock-box {
-                border-color: ${accentColor};
+                border-color: ${borderColor};
                 border-style: ${border.style};
                 border-width: ${border.width}px;
                 background-color: ${background?.color || 'transparent'};
