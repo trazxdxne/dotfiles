@@ -28,3 +28,8 @@ obsidian-livesync/data/
 obsidian-livesync/caddy_data/
 obsidian-livesync/caddy_config/
 .config/niri/noctalia.kdl
+.config/hypr/noctalia.lua
+.config/fish/fish_variables
+.config/micro/backups/
+.config/micro/buffers/
+.config/ags/alarms.json
