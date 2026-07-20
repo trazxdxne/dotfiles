@@ -22,6 +22,10 @@ const DEFAULT_CONFIG = {
       style: "solid",
       fallbackColor: "#f5c2e7"
     },
+    background: {
+      color: "rgba(37, 38, 39, 0.5)",
+      transition: "0.15s"
+    },
     layer: "OVERLAY"
   },
   appearance: {
@@ -116,12 +120,6 @@ export function applyCssVariables() {
     .clock-time {
       color: ${a.clockColor ?? 'inherit'};
       font-size: ${a.clockFontSize}px;
-    }
-
-    .Bar.fullscreen .clock-box {
-      border-width: ${cfg.fullscreen.border.width}px;
-      border-style: ${cfg.fullscreen.border.style};
-      border-color: ${cfg.fullscreen.border.fallbackColor};
     }
   `
   

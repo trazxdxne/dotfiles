@@ -40,12 +40,12 @@
     "rightClick": "alarm-menu"
   },
 
-  // ── Fullscreen border ────────────────────────────────────────────────────
+  // ── Fullscreen appearance ────────────────────────────────────────────────
   // Shown around the clock button when the focused window is fullscreen.
   "fullscreen": {
     "border": {
       // Border width in pixels.
-      "width": 1,
+      "width": 2,
 
       // CSS border-style value: "solid" | "dashed" | "dotted" | "none" …
       "style": "solid",
@@ -53,6 +53,12 @@
       // Fallback color used when no GTK theme color is available.
       // Any valid CSS color string: "#rrggbb", "rgba(…)", etc.
       "fallbackColor": "#f5c2e7"
+    },
+
+    // Background style when fullscreen
+    "background": {
+      "color": "rgba(37, 38, 39, 0.5)",
+      "transition": "0.15s"
     },
 
     // Wayland layer for the fullscreen indicator window.

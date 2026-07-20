@@ -7,65 +7,13 @@ import Gio from "gi://Gio"
 import style from "./style.css"
 import { toggleAlarmMenu, setupAlarmWindows } from "./alarms.jsx"
 import { getConfig, applyCssVariables } from "./config.js"
+import { refreshAccentColor } from "./fullscreen-appearance.js"
 
 const config = getConfig()
 const timeVal = createPoll("", config.clock.interval, `date +"${config.clock.format}"`)
 
 const barWindows = []
 const fileMonitors = []
-let cssProvider = null
-
-
-
-const NIRI_CONFIG_FILES = ["noctalia.kdl", "config.kdl"]
-
-function readNiriAccentColor() {
-    for (const filename of NIRI_CONFIG_FILES) {
-        try {
-            const path = GLib.build_filenamev([GLib.get_home_dir(), ".config", "niri", filename])
-            const file = Gio.File.new_for_path(path)
-            const [ok, content] = file.load_contents(null)
-            if (ok) {
-                const text = new TextDecoder("utf-8").decode(content)
-                const focusRingMatch = text.match(/focus-ring\s*\{([^}]+)\}/)
-                if (focusRingMatch) {
-                    const colorMatch = focusRingMatch[1].match(/active-color\s*"([^"]+)"/)
-                    if (colorMatch) {
-                        return colorMatch[1]
-                    }
-                }
-            }
-        } catch (e) {
-            console.error(`[bar] failed to read ${filename}: ${e.message}`)
-        }
-    }
-    return "#f5c2e7"
-}
-
-function updateAccentColor() {
-    const accentColor = readNiriAccentColor() || config.fullscreen.border.fallbackColor
-
-    if (!cssProvider) {
-        cssProvider = new Gtk.CssProvider()
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            cssProvider,
-            Gtk.STYLE_PROVIDER_PRIORITY_USER
-        )
-    }
-
-    try {
-        cssProvider.load_from_data(`
-            .Bar.fullscreen .clock-box {
-                border-color: ${accentColor};
-                border-style: ${config.fullscreen.border.style};
-                border-width: ${config.fullscreen.border.width}px;
-            }
-        `)
-    } catch (e) {
-        console.error(`[bar] failed to update accent color CSS: ${e.message}`)
-    }
-}
 
 function setupNiriMonitor() {
     try {
@@ -75,9 +23,9 @@ function setupNiriMonitor() {
         monitor.connect("changed", (monitor, file, other_file, event_type) => {
             if (event_type === Gio.FileMonitorEvent.CHANGES_DONE_HINT || event_type === Gio.FileMonitorEvent.CREATED) {
                 const name = file.get_basename()
-                if (NIRI_CONFIG_FILES.includes(name)) {
+                if (name === "noctalia.kdl" || name === "config.kdl") {
                     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
-                        updateAccentColor()
+                        refreshAccentColor()
                         return GLib.SOURCE_REMOVE
                     })
                 }
@@ -158,7 +106,7 @@ const handleWindows = (windows) => {
         if (hasFullscreen) {
             context.add_class("fullscreen")
             Astal.widget_set_click_through(win, true)
-            win.set_layer(Astal.Layer.OVERLAY)
+            win.set_layer(Astal.Layer[config.fullscreen.layer] || Astal.Layer.OVERLAY)
         } else {
             context.remove_class("fullscreen")
             Astal.widget_set_click_through(win, false)
@@ -203,7 +151,7 @@ const processNiriEvent = (event) => {
         checkFullscreen()
     }
     if (event.ConfigLoaded) {
-        updateAccentColor()
+        refreshAccentColor()
     }
 }
 
@@ -314,7 +262,7 @@ app.start({
             return GLib.SOURCE_REMOVE;
         });
 
-        updateAccentColor()
+        refreshAccentColor()
         setupNiriMonitor()
         setupHotReload()
 
