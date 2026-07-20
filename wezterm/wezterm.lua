@@ -1,7 +1,6 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
--- Modern default settings
 config.font = wezterm.font_with_fallback {
   { family = 'Geist Mono' },
   { family = 'Twemoji' },
@@ -13,14 +12,9 @@ config.use_fancy_tab_bar = false
 config.enable_wayland = true
 config.max_fps = 200
 
--- Enable terminal ligatures and ensure emoji fallback
--- WezTerm natively supports flags and emojis via HarfBuzz and font shaping
 config.harfbuzz_features = { 'calt=1', 'clig=1', 'liga=1' }
 
-
 config.color_scheme = 'Noctalia'
--- Optional: Window appearance
---config.window_background_opacity = 0.95
 config.window_close_confirmation = 'NeverPrompt'
 config.hide_tab_bar_if_only_one_tab = true
 
@@ -28,9 +22,14 @@ local act = wezterm.action
 
 local function smart_copy()
   return wezterm.action_callback(function(window, pane)
-    local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-    if has_selection then
-      window:perform_action(act.CopyTo('ClipboardAndClearSelection'), pane)
+    local sel = window:get_selection_text_for_pane(pane)
+    if sel and sel ~= "" then
+      local f = io.popen("wl-copy", "w")
+      if f then
+        f:write(sel)
+        f:close()
+      end
+      window:perform_action(act.ClearSelection, pane)
     else
       window:perform_action(act.SendKey{key='c', mods='CTRL'}, pane)
     end
@@ -38,13 +37,10 @@ local function smart_copy()
 end
 
 config.keys = {
-  -- Вставка на обеих раскладках
   { key = 'v', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
   { key = 'м', mods = 'CTRL', action = act.PasteFrom('Clipboard') },
-  -- Копирование (умное: если нет выделения мышью, отправляет Ctrl-c в терминал)
   { key = 'c', mods = 'CTRL', action = smart_copy() },
   { key = 'с', mods = 'CTRL', action = smart_copy() },
-  -- Прерывание программы (как старый Ctrl+C)
   { key = 'C', mods = 'CTRL|SHIFT', action = act.SendKey { key = 'c', mods = 'CTRL' } },
   { key = 'С', mods = 'CTRL|SHIFT', action = act.SendKey { key = 'c', mods = 'CTRL' } },
 }
