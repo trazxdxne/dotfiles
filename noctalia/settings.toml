@@ -8,7 +8,7 @@ enable_overdrive = false
 enable_sounds = false
 
 [backdrop]
-blur_intensity = 0.59999998658895493
+blur_intensity = 0.0
 enabled = false
 tint_intensity = 0.099999997764825821
 
@@ -37,7 +37,7 @@ order = [ "default", "bar" ]
 
     [bar.default]
     auto_hide = false
-    background_opacity = 0.99999997764825821
+    background_opacity = 0.89999997988343239
     capsule = true
     capsule_radius = 12
     center = [ "clock" ]

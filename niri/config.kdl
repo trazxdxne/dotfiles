@@ -1,5 +1,3 @@
-// Clean standard niri config
-
 workspace "1"
 workspace "2"
 workspace "1 " {
@@ -94,8 +92,6 @@ environment {
     ELECTRON_OZONE_PLATFORM_HINT "auto"
 }
 
-// Autostarts are now managed by XDG Autostart via uwsm
-
 hotkey-overlay {
     skip-at-startup
 }
@@ -122,6 +118,9 @@ window-rule {
     default-column-width {}
     open-maximized true
     open-focused true
+    background-effect {
+       blur true
+    }
 }
 
 window-rule {
@@ -207,6 +206,16 @@ window-rule {
 window-rule {
 	match app-id=r#"^org\.gnome\.Nautilus$"#
 	open-focused true
+	background-effect {
+	   blur true
+	}
+}
+window-rule {
+	match app-id=r#"obsidian"#
+	open-focused true
+	background-effect {
+	   blur true
+	}
 }
 
 binds {
