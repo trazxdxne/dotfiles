@@ -14,6 +14,25 @@ const barWindows = []
 const fileMonitors = []
 let cssProvider = null
 
+const CONFIG_FILE = GLib.build_filenamev([GLib.get_home_dir(), ".config", "ags", "config.json"])
+
+export function loadPanelConfig() {
+    try {
+        const [ok, contents] = GLib.file_get_contents(CONFIG_FILE)
+        if (ok) {
+            return JSON.parse(new TextDecoder("utf-8").decode(contents))
+        }
+    } catch (e) {
+        console.error(`[bar] failed to load config: ${e.message}`)
+    }
+    // Default fallback
+    return {
+        bar: { layer: "OVERLAY", anchor: ["TOP"], marginTop: 9 },
+        alarmOSD: { layer: "OVERLAY", anchor: ["TOP"], marginTop: 84 },
+        alarmMenu: { layer: "OVERLAY", anchor: ["TOP", "BOTTOM", "LEFT", "RIGHT"], marginTop: 24, marginBottom: 40, width: 360 }
+    }
+}
+
 const NIRI_CONFIG_FILES = ["noctalia.kdl", "config.kdl"]
 
 function readNiriAccentColor() {
@@ -95,7 +114,7 @@ function setupHotReload() {
             monitor.connect("changed", (monitor, file, other_file, event_type) => {
                 if (event_type === Gio.FileMonitorEvent.CHANGES_DONE_HINT || event_type === Gio.FileMonitorEvent.CREATED) {
                     const path = file.get_path()
-                    if (path && (path.endsWith(".js") || path.endsWith(".jsx") || path.endsWith(".ts") || path.endsWith(".css"))) {
+                    if (path && (path.endsWith(".js") || path.endsWith(".jsx") || path.endsWith(".ts") || path.endsWith(".css") || path.endsWith("config.json"))) {
                         if (reloadTimeout) GLib.source_remove(reloadTimeout);
                         reloadTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
                             console.log(`[hot-reload] File changed: ${path}, restarting ags via systemd...`)
@@ -159,7 +178,7 @@ const handleWindows = (windows) => {
         } else {
             context.remove_class("fullscreen")
             Astal.widget_set_click_through(win, false)
-            win.set_layer(Astal.Layer.BOTTOM)
+            win.set_layer(win.defaultLayer !== undefined ? win.defaultLayer : Astal.Layer.BOTTOM)
         }
     })
 }
@@ -256,7 +275,9 @@ function Clock() {
 }
 
 function Bar(gdkmonitor) {
-    const { TOP } = Astal.WindowAnchor
+    const config = loadPanelConfig()
+    const anchor = config.bar.anchor.reduce((acc, a) => acc | Astal.WindowAnchor[a], 0)
+    const layer = Astal.Layer[config.bar.layer] || Astal.Layer.OVERLAY
 
     const barWindow = (
         <window
@@ -264,15 +285,16 @@ function Bar(gdkmonitor) {
             gdkmonitor={gdkmonitor}
             monitor={gdkmonitor}
             exclusivity={Astal.Exclusivity.IGNORE}
-            anchor={TOP}
-            layer={Astal.Layer.OVERLAY}
+            anchor={anchor}
+            layer={layer}
             application={app}
-            margin_top={9}
+            margin_top={config.bar.marginTop}
         >
             <Clock />
         </window>
     )
 
+    barWindow.defaultLayer = layer
     barWindow.gdkmonitor = gdkmonitor
     barWindows.push(barWindow)
 

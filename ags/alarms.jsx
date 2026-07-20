@@ -4,6 +4,8 @@ import { execAsync, subprocess } from "ags/process"
 import GLib from "gi://GLib"
 
 const ALARMS_FILE = GLib.build_filenamev([GLib.get_home_dir(), ".config", "ags", "alarms.json"])
+import { loadPanelConfig } from "./app.jsx"
+
 const SNOOZE_MINUTES = 5
 const AUTO_SNOOZE_MINUTES = 1
 const MISSED_THRESHOLD_MINUTES = 30
@@ -29,6 +31,10 @@ function calculateNextRingTs(timeStr, days, fromTs = null) {
         
         const isWeekday = candidate.getDay() > 0 && candidate.getDay() < 6
         if (days === "Weekdays" && !isWeekday) continue
+        
+        const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+        const candidateDayStr = dayNames[candidate.getDay()]
+        if (days !== "All" && days !== "Weekdays" && !days.split(",").includes(candidateDayStr)) continue
         
         return Math.floor(candidate.getTime() / 1000)
     }
@@ -82,6 +88,16 @@ function saveAlarms() {
     } catch (e) {
         console.error(e)
     }
+}
+
+let saveTimeout = null
+function debouncedSave() {
+    if (saveTimeout) GLib.source_remove(saveTimeout)
+    saveTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
+        saveAlarms()
+        saveTimeout = null
+        return GLib.SOURCE_REMOVE
+    })
 }
 
 const osdTimeLabel = <label class="alarm-osd-time" />
@@ -164,12 +180,19 @@ export function checkAlarms() {
 }
 
 export function setupAlarmWindows() {
+    const config = loadPanelConfig()
+    const osdAnchor = config.alarmOSD.anchor.reduce((acc, a) => acc | Astal.WindowAnchor[a], 0)
+    const osdLayer = Astal.Layer[config.alarmOSD.layer] || Astal.Layer.OVERLAY
+
+    const menuAnchor = config.alarmMenu.anchor.reduce((acc, a) => acc | Astal.WindowAnchor[a], 0)
+    const menuLayer = Astal.Layer[config.alarmMenu.layer] || Astal.Layer.OVERLAY
+
     AlarmOSD = (
         <window
             class="alarm-osd-window"
-            anchor={Astal.WindowAnchor.TOP}
-            layer={Astal.Layer.OVERLAY}
-            margin_top={84}
+            anchor={osdAnchor}
+            layer={osdLayer}
+            margin_top={config.alarmOSD.marginTop}
             visible={false}
             application={app}
         >
@@ -187,8 +210,8 @@ export function setupAlarmWindows() {
     AlarmMenu = (
         <window
             class="alarm-menu-window"
-            anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT | Astal.WindowAnchor.RIGHT}
-            layer={Astal.Layer.OVERLAY}
+            anchor={menuAnchor}
+            layer={menuLayer}
             visible={false}
             application={app}
             keymode={Astal.Keymode.ON_DEMAND}
@@ -202,9 +225,9 @@ export function setupAlarmWindows() {
             }}
         >
             <eventbox onButtonPressEvent={() => { AlarmMenu.hide(); return true; }} expand={true}>
-                <box valign={Gtk.Align.START} halign={Gtk.Align.CENTER} margin_top={24} margin_bottom={40}>
+                <box valign={Gtk.Align.START} halign={Gtk.Align.CENTER} margin_top={config.alarmMenu.marginTop} margin_bottom={config.alarmMenu.marginBottom}>
                     <eventbox onButtonPressEvent={() => true}>
-                        <box vertical class="alarm-menu" width_request={360}>
+                        <box vertical class="alarm-menu" width_request={config.alarmMenu.width}>
                             <box margin_bottom={10}>
                                 <label class="alarm-title" label="Alarms" hexpand={true} halign={Gtk.Align.START} />
                             </box>
@@ -236,47 +259,65 @@ function AlarmItem(alarm) {
 
     const enabledSwitch = new Gtk.Switch({ active: alarm.enabled, valign: Gtk.Align.CENTER })
     
-    const daysBtn = new Gtk.Button({ label: alarm.days })
-    daysBtn.get_style_context().add_class("alarm-button")
+    const daysBox = new Gtk.Box({ spacing: 2 })
+    const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+    const currentDays = alarm.days ? alarm.days.split(",") : []
+    
+    let activeDays = []
+    if (alarm.days === "All") activeDays = days
+    else if (alarm.days === "Weekdays") activeDays = ["Mo", "Tu", "We", "Th", "Fr"]
+    else activeDays = currentDays
+    
+    days.forEach(day => {
+        const btn = new Gtk.ToggleButton({ label: day, active: activeDays.includes(day) })
+        btn.get_style_context().add_class("alarm-day-toggle")
+        btn.connect("toggled", () => {
+            if (btn.active && !activeDays.includes(day)) activeDays.push(day)
+            if (!btn.active) activeDays = activeDays.filter(d => d !== day)
+            
+            const isWeekdays = activeDays.length === 5 && ["Mo", "Tu", "We", "Th", "Fr"].every(d => activeDays.includes(d))
+            alarm.days = activeDays.length === 7 ? "All" : isWeekdays ? "Weekdays" : activeDays.join(",")
+            alarm.nextRingTs = calculateNextRingTs(alarm.time, alarm.days)
+            saveAlarms()
+        })
+        daysBox.add(btn)
+    })
 
     const deleteBtn = new Gtk.Button({ label: "🗑" })
     deleteBtn.get_style_context().add_class("alarm-button")
     deleteBtn.get_style_context().add_class("delete")
-    
-    const box = new Gtk.Box({ spacing: 8 })
-    box.get_style_context().add_class("alarm-item")
-    
-    timeEntry.connect("changed", () => {
-        alarm.time = timeEntry.get_text()
-        alarm.nextRingTs = calculateNextRingTs(alarm.time, alarm.days)
-        saveAlarms()
-    })
-    noteEntry.connect("changed", () => { 
-        alarm.note = noteEntry.get_text()
-        saveAlarms()
-    })
-    enabledSwitch.connect("notify::active", () => { 
-        alarm.enabled = enabledSwitch.active
-        if (alarm.enabled) alarm.nextRingTs = calculateNextRingTs(alarm.time, alarm.days)
-        saveAlarms()
-    })
-    daysBtn.connect("clicked", (self) => {
-        self.label = self.label === "All" ? "Weekdays" : "All"
-        alarm.days = self.label
-        alarm.nextRingTs = calculateNextRingTs(alarm.time, alarm.days)
-        saveAlarms()
-    })
     deleteBtn.connect("clicked", () => {
         alarms = alarms.filter(a => a.id !== alarm.id)
         saveAlarms()
         renderAlarmsList()
     })
     
-    box.add(timeEntry)
-    box.add(daysBtn)
-    box.add(noteEntry)
-    box.add(enabledSwitch)
-    box.add(deleteBtn)
+    const topBox = new Gtk.Box({ spacing: 8 })
+    topBox.add(timeEntry)
+    topBox.add(noteEntry)
+    topBox.add(enabledSwitch)
+    topBox.add(deleteBtn)
+
+    const box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 6 })
+    box.get_style_context().add_class("alarm-item")
+    
+    timeEntry.connect("changed", () => {
+        alarm.time = timeEntry.get_text()
+        alarm.nextRingTs = calculateNextRingTs(alarm.time, alarm.days)
+        debouncedSave()
+    })
+    noteEntry.connect("changed", () => { 
+        alarm.note = noteEntry.get_text()
+        debouncedSave()
+    })
+    enabledSwitch.connect("notify::active", () => { 
+        alarm.enabled = enabledSwitch.active
+        if (alarm.enabled) alarm.nextRingTs = calculateNextRingTs(alarm.time, alarm.days)
+        saveAlarms()
+    })
+    
+    box.add(topBox)
+    box.add(daysBox)
     
     return box
 }
