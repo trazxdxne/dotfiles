@@ -98,7 +98,7 @@ function setupHotReload() {
             monitor.connect("changed", (monitor, file, other_file, event_type) => {
                 if (event_type === Gio.FileMonitorEvent.CHANGES_DONE_HINT || event_type === Gio.FileMonitorEvent.CREATED) {
                     const path = file.get_path()
-                    if (path && (path.endsWith(".js") || path.endsWith(".jsx") || path.endsWith(".ts") || path.endsWith(".css") || path.endsWith("config.json"))) {
+                    if (path && (path.endsWith(".js") || path.endsWith(".jsx") || path.endsWith(".ts") || path.endsWith(".css") || path.endsWith(".jsonc"))) {
                         if (reloadTimeout) GLib.source_remove(reloadTimeout);
                         reloadTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, config.hotReload.debounce, () => {
                             console.log(`[hot-reload] File changed: ${path}, restarting ags via systemd...`)
