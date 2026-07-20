@@ -81,6 +81,7 @@ layout {
         // top 0
         // bottom 0
     }
+    background-color "transparent" 
 }
 
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY" "XDG_CURRENT_DESKTOP"
@@ -98,7 +99,17 @@ prefer-no-csd
 //screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 animations {
-	slowdown 0.1
+	slowdown 0.2
+}
+
+overview {
+    workspace-shadow {
+        off
+    }
+}
+layer-rule {
+    match namespace="^noctalia-wallpaper"
+    place-within-backdrop true
 }
 
 window-rule {

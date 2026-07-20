@@ -8,9 +8,8 @@ enable_overdrive = false
 enable_sounds = false
 
 [backdrop]
-blur_intensity = 0.99999997764825821
+blur_intensity = 0.29999999329447746
 enabled = false
-tint_intensity = 0.82999998144805431
 
 [bar]
 order = [ "default", "bar" ]
