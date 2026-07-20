@@ -281,7 +281,7 @@ repos = [
 # pull_predefined = false
 
 # Arguments to pass Git when pulling/fetching Repositories
-# arguments = "--rebase --autostash"
+arguments = "--rebase --autostash"
 
 # Whether to perform a `git fetch` instead of `git pull`
 # fetch_only = false
