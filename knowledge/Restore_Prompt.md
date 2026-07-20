@@ -12,7 +12,7 @@
    - Выведи мне инструкцию запустить `gh auth login` в терминале для авторизации в GitHub. После этого приостанови выполнение и жди моего подтверждения "Готово".
    - После подтверждения, автоматически склонируй мой приватный репозиторий дотфайлов: `git clone https://github.com/trazxdxne/dotfiles.git ~/dotfiles`.
 3. Восстановление и Симлинки:
-    - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents/skills`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`, `~/.config/hypr`, `~/.config/uwsm`.
+    - Создай необходимые системные директории: `~/.config/niri`, `~/.config/niri-autostart`, `~/.config/fuzzel`, `~/.config/gtk-3.0`, `~/.config/gtk-4.0`, `~/.agents/skills`, `~/.gemini/antigravity-cli/knowledge/`, `~/.config/swappy`, `~/.local/bin`, `~/.config/qt5ct/colors`, `~/.config/qt6ct/colors`, `~/.config/hypr`, `~/.config/uwsm`, `~/.config/autostart`.
     - Создай симлинки из `~/dotfiles` в систему:
       • `~/.config/niri/config.kdl` -> `~/dotfiles/niri/config.kdl`
       • `~/.config/niri-autostart/config.kdl` -> `~/dotfiles/niri-autostart/config.kdl`
@@ -50,6 +50,11 @@
       • `~/.agents/skills/baby` -> `~/dotfiles/.agents/skills/baby`
       • `~/.agents/skills/obsidian-task-organizer` -> `~/dotfiles/.agents/skills/obsidian-task-organizer`
       • `~/.config/uwsm/env` -> `~/dotfiles/uwsm/env`
+      • `~/.config/autostart/noctalia.desktop` -> `~/dotfiles/autostart/noctalia.desktop`
+      • `~/.config/autostart/ags.desktop` -> `~/dotfiles/autostart/ags.desktop`
+      • `~/.config/autostart/gnome-keyring-daemon.desktop` -> `~/dotfiles/autostart/gnome-keyring-daemon.desktop`
+      • `~/.config/autostart/niri-autostart.desktop` -> `~/dotfiles/autostart/niri-autostart.desktop`
+      • `~/.config/autostart/wayvnc.desktop` -> `~/dotfiles/autostart/wayvnc.desktop`
       • `~/.config/fish/functions/fastfetch.fish` -> `~/dotfiles/fish/functions/fastfetch.fish`
       • `~/.config/fish/functions/dotpush.fish` -> `~/dotfiles/fish/functions/dotpush.fish`
       • `~/.config/fastfetch/config.jsonc` -> `~/dotfiles/fastfetch/config.jsonc`

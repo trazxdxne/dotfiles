@@ -94,12 +94,7 @@ environment {
     ELECTRON_OZONE_PLATFORM_HINT "auto"
 }
 
-spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY" "XDG_CURRENT_DESKTOP"
-spawn-at-startup "noctalia"
-spawn-at-startup "systemctl" "--user" "start" "ags.service"
-spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
-spawn-sh-at-startup "sleep 2 && if command -v uwsm >/dev/null 2>&1 && systemctl --user is-active --quiet graphical-session.target; then uwsm app -- ~/.local/bin/niri-autostart; else ~/.local/bin/niri-autostart; fi"
-spawn-at-startup "wayvnc" "-f" "60" "-r" "--output=HDMI-A-1" "0.0.0.0"
+// Autostarts are now managed by XDG Autostart via uwsm
 
 hotkey-overlay {
     skip-at-startup
@@ -217,10 +212,10 @@ window-rule {
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
-    Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "wezterm" "start" "--always-new-process"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "uwsm" "app" "--" "wezterm" "start" "--always-new-process"; }
     Mod+Space hotkey-overlay-title="Run an Application Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+L hotkey-overlay-title="Lock the Screen" { spawn "noctalia" "msg" "session lock"; }
-    Mod+E hotkey-overlay-title="Open a File Manager" { spawn "nautilus"; }
+    Mod+E hotkey-overlay-title="Open a File Manager" { spawn "uwsm" "app" "--" "nautilus"; }
 
     //Mod+Alt+X   	     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
     Mod+Alt+Z     		 allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
