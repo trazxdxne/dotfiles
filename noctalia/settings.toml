@@ -558,6 +558,9 @@ color = "#000000"
 enabled = true
 type = "noctalia/true-transparency:transparent_widget"
 
+[widget."trazxdxne/alarms-panel:clock"]
+enabled = true
+
 [widget.wallpaper]
 enabled = false
 

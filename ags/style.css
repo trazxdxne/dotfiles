@@ -28,7 +28,7 @@ button.clock-box {
 }
 
 button.clock-box:hover {
-    background-color: alpha(@window_fg_color, 0.12);
+    background-color: alpha(@window_fg_color, 0.15);
 }
 
 .clock-time {
