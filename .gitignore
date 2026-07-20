@@ -27,3 +27,4 @@ obsidian-livesync/.env
 obsidian-livesync/data/
 obsidian-livesync/caddy_data/
 obsidian-livesync/caddy_config/
+.config/niri/noctalia.kdl
