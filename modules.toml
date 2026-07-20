@@ -1,0 +1,109 @@
+[modules.base]
+description = "Shell, terminal, base settings"
+always = true
+packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum"]
+packages.arch = []
+packages.fedora = []
+
+[modules.base.links]
+".config/fish"          = "~/.config/fish"
+".config/fastfetch"     = "~/.config/fastfetch"
+".config/micro"         = "~/.config/micro"
+".config/topgrade"      = "~/.config/topgrade"
+".config/gtk-3.0/settings.ini" = "~/.config/gtk-3.0/settings.ini"
+".config/gtk-4.0/settings.ini" = "~/.config/gtk-4.0/settings.ini"
+".config/autostart/gnome-keyring-daemon.desktop" = "~/.config/autostart/gnome-keyring-daemon.desktop"
+"bash/.bashrc"          = "~/.bashrc"
+"wezterm/wezterm.lua"   = "~/.wezterm.lua"
+
+[modules.niri]
+description = "Niri compositor"
+packages = ["niri", "fuzzel", "uwsm"]
+packages.arch = ["xdg-desktop-portal-gnome"]
+packages.fedora = []
+
+[modules.niri.links]
+".config/niri"              = "~/.config/niri"
+".config/niri-autostart"    = "~/.config/niri-autostart"
+".config/fuzzel"            = "~/.config/fuzzel"
+".config/uwsm"              = "~/.config/uwsm"
+".config/autostart/niri-autostart.desktop" = "~/.config/autostart/niri-autostart.desktop"
+
+[modules.hyprland]
+description = "Hyprland compositor"
+packages = ["hyprland", "hyprlock"]
+
+[modules.hyprland.links]
+".config/hypr" = "~/.config/hypr"
+
+[modules.ags]
+description = "AGS bar and widgets"
+packages = ["ags"]
+
+[modules.ags.links]
+".config/ags" = "~/.config/ags"
+".config/autostart/ags.desktop" = "~/.config/autostart/ags.desktop"
+
+[modules.ags.user_services]
+"ags.service" = ".config/ags/ags.service"
+
+[modules.greeter]
+description = "Noctalia Greeter (greetd)"
+packages = ["greetd"]
+packages.arch = ["greetd-noctalia"]
+packages.fedora = []
+
+[modules.greeter.root_copies]
+"system/greetd/config.toml" = "/etc/greetd/config.toml"
+
+[modules.greeter.root_services]
+enable = ["greetd"]
+
+[modules.noctalia]
+description = "Noctalia theming engine"
+packages = ["noctalia"]
+
+[modules.noctalia.links]
+".local/state/noctalia"           = "~/.local/state/noctalia"
+".config/gtk-3.0/gtk.css"         = "~/.config/gtk-3.0/gtk.css"
+".config/gtk-4.0/gtk.css"         = "~/.config/gtk-4.0/gtk.css"
+".config/autostart/noctalia.desktop" = "~/.config/autostart/noctalia.desktop"
+
+[modules.audio]
+description = "Audio (WirePlumber)"
+packages = ["wireplumber", "pipewire"]
+packages.arch = ["pipewire-pulse"]
+packages.fedora = ["pipewire-pulseaudio"]
+
+[modules.audio.links]
+".config/wireplumber" = "~/.config/wireplumber"
+
+[modules.system-hw]
+description = "System hardware (polkit, modprobe, EDID, VNC)"
+packages = ["wayvnc"]
+
+[modules.system-hw.root_copies]
+"system/polkit-1/10-power.rules"              = "/etc/polkit-1/rules.d/10-power.rules"
+"system/polkit-1/20-noctalia-greeter.rules"    = "/etc/polkit-1/rules.d/20-noctalia-greeter.rules"
+"system/polkit-1/30-wakealarm.rules"           = "/etc/polkit-1/rules.d/30-wakealarm.rules"
+"system/polkit-1/org.freedesktop.Flatpak.rules" = "/etc/polkit-1/rules.d/org.freedesktop.Flatpak.rules"
+"system/modprobe.d/disable-hda.conf"           = "/etc/modprobe.d/disable-hda.conf"
+"system/edid/combined.bin"                     = "/usr/lib/firmware/edid/combined.bin"
+"system/sysctl.d/99-tailscale.conf"            = "/etc/sysctl.d/99-tailscale.conf"
+
+[modules.system-hw.links]
+".config/autostart/wayvnc.desktop" = "~/.config/autostart/wayvnc.desktop"
+
+[modules.livesync]
+description = "Obsidian LiveSync (Docker + CouchDB)"
+packages = ["docker", "docker-compose", "tailscale"]
+packages.fedora = ["docker-ce", "docker-compose-plugin", "tailscale"]
+
+[modules.livesync.root_services]
+enable = ["docker", "tailscaled"]
+
+[modules.livesync.root_commands]
+usermod = "usermod -aG docker $SUDO_USER"
+
+[modules.livesync.post_message]
+text = "Run iac/obsidian-livesync/setup.sh to initialize CouchDB and Tailscale serve"
