@@ -4,11 +4,9 @@ import { execAsync, subprocess } from "ags/process"
 import GLib from "gi://GLib"
 
 const ALARMS_FILE = GLib.build_filenamev([GLib.get_home_dir(), ".config", "ags", "alarms.json"])
-import { loadPanelConfig } from "./app.jsx"
+import { getConfig } from "./config.js"
 
-const SNOOZE_MINUTES = 5
-const AUTO_SNOOZE_MINUTES = 1
-const MISSED_THRESHOLD_MINUTES = 30
+const config = getConfig()
 
 let alarms = []
 let currentRingingAlarm = null
@@ -66,10 +64,10 @@ function syncWakealarm() {
         }
     })
     
-    execAsync(["bash", "-c", "echo 0 | sudo tee /sys/class/rtc/rtc0/wakealarm >/dev/null"]).then(() => {
+    execAsync(["bash", "-c", "echo 0 | pkexec tee /sys/class/rtc/rtc0/wakealarm >/dev/null"]).then(() => {
         if (nextRingTs) {
-            const wakeTs = nextRingTs - 5
-            execAsync(["bash", "-c", `echo ${wakeTs} | sudo tee /sys/class/rtc/rtc0/wakealarm >/dev/null`]).catch(e => console.error(e))
+            const wakeTs = nextRingTs - config.alarms.wakeBeforeAlarm
+            execAsync(["bash", "-c", `echo ${wakeTs} | pkexec tee /sys/class/rtc/rtc0/wakealarm >/dev/null`]).catch(e => console.error(e))
         }
     }).catch(e => console.error(e))
 }
@@ -109,7 +107,7 @@ function ringAlarm(alarm) {
     currentRingingAlarm = alarm
     
     try {
-        playerProc = subprocess(['sh', '-c', 'while true; do pw-play /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga || mpv --loop /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga || sleep 1; done'])
+        playerProc = subprocess(['sh', '-c', `while true; do ${config.alarms.player} ${config.alarms.sound} || mpv --loop ${config.alarms.sound} || sleep 1; done`])
     } catch (e) {
         console.error(e)
     }
@@ -118,7 +116,7 @@ function ringAlarm(alarm) {
     osdNoteLabel.label = alarm.note || "Alarm"
     if (AlarmOSD) AlarmOSD.show_all()
     
-    autoSnoozeTimeout = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, AUTO_SNOOZE_MINUTES * 60, () => {
+    autoSnoozeTimeout = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, config.alarms.autoSnoozeDuration * 60, () => {
         snoozeAlarm()
         return GLib.SOURCE_REMOVE
     })
@@ -143,7 +141,7 @@ export function snoozeAlarm() {
     const snoozed = currentRingingAlarm
     stopAlarm()
     
-    snoozed.nextRingTs = Math.floor(Date.now() / 1000) + (SNOOZE_MINUTES * 60)
+    snoozed.nextRingTs = Math.floor(Date.now() / 1000) + (config.alarms.snoozeDuration * 60)
     saveAlarms()
 }
 
@@ -160,7 +158,7 @@ export function checkAlarms() {
         if (alarm.nextRingTs && nowTs >= alarm.nextRingTs) {
             const diff = nowTs - alarm.nextRingTs
             
-            if (diff < MISSED_THRESHOLD_MINUTES * 60) {
+            if (diff < config.alarms.missedThreshold * 60) {
                 ringAlarm(alarm)
             } else {
                 execAsync(["notify-send", "-u", "critical", "Alarm Missed", `Alarm ${alarm.time} was missed`]).catch(e => console.error(e))
@@ -180,7 +178,6 @@ export function checkAlarms() {
 }
 
 export function setupAlarmWindows() {
-    const config = loadPanelConfig()
     const osdAnchor = config.alarmOSD.anchor.reduce((acc, a) => acc | Astal.WindowAnchor[a], 0)
     const osdLayer = Astal.Layer[config.alarmOSD.layer] || Astal.Layer.OVERLAY
 
@@ -200,7 +197,7 @@ export function setupAlarmWindows() {
                 {osdTimeLabel}
                 {osdNoteLabel}
                 <box halign={Gtk.Align.CENTER} spacing={10} margin_top={15}>
-                    <button class="alarm-button" label={`Snooze (${SNOOZE_MINUTES}m)`} onClicked={snoozeAlarm} />
+                    <button class="alarm-button" label={`Snooze (${config.alarms.snoozeDuration}m)`} onClicked={snoozeAlarm} />
                     <button class="alarm-button delete" label="Dismiss" onClicked={stopAlarm} />
                 </box>
             </box>
@@ -235,8 +232,8 @@ export function setupAlarmWindows() {
                                 {alarmsListBox}
                             </scrollable>
                             <button class="alarm-button" label="+ Add Alarm" margin_top={10} onClicked={() => {
-                    alarms.push({ id: Date.now().toString(), time: "08:00", days: "All", enabled: false, note: "" })
-                    saveAlarms()
+                    alarms.push({ id: Date.now().toString(), time: config.alarms.defaultTime, days: config.alarms.defaultDays, enabled: false, note: "" })
+                    debouncedSave()
                     renderAlarmsList()
                             }} />
                         </box>
@@ -247,7 +244,7 @@ export function setupAlarmWindows() {
     )
 
     loadAlarms()
-    GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 60, checkAlarms)
+    GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, config.alarms.checkInterval, checkAlarms)
 }
 
 function AlarmItem(alarm) {

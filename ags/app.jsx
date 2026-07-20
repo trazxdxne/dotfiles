@@ -6,32 +6,16 @@ import GLib from "gi://GLib"
 import Gio from "gi://Gio"
 import style from "./style.css"
 import { toggleAlarmMenu, setupAlarmWindows } from "./alarms.jsx"
+import { getConfig, applyCssVariables } from "./config.js"
 
-
-const timeVal = createPoll("", 1000, 'date +"%H:%M"')
+const config = getConfig()
+const timeVal = createPoll("", config.clock.interval, `date +"${config.clock.format}"`)
 
 const barWindows = []
 const fileMonitors = []
 let cssProvider = null
 
-const CONFIG_FILE = GLib.build_filenamev([GLib.get_home_dir(), ".config", "ags", "config.json"])
 
-export function loadPanelConfig() {
-    try {
-        const [ok, contents] = GLib.file_get_contents(CONFIG_FILE)
-        if (ok) {
-            return JSON.parse(new TextDecoder("utf-8").decode(contents))
-        }
-    } catch (e) {
-        console.error(`[bar] failed to load config: ${e.message}`)
-    }
-    // Default fallback
-    return {
-        bar: { layer: "OVERLAY", anchor: ["TOP"], marginTop: 9 },
-        alarmOSD: { layer: "OVERLAY", anchor: ["TOP"], marginTop: 84 },
-        alarmMenu: { layer: "OVERLAY", anchor: ["TOP", "BOTTOM", "LEFT", "RIGHT"], marginTop: 24, marginBottom: 40, width: 360 }
-    }
-}
 
 const NIRI_CONFIG_FILES = ["noctalia.kdl", "config.kdl"]
 
@@ -59,7 +43,7 @@ function readNiriAccentColor() {
 }
 
 function updateAccentColor() {
-    const accentColor = readNiriAccentColor()
+    const accentColor = readNiriAccentColor() || config.fullscreen.border.fallbackColor
 
     if (!cssProvider) {
         cssProvider = new Gtk.CssProvider()
@@ -74,8 +58,8 @@ function updateAccentColor() {
         cssProvider.load_from_data(`
             .Bar.fullscreen .clock-box {
                 border-color: ${accentColor};
-                border-style: solid;
-                border-width: 1px;
+                border-style: var(--panel-fs-border-style);
+                border-width: var(--panel-fs-border-width);
             }
         `)
     } catch (e) {
@@ -116,7 +100,7 @@ function setupHotReload() {
                     const path = file.get_path()
                     if (path && (path.endsWith(".js") || path.endsWith(".jsx") || path.endsWith(".ts") || path.endsWith(".css") || path.endsWith("config.json"))) {
                         if (reloadTimeout) GLib.source_remove(reloadTimeout);
-                        reloadTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
+                        reloadTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, config.hotReload.debounce, () => {
                             console.log(`[hot-reload] File changed: ${path}, restarting ags via systemd...`)
                             GLib.spawn_command_line_async('systemctl --user restart ags.service')
                             reloadTimeout = null;
@@ -251,10 +235,12 @@ function Clock() {
             halign={Gtk.Align.CENTER}
             onButtonReleaseEvent={(self, event) => {
                 const btn = event.get_button()[1]
-                if (btn === 1) {
-                    execAsync(["bash", "-c", "noctalia msg panel-toggle control-center calendar"]).catch(() => {})
-                } else if (btn === 3) {
-                    toggleAlarmMenu()
+                if (btn === 1 && config.clock.leftClick) {
+                    if (config.clock.leftClick === "alarm-menu") toggleAlarmMenu()
+                    else execAsync(["bash", "-c", config.clock.leftClick]).catch(() => {})
+                } else if (btn === 3 && config.clock.rightClick) {
+                    if (config.clock.rightClick === "alarm-menu") toggleAlarmMenu()
+                    else execAsync(["bash", "-c", config.clock.rightClick]).catch(() => {})
                 }
             }}
             onEnterNotifyEvent={(self) => {
@@ -275,7 +261,6 @@ function Clock() {
 }
 
 function Bar(gdkmonitor) {
-    const config = loadPanelConfig()
     const anchor = config.bar.anchor.reduce((acc, a) => acc | Astal.WindowAnchor[a], 0)
     const layer = Astal.Layer[config.bar.layer] || Astal.Layer.OVERLAY
 
@@ -305,17 +290,26 @@ function Bar(gdkmonitor) {
 app.start({
     css: style,
     main() {
+        applyCssVariables(app)
         setupAlarmWindows()
         GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
             const monitors = app.get_monitors();
-            const primary = monitors.find(m => {
-                const rect = m.get_geometry();
-                return rect.x === 0 && rect.y === 0;
-            }) || monitors[0];
+            let targetMonitor = null;
             
-            if (primary) {
-                console.log("[bar] creating bar on primary monitor (0,0)");
-                Bar(primary);
+            if (config.bar.monitor === "primary") {
+                targetMonitor = monitors.find(m => {
+                    const rect = m.get_geometry();
+                    return rect.x === 0 && rect.y === 0;
+                }) || monitors[0];
+            } else if (typeof config.bar.monitor === "number") {
+                targetMonitor = monitors[config.bar.monitor] || monitors[0];
+            } else {
+                targetMonitor = monitors.find(m => m.get_model() === config.bar.monitor) || monitors[0];
+            }
+            
+            if (targetMonitor) {
+                console.log("[bar] creating bar on monitor");
+                Bar(targetMonitor);
             }
             return GLib.SOURCE_REMOVE;
         });
