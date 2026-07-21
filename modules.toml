@@ -89,6 +89,8 @@ packages = ["wayvnc"]
 "system/polkit-1/30-wakealarm.rules"           = "/etc/polkit-1/rules.d/30-wakealarm.rules"
 "system/polkit-1/org.freedesktop.Flatpak.rules" = "/etc/polkit-1/rules.d/org.freedesktop.Flatpak.rules"
 "system/modprobe.d/disable-hda.conf"           = "/etc/modprobe.d/disable-hda.conf"
+"system/modprobe.d/v4l2loopback.conf"          = "/etc/modprobe.d/v4l2loopback.conf"
+"system/modules-load.d/v4l2loopback.conf"      = "/etc/modules-load.d/v4l2loopback.conf"
 "system/edid/combined.bin"                     = "/usr/lib/firmware/edid/combined.bin"
 "system/sysctl.d/99-tailscale.conf"            = "/etc/sysctl.d/99-tailscale.conf"
 
