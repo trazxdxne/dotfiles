@@ -18,6 +18,7 @@ const DEFAULT_CONFIG = {
   },
   fullscreen: {
     border: {
+      position: "inside",
       width: 1,
       style: "solid",
       opacity: 1.0,

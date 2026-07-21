@@ -17,6 +17,11 @@ window.alarm-osd-window decoration:backdrop {
     border: none;
 }
 
+.clock-wrapper {
+    background: transparent;
+    padding: 0;
+}
+
 button.clock-box {
     background-color: @card_bg_color;
     border: 2px solid transparent;

@@ -178,6 +178,7 @@ if (desktop === "Hyprland") {
 
 function Clock() {
     return (
+        <box class="clock-wrapper">
         <button
             class="clock-box"
             halign={Gtk.Align.CENTER}
@@ -205,6 +206,7 @@ function Clock() {
         >
             <label class="clock-time" label={timeVal} />
         </button>
+        </box>
     )
 }
 

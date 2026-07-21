@@ -48,21 +48,45 @@ export function applyFullscreenStyles() {
     }
 
     const { border, background } = config.fullscreen
+    const { appearance } = config
     
     // Apply opacity if specified
     const opacity = border.opacity !== undefined ? border.opacity : 1.0
     const borderColor = opacity < 1.0 ? `alpha(${accentColor}, ${opacity})` : accentColor
 
+    const isOutside = border.position === "outside"
+    const wrapperRadius = (appearance?.borderRadius || 12) + border.width
+
     try {
-        cssProvider.load_from_data(`
+        const css = isOutside ? `
+            .clock-wrapper {
+                border: ${border.width}px solid transparent;
+                border-radius: ${wrapperRadius}px;
+                margin: -${border.width}px;
+            }
+            .Bar.fullscreen .clock-wrapper {
+                border-color: ${borderColor};
+                border-style: ${border.style};
+                transition: all ${background?.transition || '0.15s'};
+            }
+            .Bar.fullscreen .clock-box {
+                background-color: ${background?.color || 'transparent'};
+                transition: all ${background?.transition || '0.15s'};
+            }` : `
+            .clock-wrapper {
+                border: none;
+                margin: 0;
+            }
             .Bar.fullscreen .clock-box {
                 border-color: ${borderColor};
                 border-style: ${border.style};
                 border-width: ${border.width}px;
                 background-color: ${background?.color || 'transparent'};
+                background-clip: padding-box;
                 transition: all ${background?.transition || '0.15s'};
-            }
-        `)
+            }`
+
+        cssProvider.load_from_data(css)
     } catch (e) {
         console.error(`[fullscreen-appearance] failed to update fullscreen CSS: ${e.message}`)
     }

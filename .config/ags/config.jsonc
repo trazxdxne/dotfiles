@@ -44,6 +44,9 @@
   // Shown around the clock button when the focused window is fullscreen.
   "fullscreen": {
     "border": {
+      // Where to draw the border: "inside" (default) or "outside"
+      "position": "outside",
+
       // Border width in pixels.
       "width": 2,
 
