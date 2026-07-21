@@ -59,23 +59,28 @@ export function applyFullscreenStyles() {
 
     try {
         const css = isOutside ? `
-            .clock-wrapper {
+            .Bar .clock-wrapper {
                 border: ${border.width}px solid transparent;
-                border-radius: ${wrapperRadius}px;
-                margin: -${border.width}px;
+            }
+            .Bar .clock-box {
+                border: 0px solid transparent;
             }
             .Bar.fullscreen .clock-wrapper {
                 border-color: ${borderColor};
                 border-style: ${border.style};
+                border-width: ${border.width}px;
+                border-radius: ${wrapperRadius}px;
                 transition: all ${background?.transition || '0.15s'};
             }
             .Bar.fullscreen .clock-box {
                 background-color: ${background?.color || 'transparent'};
                 transition: all ${background?.transition || '0.15s'};
             }` : `
-            .clock-wrapper {
-                border: none;
-                margin: 0;
+            .Bar .clock-wrapper {
+                border: 0px solid transparent;
+            }
+            .Bar .clock-box {
+                border: ${border.width}px solid transparent;
             }
             .Bar.fullscreen .clock-box {
                 border-color: ${borderColor};

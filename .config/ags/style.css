@@ -19,12 +19,12 @@ window.alarm-osd-window decoration:backdrop {
 
 .clock-wrapper {
     background: transparent;
+    border-radius: 14px;
     padding: 0;
 }
 
 button.clock-box {
     background-color: @card_bg_color;
-    border: 2px solid transparent;
     padding: 1px 10px;
     transition: all 0.05s ease;
     box-shadow: none;
