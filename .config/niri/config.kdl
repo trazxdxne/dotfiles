@@ -360,10 +360,11 @@ binds {
     Mod+Shift+X { switch-focus-between-floating-and-tiling; }
 
     Mod+W { toggle-column-tabbed-display; }
-
-    Print { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    
+    Print { screenshot-window; }
+    Mod+Print { spawn "noctalia" "msg" "screenshot-fullscreen"; }
     Mod+Shift+S { spawn "noctalia" "msg" "screenshot-region"; }
-    Alt+Print { screenshot-window; }
+
 
     Mod+V cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
 

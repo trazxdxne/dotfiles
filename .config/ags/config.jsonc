@@ -17,7 +17,7 @@
     "anchor": ["TOP"],
 
     // Margin (px) from the top edge of the screen.
-    "marginTop": 9,
+    "marginTop": 8,
 
     // Which monitor to show the bar on.
     // Values: "primary" or the connector name e.g. "DP-1", "HDMI-A-1"
@@ -54,7 +54,7 @@
       "style": "solid",
 
       // Border opacity (0.0 to 1.0)
-      "opacity": 1.0,
+      "opacity": 0.75,
 
       // Fallback color used when no GTK theme color is available.
       // Any valid CSS color string: "#rrggbb", "rgba(…)", etc.
@@ -63,7 +63,7 @@
 
     // Background style when fullscreen
     "background": {
-      "color": "rgba(37, 38, 39, 0.8)",
+      "color": "rgba(37, 38, 39, 0.75)",
       "transition": "0.15s"
     },
 
