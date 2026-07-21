@@ -1,5 +1,0 @@
-[Desktop Entry]
-Name=AGS
-Exec=systemctl --user start ags.service
-Type=Application
-Terminal=false
