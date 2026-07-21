@@ -1,6 +1,8 @@
 [Unit]
 Description=Aylur's GTK Shell
 PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
 
 [Service]
 ExecStart=/usr/bin/ags run %h/.config/ags

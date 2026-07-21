@@ -28,6 +28,7 @@ packages.fedora = []
 ".config/niri-autostart"    = "~/.config/niri-autostart"
 ".config/fuzzel"            = "~/.config/fuzzel"
 ".config/uwsm"              = "~/.config/uwsm"
+".config/systemd/user"      = "~/.config/systemd/user"
 ".config/autostart/niri-autostart.desktop" = "~/.config/autostart/niri-autostart.desktop"
 
 [modules.hyprland]
