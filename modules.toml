@@ -82,8 +82,11 @@ packages.fedora = ["pipewire-pulseaudio"]
 ".config/wireplumber" = "~/.config/wireplumber"
 
 [modules.system-hw]
-description = "System hardware (polkit, modprobe, EDID, VNC)"
+description = "System hardware (polkit, modprobe, EDID, VNC, systemd-oomd)"
 packages = ["wayvnc"]
+
+[modules.system-hw.root_services]
+enable = ["systemd-oomd"]
 
 [modules.system-hw.root_copies]
 "system/polkit-1/10-power.rules"              = "/etc/polkit-1/rules.d/10-power.rules"
