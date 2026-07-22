@@ -19,6 +19,7 @@ alias nano=micro
 
 # Added by Antigravity CLI installer
 export PATH="/home/trazxdxne/.local/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 
 # pnpm
 export PNPM_HOME="/home/trazxdxne/.local/share/pnpm"
