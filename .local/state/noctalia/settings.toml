@@ -387,6 +387,7 @@ button_borders = false
 clipboard_auto_paste = "off"
 clipboard_history_max_entries = 150
 font_family = "Adwaita Sans"
+launch_apps_as_systemd_services = true
 niri_overview_type_to_launch_enabled = false
 offline_mode = false
 password_style = "default"

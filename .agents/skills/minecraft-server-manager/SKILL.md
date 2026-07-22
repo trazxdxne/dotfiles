@@ -1,10 +1,10 @@
 ---
 name: minecraft-server-manager
-description: Manage the Fabric server at /home/trazxdxne/Games/minecraft_server. Use when user wants to sync mods from Prism Launcher, tweak settings, or optimize lag.
+description: Manage the Fabric server at /home/trazxdxne/Projects/minecraft_server. Use when user wants to sync mods from Prism Launcher, tweak settings, or optimize lag.
 ---
 # Minecraft Server Manager
 
-You manage the local Fabric Minecraft server at `/home/trazxdxne/Games/minecraft_server`.
+You manage the local Fabric Minecraft server at `/home/trazxdxne/Projects/minecraft_server`.
 
 ## Sync
 
