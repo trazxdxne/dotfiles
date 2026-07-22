@@ -81,16 +81,6 @@ layout {
     }
     background-color "transparent" 
 }
-environment {
-    XDG_CURRENT_DESKTOP "niri"
-    XDG_SESSION_TYPE "wayland"
-    XDG_SESSION_DESKTOP "niri"
-    
-    QT_QPA_PLATFORM "wayland"
-    GDK_BACKEND "wayland"
-    MOZ_ENABLE_WAYLAND "1"
-    ELECTRON_OZONE_PLATFORM_HINT "auto"
-}
 
 hotkey-overlay {
     skip-at-startup

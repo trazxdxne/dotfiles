@@ -5,15 +5,15 @@ autostart {
                 proportion 0.67
             }
             window app-id="brave-pommaclcbfghclhalboakcipcmmndhcj-Default" {
-                command "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=pommaclcbfghclhalboakcipcmmndhcj"
+                command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=pommaclcbfghclhalboakcipcmmndhcj"
                 height { proportion 1.0; }
             }
             window app-id="com.ayugram.desktop" {
-                command "AyuGram" "-autostart"
+                command "uwsm" "app" "--" "AyuGram" "-autostart"
                 height { proportion 1.0; }
             }
             window app-id="discord" {
-                command "discord"
+                command "uwsm" "app" "--" "discord"
                 height { proportion 1.0; }
             }
         }
@@ -23,7 +23,7 @@ autostart {
                 proportion 1.0
             }
             window app-id="brave-origin" {
-                command "/opt/brave-origin-bin/brave-origin" "--new-window"
+                command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--new-window"
                 height { proportion 1.0; }
             }
         }
@@ -35,11 +35,11 @@ autostart {
                 proportion 1.0
             }
             window app-id="brave-chddojmiiokipokdfcabeikjhljgcafd-Default" {
-                command "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=chddojmiiokipokdfcabeikjhljgcafd"
+                command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=chddojmiiokipokdfcabeikjhljgcafd"
                 height { proportion 1.0; }
             }
             window app-id="brave-agimnkijcaahngcdmfeangaknmldooml-Default" {
-                command "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=agimnkijcaahngcdmfeangaknmldooml"
+                command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=agimnkijcaahngcdmfeangaknmldooml"
                 height { proportion 1.0; }
             }
         }
