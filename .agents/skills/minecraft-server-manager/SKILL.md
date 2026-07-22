@@ -10,7 +10,7 @@ You manage the local Fabric Minecraft server at `/home/trazxdxne/Projects/minecr
 
 Sync mods from a Prism Launcher instance to the server.
 
-1. **Locate**: Find the Prism instance in `~/.local/share/PrismLauncher/instances/`. Ask the user for the instance name if missing.
+1. **Locate**: Find the Prism instance in `~/.local/share/ElyPrismLauncher/instances/` (e.g. `Fabulously Optimized(2)/minecraft/`) or `~/.local/share/PrismLauncher/instances/`. Ask the user for the instance name if missing.
 2. **Sync**: Rsync `mods/` and `config/` from the Prism instance to the server root.
 3. **Filter**: Delete client-only mods from the server `mods/` folder (e.g. Sodium, Iris, ModMenu, Xaero).
 - **Completion**: Server `mods/` holds the instance's mods minus client-only additions.
