@@ -18,7 +18,6 @@ alias nano micro
 
 # Added by Antigravity CLI installer
 set -gx PATH "/home/trazxdxne/.local/bin" $PATH
-set -gx PATH "$HOME/go/bin" $PATH
 
 # pnpm
 set -gx PNPM_HOME "/home/trazxdxne/.local/share/pnpm"
