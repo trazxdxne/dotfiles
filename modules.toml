@@ -16,6 +16,7 @@ packages.fedora = []
 ".config/autostart/gnome-keyring-daemon.desktop" = "~/.config/autostart/gnome-keyring-daemon.desktop"
 "bash/.bashrc"          = "~/.bashrc"
 "wezterm/wezterm.lua"   = "~/.wezterm.lua"
+".agents/skills"        = "~/.agents/skills"
 
 [modules.niri]
 description = "Niri compositor"
