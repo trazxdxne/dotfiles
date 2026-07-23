@@ -20,7 +20,9 @@ Sync mods from a Prism Launcher instance to the server.
 Tweak server configuration.
 
 1. **Edit**: Modify `server.properties` or files in `config/`.
-2. **Apply**: Restart the server process via `start.sh` if it is currently running.
+2. **Apply**: Check if the server is running.
+   - **Detect**: Find the process using `pgrep -a java | grep fabric-server-launch.jar`.
+   - **Restart**: NEVER restart the server automatically. If it is running, explicitly ask the user to restart it manually via their console.
 - **Completion**: Target settings are written to disk and active.
 
 ## Optimize
