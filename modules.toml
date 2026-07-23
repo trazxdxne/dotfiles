@@ -98,6 +98,7 @@ enable = ["systemd-oomd"]
 "system/modules-load.d/v4l2loopback.conf"      = "/etc/modules-load.d/v4l2loopback.conf"
 "system/edid/combined.bin"                     = "/usr/lib/firmware/edid/combined.bin"
 "system/sysctl.d/99-tailscale.conf"            = "/etc/sysctl.d/99-tailscale.conf"
+"system/systemd/system/user@.service.d/10-oomd-user-service.conf" = "/etc/systemd/system/user@.service.d/10-oomd-user-service.conf"
 
 [modules.system-hw.links]
 ".config/autostart/wayvnc.desktop" = "~/.config/autostart/wayvnc.desktop"
