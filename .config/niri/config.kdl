@@ -232,7 +232,7 @@ binds {
     //Mod+Alt+X   	     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
     Mod+Alt+Z     		 allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
 
-    Pause                allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    Mod+MouseMiddle      allow-when-locked=true { spawn-sh "playerctl play-pause"; }
     Mod+Alt+Space        allow-when-locked=true { spawn-sh "playerctl stop"; }
     Mod+Alt+Minus        allow-when-locked=true { spawn-sh "playerctl previous"; }
     Mod+Alt+Equal        allow-when-locked=true { spawn-sh "playerctl next"; }		
