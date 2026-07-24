@@ -1,29 +1,39 @@
 ---
 name: obsidian-task-organizer
-description: Use when the user wants to organize Obsidian tasks, convert task lists into individual files, or sort tasks by importance (stars).
+description: Triage Obsidian tasks, split impromptu task lists into star-rated task files, or organize Inbox notes into category folders (Today, Linux, Windows, General). Use when user asks to organize tasks or process Inbox.
 ---
 
-The goal is to structure the user's impromptu task lists into individual files categorized by platform (`Tasks/Linux`, `Tasks/Windows`, `Tasks/General`) and sorted by importance using a star prefix.
+Triage impromptu task lists from `/home/trazxdxne/Documents/Obsidian Vault/Inbox.md` into structured, star-rated task files in `Tasks/<Category>/`.
 
-## Core Rules
+## Categories
 
-- **Deduplication & Merging**: Never split a single bullet into multiple tasks (no hallucinations). HOWEVER, you must actively avoid duplicates:
-  1. If multiple bullets in the Inbox are essentially the same task, MERGE them into a single new file.
-  2. Before creating a new file, check the `Tasks/` directory to see if a highly similar task already exists. If it does, do NOT create a new file. Instead, you may append the new bullet's context to the existing file if it adds valuable details.
-- **Polishing**: The user writes impromptu. You must polish the task.
-  - **Filename**: Create a concise, actionable filename without typos.
-  - **Content**: Place the original impromptu bullet text inside the file as context. Below it, add a `**Детали:**` section. Under details, provide structured steps or a breakdown, and you MUST use Markdown checkboxes (`- [ ] `) for every item in the list, fixing any errors.
-- **Priority Prefix**: Evaluate the task's importance or speed. 
-  - `★★★ ` - High priority, urgent bugfix, or something very quick (1 minute).
-  - `★★☆ ` - Medium priority.
-  - `★☆☆ ` - Low priority.
-  Prefix the filename with this exact string.
-- **Target Directories**: Move/create the files in `Tasks/Linux/`, `Tasks/Windows/`, or `Tasks/General/` inside the Obsidian Vault.
+- `Tasks/Today/`: Urgent tasks, immediate daily focus items, or tasks explicitly assigned to today.
+- `Tasks/Linux/`: Linux-specific system, desktop, tool, or script tasks.
+- `Tasks/Windows/`: Windows-specific tasks.
+- `Tasks/General/`: Platform-agnostic or general tasks.
 
-## Steps
+## Formatting Rules
 
-1. **Locate Source Files**: Read the `/home/trazxdxne/Documents/Obsidian Vault/Inbox.md` file. This is the only file you should process unless the user specifies otherwise.
-2. **Read Content**: Read the source files to extract all bullet points.
-3. **Draft Transformations**: For each bullet point, decide the target category, the priority prefix (★★★, ★★☆, ★☆☆), the polished filename, and the polished content.
-4. **Create Files**: Create the new individual `.md` files in the target directories (`Tasks/Linux/`, `Tasks/Windows/`, `Tasks/General/`).
-5. **Clean Up**: Remove the processed bullet points from the source files, leaving the rest of the file intact.
+- **Priority Prefix**:
+  - `★★★ ` — High priority, urgent, or quick fix (<= 1 min).
+  - `★★☆ ` — Medium priority.
+  - `★☆☆ ` — Low priority.
+- **Filename**: `<Priority Prefix><Concise Actionable Title>.md`
+- **File Body**:
+  1. Original bullet text as context.
+  2. `**Детали:**` heading followed by actionable subtasks with `- [ ] ` checkboxes.
+
+## Execution Steps
+
+1. **Read Inbox**: Read `/home/trazxdxne/Documents/Obsidian Vault/Inbox.md`. Extract all bullet items.
+   - *Completion criterion*: All bullet items extracted.
+2. **Deduplicate**: Search `Tasks/` subdirectories (`Today/`, `Linux/`, `Windows/`, `General/`) for existing similar tasks.
+   - Merge duplicate bullets into one item.
+   - If a matching task file exists, append new details to it rather than duplicating.
+   - *Completion criterion*: Zero duplicate files targeted for creation.
+3. **Format & Categorize**: Assign category (`Today`, `Linux`, `Windows`, `General`), priority prefix, polished filename, and structured body with `**Детали:**` checkboxes.
+   - *Completion criterion*: Every item mapped to a category, priority prefix, and formatted body.
+4. **Write Files**: Save markdown files to `/home/trazxdxne/Documents/Obsidian Vault/Tasks/<Category>/`.
+   - *Completion criterion*: All files written to disk.
+5. **Clean Inbox**: Remove processed bullets from `Inbox.md`, preserving vault structure/headers.
+   - *Completion criterion*: `Inbox.md` pruned of all processed tasks.
