@@ -57,7 +57,7 @@ order = [ "default", "bar" ]
     reserve_space = true
     shadow = false
     show_on_workspace_switch = false
-    start = [ "workspaces" ]
+    start = [ "taskbar" ]
     thickness = 30
 
         [bar.default.monitor.HDMI-A-1]
@@ -565,6 +565,14 @@ enabled = false
 [widget.spacer_2]
 length = 141
 type = "spacer"
+
+[widget.taskbar]
+focused_output_only = true
+group_by_workspace = true
+hide_empty_workspaces = true
+inactive_opacity = 0.75
+show_active_indicator = false
+workspace_group_capsule = false
 
 [widget.transparent_widget]
 color = "#000000"
