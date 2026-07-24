@@ -118,3 +118,11 @@ usermod = "usermod -aG docker $SUDO_USER"
 
 [modules.livesync.post_message]
 text = "Run iac/obsidian-livesync/setup.sh to initialize CouchDB and Tailscale serve"
+
+[modules.minecraft]
+description = "Minecraft Server Management"
+packages = []
+
+[modules.minecraft.user_services]
+"minecraft-backup.timer" = ".config/systemd/user/minecraft-backup.timer"
+"minecraft-backup.service" = ".config/systemd/user/minecraft-backup.service"
