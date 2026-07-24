@@ -1,4 +1,4 @@
 ESP_PATH="/boot"
-KERNEL_CMDLINE[default]+="quiet nowatchdog splash rw rootflags=subvol=/@ root=UUID=f7f27a7e-1d52-4ea5-8571-325c5a0e0015 drm.edid_firmware=HDMI-A-1:edid/combined.bin video=DP-1:1920x1080@200 video=HDMI-A-1:e nvidia_drm.modeset=1 nvidia_drm.fbdev=1 fbcon=nodefer vt.global_cursor_default=0"
+KERNEL_CMDLINE[default]+="quiet loglevel=3 nowatchdog splash rw rootflags=subvol=/@ root=UUID=f7f27a7e-1d52-4ea5-8571-325c5a0e0015 drm.edid_firmware=HDMI-A-1:edid/combined.bin video=DP-1:1920x1080@200 video=HDMI-A-1:e nvidia_drm.modeset=1 nvidia_drm.fbdev=1 fbcon=nodefer vt.global_cursor_default=0"
 BOOT_ORDER="*, *lts, *fallback, Snapshots"
 MAX_SNAPSHOT_ENTRIES=15
