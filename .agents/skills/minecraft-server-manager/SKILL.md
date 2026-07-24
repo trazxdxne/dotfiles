@@ -1,6 +1,6 @@
 ---
 name: minecraft-server-manager
-description: Manage Fabric Minecraft servers under /home/trazxdxne/Projects/ (default: /home/trazxdxne/Projects/minecraft_server). Use when user wants to sync mods, tweak settings, optimize lag, or update server README journals.
+description: 'Manage Fabric Minecraft servers under /home/trazxdxne/Projects/ (default: /home/trazxdxne/Projects/minecraft_server). Use when user wants to sync mods, tweak settings, optimize lag, or update server README journals.'
 ---
 # Minecraft Server Manager
 
