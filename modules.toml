@@ -99,6 +99,8 @@ enable = ["systemd-oomd"]
 "system/edid/combined.bin"                     = "/usr/lib/firmware/edid/combined.bin"
 "system/sysctl.d/99-tailscale.conf"            = "/etc/sysctl.d/99-tailscale.conf"
 "system/systemd/system/user@.service.d/10-oomd-user-service.conf" = "/etc/systemd/system/user@.service.d/10-oomd-user-service.conf"
+"system/mkinitcpio.conf"                            = "/etc/mkinitcpio.conf"
+"system/default/limine"                             = "/etc/default/limine"
 
 [modules.system-hw.links]
 ".config/autostart/wayvnc.desktop" = "~/.config/autostart/wayvnc.desktop"
