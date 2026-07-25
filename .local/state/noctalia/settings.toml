@@ -39,11 +39,11 @@ order = [ "default", "bar" ]
     auto_hide = false
     background_opacity = 0.89999997988343239
     capsule = true
+    capsule_group = []
     capsule_radius = 12
-    center = [ "clock" ]
     contact_shadow = true
     enabled = true
-    end = [ "battery", "tray", "ram", "group:g1", "keyboard_layout", "notifications" ]
+    end = [ "battery", "tray", "ram", "media", "volume", "keyboard_layout", "notifications" ]
     font_family = "Adwaita Sans"
     font_weight = 500
     hover_highlight = true
@@ -63,15 +63,6 @@ order = [ "default", "bar" ]
         [bar.default.monitor.HDMI-A-1]
         enabled = false
         font_family = "Adwaita Sans"
-
-        [[bar.default.capsule_group]]
-        enabled = true
-        fill = "surface_variant"
-        id = "g1"
-        members = [ "media", "volume" ]
-        opacity = 1.0
-        padding = 6.0
-        radius = 12.0
 
 [calendar]
 enabled = false
@@ -360,6 +351,9 @@ menu_open_near_click = true
 menu_placement = "floating"
 menu_position = "auto"
 
+[plugin_settings."noctalia/bitwarden"]
+server_url = "https://vault.bitwarden.com"
+
 [plugin_settings."noctalia/true-transparency"]
 transparency_panel_open_near_click = true
 transparency_panel_placement = "floating"
@@ -367,7 +361,7 @@ transparency_panel_position = "auto"
 
 [plugins]
 auto_update = true
-enabled = []
+enabled = [ "noctalia/bitwarden", "noctalia/timer" ]
 
     [[plugins.source]]
     kind = "git"
@@ -509,6 +503,9 @@ transition_on_startup = true
 [weather]
 enabled = false
 
+[widget.active_window]
+max_length = 80
+
 [widget.audio_visualizer]
 bands = 32
 centered = false
@@ -527,8 +524,8 @@ enabled = false
 enabled = false
 
 [widget.clock]
-anchor = true
-enabled = false
+anchor = false
+format = "          "
 scale = 1.1000000000000001
 
 [widget.control-center]
@@ -570,9 +567,9 @@ type = "spacer"
 focused_output_only = true
 group_by_workspace = true
 hide_empty_workspaces = true
-inactive_opacity = 0.75
-show_active_indicator = false
+inactive_opacity = 0.65000000000000002
 workspace_group_capsule = false
+workspace_label_placement = "inside"
 
 [widget.transparent_widget]
 color = "#000000"

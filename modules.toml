@@ -126,3 +126,11 @@ packages = []
 [modules.minecraft.user_services]
 "minecraft-backup.timer" = ".config/systemd/user/minecraft-backup.timer"
 "minecraft-backup.service" = ".config/systemd/user/minecraft-backup.service"
+
+[modules.zen]
+description = "Zen Browser"
+packages = []
+
+[modules.zen.links]
+".config/zen/user.js" = "~/.config/zen/6zqlliku.Default (release)/user.js"
+
