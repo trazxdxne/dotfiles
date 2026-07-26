@@ -39,11 +39,9 @@ order = [ "default", "bar" ]
     auto_hide = false
     background_opacity = 0.89999997988343239
     capsule = true
-    capsule_group = []
     capsule_radius = 12
     contact_shadow = true
     enabled = true
-    end = [ "battery", "tray", "ram", "media", "volume", "keyboard_layout", "notifications" ]
     font_family = "Adwaita Sans"
     font_weight = 500
     hover_highlight = true
@@ -63,6 +61,15 @@ order = [ "default", "bar" ]
         [bar.default.monitor.HDMI-A-1]
         enabled = false
         font_family = "Adwaita Sans"
+
+        [[bar.default.capsule_group]]
+        enabled = true
+        fill = "surface_variant"
+        id = "g1"
+        members = [ "volume", "media" ]
+        opacity = 1.0
+        padding = 6.0
+        radius = 12.0
 
 [calendar]
 enabled = false
