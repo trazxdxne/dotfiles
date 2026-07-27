@@ -64,6 +64,8 @@ order = [ "default", "bar" ]
         enabled = false
         font_family = "Adwaita Sans"
 
+        [bar.default.monitor.HDMI-A-1.dead_zone.actions]
+
         [[bar.default.capsule_group]]
         enabled = true
         fill = "surface_variant"
