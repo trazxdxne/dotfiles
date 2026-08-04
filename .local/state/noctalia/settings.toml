@@ -1,4 +1,4 @@
-config_version = 2
+config_version = 8
 
 [accessibility]
 high_contrast = false
@@ -8,8 +8,7 @@ enable_overdrive = false
 enable_sounds = false
 
 [backdrop]
-blur_intensity = 0.0
-enabled = false
+blur_intensity = 0.43999999016523361
 tint_intensity = 0.099999997764825821
 
 [bar]
@@ -36,26 +35,22 @@ order = [ "default", "bar" ]
     thickness = 10
 
     [bar.default]
-    auto_hide = false
     background_opacity = 0.89999997988343239
     capsule = true
     capsule_radius = 12
     contact_shadow = true
     enabled = true
+    end = [ "battery", "tray", "group:g1", "keyboard_layout", "notifications" ]
     font_family = "Adwaita Sans"
     font_weight = 500
     hover_highlight = true
-    layer = "top"
     margin_edge = 6
     margin_ends = 6
     padding = 6
     panel_overlap = 1
-    position = "top"
     radius_top_left = 12
-    reserve_space = true
     shadow = false
-    show_on_workspace_switch = false
-    start = [ "taskbar" ]
+    start = [ "taskbar", "ram" ]
     thickness = 30
 
         [bar.default.monitor.HDMI-A-1]
@@ -82,6 +77,7 @@ sidebar_section = "none"
 
     [control_center.calendar]
     show_events_card = false
+    show_week_numbers = true
 
 [desktop_widgets]
 schema_version = 2
@@ -143,19 +139,20 @@ widget_order = [
     "lockscreen-widget-0000000000000003",
     "lockscreen-widget-0000000000000004",
     "lockscreen-widget-0000000000000005",
-    "lockscreen-widget-0000000000000006"
+    "lockscreen-widget-0000000000000006",
+    "lockscreen-widget-0000000000000007"
 ]
 
     [lockscreen_widgets.grid]
-    cell_size = 16
+    cell_size = 32
     major_interval = 4
     visible = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
-    box_height = 120.0
-    box_width = 384.0
+    box_height = 96.0
+    box_width = 416.0
     cx = 960.0
-    cy = 600.0
+    cy = 588.0
     output = "DP-1"
     rotation = 0.0
     type = "login_box"
@@ -164,17 +161,18 @@ widget_order = [
         background_color = "surface_variant"
         background_opacity = 0.88
         background_radius = 12.0
-        center_password_text = true
+        center_password_text = false
         input_opacity = 1.0
         input_radius = 32.0
+        layout = "compact"
         show_caps_lock = true
         show_keyboard_layout = true
-        show_login_button = true
-        show_password_hint = true
+        show_login_button = false
+        show_session_buttons = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
-    box_height = 70.0
-    box_width = 400.0
+    box_height = 201.0
+    box_width = 720.0
     cx = 1200.0
     cy = 720.0
     output = "HDMI-A-1"
@@ -188,14 +186,15 @@ widget_order = [
         center_password_text = false
         input_opacity = 1.0
         input_radius = 6.0
+        layout = "regular"
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
-        show_password_hint = true
+        show_session_buttons = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@WAYLAND-1"]
-    box_height = 70.0
-    box_width = 400.0
+    box_height = 201.0
+    box_width = 720.0
     cx = 236.0
     cy = 391.0
     output = "WAYLAND-1"
@@ -209,14 +208,15 @@ widget_order = [
         center_password_text = false
         input_opacity = 1.0
         input_radius = 6.0
+        layout = "regular"
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
-        show_password_hint = true
+        show_session_buttons = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@winit"]
-    box_height = 70.0
-    box_width = 400.0
+    box_height = 201.0
+    box_width = 720.0
     cx = 471.0
     cy = 901.0
     output = "winit"
@@ -230,10 +230,11 @@ widget_order = [
         center_password_text = false
         input_opacity = 1.0
         input_radius = 6.0
+        layout = "regular"
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
-        show_password_hint = true
+        show_session_buttons = true
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
     box_height = 256.0
@@ -253,6 +254,7 @@ widget_order = [
         center_text = true
         clock_style = "digital"
         color = "primary"
+        format = "{:%H:%M}"
         shadow = false
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
@@ -327,6 +329,23 @@ widget_order = [
         radius = 18.0
         variant = "default"
 
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000007]
+    box_height = 32.0
+    box_width = 320.0
+    cx = 960.0
+    cy = 508.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000007.settings]
+        background = false
+        center_text = false
+        clock_style = "digital"
+        color = "secondary"
+        format = "{:%A %d %B %Y}"
+        shadow = false
+
 [nightlight]
 enabled = false
 force = true
@@ -335,7 +354,8 @@ temperature_night = 3000
 
 [notification]
 border = false
-layer = "overlay"
+layer = "top"
+show_actions = false
 
 [osd]
 border = true
@@ -382,7 +402,6 @@ enabled = [ "noctalia/bitwarden", "noctalia/timer" ]
 
 [shell]
 app_icon_color = "primary"
-app_icon_colorize = false
 avatar_path = "/home/trazxdxne/Pictures/Avatars/whats-your-opinion-on-hatake-kakashi-is-he-overrated-v0-54lk9zp713kc1.webp"
 button_borders = false
 clipboard_auto_paste = "off"
@@ -410,6 +429,9 @@ settings_show_advanced = true
     compact = true
     session_search = false
     show_icons = true
+
+        [shell.launcher.providers.windows]
+        global = false
 
     [shell.panel]
     borders = false
@@ -521,6 +543,9 @@ mirrored = false
 scale = 1.0
 width = 32
 
+[widget.battery]
+enabled = false
+
 [widget.bluetooth]
 enabled = false
 
@@ -543,25 +568,23 @@ enabled = false
 enabled = true
 
 [widget.keyboard_layout]
-display = "short"
-show_icon = false
+glyph = "keyboard-filled"
 
 [widget.launcher]
 enabled = true
 
+[widget.lock_keys]
+display = "full"
+
 [widget.media]
-hide_artist = true
+capsule_padding = 0
 hide_when_no_media = true
-max_length = 160
-min_length = 40
-title_scroll = "on_hover"
 
 [widget.network]
 enabled = false
 
 [widget.ram]
-display = "gauge"
-stat = "ram_used"
+glyph_position = "after"
 
 [widget.session]
 enabled = false
@@ -570,13 +593,15 @@ enabled = false
 length = 141
 type = "spacer"
 
+[widget.sysmon]
+stat = "gpu_usage"
+
 [widget.taskbar]
 focused_output_only = true
 group_by_workspace = true
 hide_empty_workspaces = true
 inactive_opacity = 0.65000000000000002
 workspace_group_capsule = false
-workspace_label_placement = "inside"
 
 [widget.transparent_widget]
 color = "#000000"

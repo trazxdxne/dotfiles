@@ -4,10 +4,6 @@ autostart {
             width {
                 proportion 0.67
             }
-            window app-id="brave-pommaclcbfghclhalboakcipcmmndhcj-Default" {
-                command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=pommaclcbfghclhalboakcipcmmndhcj"
-                height { proportion 1.0; }
-            }
             window app-id="com.ayugram.desktop" {
                 command "uwsm" "app" "--" "AyuGram" "-autostart"
                 height { proportion 1.0; }
@@ -17,29 +13,13 @@ autostart {
                 height { proportion 1.0; }
             }
         }
-        
+
         column {
             width {
                 proportion 1.0
             }
             window app-id="brave-origin" {
                 command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--new-window"
-                height { proportion 1.0; }
-            }
-        }
-    }
-
-    workspace "1 " {
-        column {
-            width {
-                proportion 1.0
-            }
-            window app-id="brave-chddojmiiokipokdfcabeikjhljgcafd-Default" {
-                command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=chddojmiiokipokdfcabeikjhljgcafd"
-                height { proportion 1.0; }
-            }
-            window app-id="brave-agimnkijcaahngcdmfeangaknmldooml-Default" {
-                command "uwsm" "app" "--" "/opt/brave-origin-bin/brave-origin" "--profile-directory=Default" "--app-id=agimnkijcaahngcdmfeangaknmldooml"
                 height { proportion 1.0; }
             }
         }
