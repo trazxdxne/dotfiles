@@ -20,8 +20,12 @@ if ! command -v gum &> /dev/null; then
     sudo $PKG_INSTALL gum
 fi
 
+if ! command -v stow &> /dev/null; then
+    echo "Installing stow..."
+    sudo $PKG_INSTALL stow
+fi
+
 echo "Parsing modules.toml..."
-# Convert TOML to JSON for jq
 JSON_DATA=$(python3 -c 'import sys,tomllib,json; json.dump(tomllib.load(sys.stdin.buffer), sys.stdout)' < modules.toml)
 
 MODULES=$(echo "$JSON_DATA" | jq -r '.modules | keys[]')
@@ -45,7 +49,6 @@ SELECTED_OPTIONAL=$(printf "%s\n" "${OPTIONAL_MODULES[@]}" | gum choose --no-lim
 SELECTED_MODULES=("${ALWAYS_MODULES[@]}")
 while IFS= read -r line; do
     if [ -n "$line" ]; then
-        # Extract module name (before space)
         mod_name=$(echo "$line" | awk '{print $1}')
         SELECTED_MODULES+=("$mod_name")
     fi
@@ -65,8 +68,6 @@ EOF
 chmod +x "$ROOT_SH"
 
 PACKAGES=()
-declare -A USER_SYMLINKS
-declare -A ROOT_COPIES
 ROOT_SERVICES=()
 ROOT_COMMANDS=()
 POST_MESSAGES=()
@@ -82,20 +83,6 @@ for mod in "${SELECTED_MODULES[@]}"; do
     while read -r pkg; do
         [ -n "$pkg" ] && PACKAGES+=("$pkg")
     done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].packages.${DISTRO}[]? // empty")
-
-    # Links
-    while read -r src dest; do
-        if [ -n "$src" ]; then
-            USER_SYMLINKS["$src"]="$dest"
-        fi
-    done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].links | to_entries[]? | \"\(.key) \(.value)\"")
-
-    # Root Copies
-    while read -r src dest; do
-        if [ -n "$src" ]; then
-            ROOT_COPIES["$src"]="$dest"
-        fi
-    done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].root_copies | to_entries[]? | \"\(.key) \(.value)\"")
 
     # Root Services
     while read -r srv; do
@@ -117,22 +104,18 @@ for mod in "${SELECTED_MODULES[@]}"; do
     if [ -n "$msg" ]; then
         POST_MESSAGES+=("$msg")
     fi
+
+    # Root stow packages
+    if [ -d "$DOTFILES_DIR/modules/$mod/root" ]; then
+        echo "echo 'Stowing root package for $mod...'" >> "$ROOT_SH"
+        echo "stow -R -t / -d \"$DOTFILES_DIR/modules/$mod\" root" >> "$ROOT_SH"
+    fi
 done
 
 # Write to root script
 if [ ${#PACKAGES[@]} -gt 0 ]; then
     echo "echo 'Installing packages...'" >> "$ROOT_SH"
     echo "$PKG_INSTALL ${PACKAGES[*]}" >> "$ROOT_SH"
-fi
-
-if [ ${#ROOT_COPIES[@]} -gt 0 ]; then
-    echo "echo 'Copying root files...'" >> "$ROOT_SH"
-    for src in "${!ROOT_COPIES[@]}"; do
-        dest="${ROOT_COPIES[$src]}"
-        echo "if [ -f \"$dest\" ]; then cp \"$dest\" \"${dest}.bak_\$(date +%Y%m%d_%H%M%S)\"; fi" >> "$ROOT_SH"
-        echo "mkdir -p \"\$(dirname \"$dest\")\"" >> "$ROOT_SH"
-        echo "cp \"$DOTFILES_DIR/$src\" \"$dest\"" >> "$ROOT_SH"
-    done
 fi
 
 if [ ${#ROOT_SERVICES[@]} -gt 0 ]; then
@@ -157,15 +140,12 @@ else
     echo "Skipped root operations."
 fi
 
-echo "Creating user symlinks..."
-for src in "${!USER_SYMLINKS[@]}"; do
-    dest="${USER_SYMLINKS[$src]}"
-    eval dest="$dest" # expand ~
-    mkdir -p "$(dirname "$dest")"
-    if [ -d "$dest" ] && [ ! -L "$dest" ]; then
-        mv "$dest" "${dest}.bak_\$(date +%Y%m%d_%H%M%S)"
+echo "Stowing user packages..."
+for mod in "${SELECTED_MODULES[@]}"; do
+    if [ -d "$DOTFILES_DIR/modules/$mod/user" ]; then
+        echo "Stowing user package for $mod..."
+        stow -R -t "$HOME" -d "$DOTFILES_DIR/modules/$mod" user
     fi
-    ln -sfn "$DOTFILES_DIR/$src" "$dest"
 done
 
 if [ ${#USER_SERVICES[@]} -gt 0 ]; then

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1784386961615",
+    "time": "22:00",
+    "days": "All",
+    "enabled": false,
+    "note": "Daily Rewards",
+    "nextRingTs": 1785690000
+  },
+  {
+    "id": "1784473835959",
+    "time": "21:00",
+    "days": "All",
+    "enabled": false,
+    "note": "Snapchat",
+    "nextRingTs": 1785772800
+  },
+  {
+    "id": "1785254889560",
+    "time": "01:55",
+    "days": "All",
+    "enabled": false,
+    "note": "TikTok",
+    "nextRingTs": 1785704100
+  }
+]

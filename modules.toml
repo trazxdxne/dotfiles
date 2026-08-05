@@ -1,22 +1,9 @@
 [modules.base]
 description = "Shell, terminal, base settings"
 always = true
-packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum"]
+packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum", "stow"]
 packages.arch = []
 packages.fedora = []
-
-[modules.base.links]
-".config/fish"          = "~/.config/fish"
-".local/bin/graceful-session-exit" = "~/.local/bin/graceful-session-exit"
-".config/fastfetch"     = "~/.config/fastfetch"
-".config/micro"         = "~/.config/micro"
-".config/topgrade"      = "~/.config/topgrade"
-".config/gtk-3.0/settings.ini" = "~/.config/gtk-3.0/settings.ini"
-".config/gtk-4.0/settings.ini" = "~/.config/gtk-4.0/settings.ini"
-".config/autostart/gnome-keyring-daemon.desktop" = "~/.config/autostart/gnome-keyring-daemon.desktop"
-"bash/.bashrc"          = "~/.bashrc"
-"wezterm/wezterm.lua"   = "~/.wezterm.lua"
-".agents/skills"        = "~/.agents/skills"
 
 [modules.niri]
 description = "Niri compositor"
@@ -24,28 +11,13 @@ packages = ["niri", "fuzzel", "uwsm"]
 packages.arch = ["xdg-desktop-portal-gnome"]
 packages.fedora = []
 
-[modules.niri.links]
-".config/niri"              = "~/.config/niri"
-".config/niri-autostart"    = "~/.config/niri-autostart"
-".config/fuzzel"            = "~/.config/fuzzel"
-".config/uwsm"              = "~/.config/uwsm"
-".config/systemd/user"      = "~/.config/systemd/user"
-".config/autostart/niri-autostart.desktop" = "~/.config/autostart/niri-autostart.desktop"
-
 [modules.hyprland]
 description = "Hyprland compositor"
 packages = ["hyprland", "hyprlock"]
 
-[modules.hyprland.links]
-".config/hypr" = "~/.config/hypr"
-
 [modules.ags]
 description = "AGS bar and widgets"
 packages = ["ags"]
-
-[modules.ags.links]
-".config/ags" = "~/.config/ags"
-".config/autostart/ags.desktop" = "~/.config/autostart/ags.desktop"
 
 [modules.ags.user_services]
 "ags.service" = ".config/ags/ags.service"
@@ -56,9 +28,6 @@ packages = ["greetd"]
 packages.arch = ["greetd-noctalia"]
 packages.fedora = []
 
-[modules.greeter.root_copies]
-"system/greetd/config.toml" = "/etc/greetd/config.toml"
-
 [modules.greeter.root_services]
 enable = ["greetd"]
 
@@ -66,20 +35,11 @@ enable = ["greetd"]
 description = "Noctalia theming engine"
 packages = ["noctalia"]
 
-[modules.noctalia.links]
-".local/state/noctalia"           = "~/.local/state/noctalia"
-".config/gtk-3.0/gtk.css"         = "~/.config/gtk-3.0/gtk.css"
-".config/gtk-4.0/gtk.css"         = "~/.config/gtk-4.0/gtk.css"
-".config/autostart/noctalia.desktop" = "~/.config/autostart/noctalia.desktop"
-
 [modules.audio]
 description = "Audio (WirePlumber)"
 packages = ["wireplumber", "pipewire"]
 packages.arch = ["pipewire-pulse"]
 packages.fedora = ["pipewire-pulseaudio"]
-
-[modules.audio.links]
-".config/wireplumber" = "~/.config/wireplumber"
 
 [modules.system-hw]
 description = "System hardware (polkit, modprobe, EDID, VNC, systemd-oomd)"
@@ -87,23 +47,6 @@ packages = ["wayvnc"]
 
 [modules.system-hw.root_services]
 enable = ["systemd-oomd"]
-
-[modules.system-hw.root_copies]
-"system/polkit-1/10-power.rules"              = "/etc/polkit-1/rules.d/10-power.rules"
-"system/polkit-1/20-noctalia-greeter.rules"    = "/etc/polkit-1/rules.d/20-noctalia-greeter.rules"
-"system/polkit-1/30-wakealarm.rules"           = "/etc/polkit-1/rules.d/30-wakealarm.rules"
-"system/polkit-1/org.freedesktop.Flatpak.rules" = "/etc/polkit-1/rules.d/org.freedesktop.Flatpak.rules"
-"system/modprobe.d/disable-hda.conf"           = "/etc/modprobe.d/disable-hda.conf"
-"system/modprobe.d/v4l2loopback.conf"          = "/etc/modprobe.d/v4l2loopback.conf"
-"system/modules-load.d/v4l2loopback.conf"      = "/etc/modules-load.d/v4l2loopback.conf"
-"system/edid/combined.bin"                     = "/usr/lib/firmware/edid/combined.bin"
-"system/sysctl.d/99-tailscale.conf"            = "/etc/sysctl.d/99-tailscale.conf"
-"system/systemd/system/user@.service.d/10-oomd-user-service.conf" = "/etc/systemd/system/user@.service.d/10-oomd-user-service.conf"
-"system/mkinitcpio.conf"                            = "/etc/mkinitcpio.conf"
-"system/default/limine"                             = "/etc/default/limine"
-
-[modules.system-hw.links]
-".config/autostart/wayvnc.desktop" = "~/.config/autostart/wayvnc.desktop"
 
 [modules.livesync]
 description = "Obsidian LiveSync (Docker + CouchDB)"
@@ -130,7 +73,3 @@ packages = []
 [modules.zen]
 description = "Zen Browser"
 packages = []
-
-[modules.zen.links]
-".config/zen/user.js" = "~/.config/zen/6zqlliku.Default (release)/user.js"
-

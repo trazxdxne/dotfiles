@@ -149,10 +149,10 @@ widget_order = [
     visible = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
-    box_height = 96.0
-    box_width = 416.0
+    box_height = 70.0
+    box_width = 384.0
     cx = 960.0
-    cy = 588.0
+    cy = 607.0
     output = "DP-1"
     rotation = 0.0
     type = "login_box"
@@ -168,10 +168,13 @@ widget_order = [
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = false
+        show_media = false
         show_session_buttons = true
+        show_unlock_hint = false
+        show_weather = false
 
     [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
-    box_height = 201.0
+    box_height = 196.0
     box_width = 720.0
     cx = 1200.0
     cy = 720.0
@@ -190,10 +193,13 @@ widget_order = [
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
+        show_media = true
         show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@WAYLAND-1"]
-    box_height = 201.0
+    box_height = 196.0
     box_width = 720.0
     cx = 236.0
     cy = 391.0
@@ -212,10 +218,13 @@ widget_order = [
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
+        show_media = true
         show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@winit"]
-    box_height = 201.0
+    box_height = 196.0
     box_width = 720.0
     cx = 471.0
     cy = 901.0
@@ -234,7 +243,10 @@ widget_order = [
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
+        show_media = true
         show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
     box_height = 256.0

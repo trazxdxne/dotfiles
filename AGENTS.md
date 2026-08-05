@@ -6,18 +6,19 @@
 
 ## Dotfiles
 
-The repository follows a strict domain structure:
-- `~/.config/` and `~/.local/` configs go to `~/dotfiles/.config/` and `~/dotfiles/.local/`.
-- `/etc/` and `/usr/` system files go to `~/dotfiles/system/` (requires root).
-- Home root files (`~/.bashrc`, etc.) go to `~/dotfiles/<app>/` at the repo root.
+The repository follows a module-based GNU Stow structure located at `~/.dotfiles`:
+- User configs go to `~/.dotfiles/modules/<module_name>/user/` (stowed relative to `~`).
+- System files go to `~/.dotfiles/modules/<module_name>/root/` (stowed relative to `/`, requires root).
 
 ### Onboarding a new config
 
-1. Move the original file into the corresponding domain directory in `~/dotfiles/` (e.g., `~/dotfiles/.config/<app>/`).
-2. Add the path mapping to `~/dotfiles/modules.toml` under the appropriate module.
+1. Place the new file in the corresponding module directory:
+   - For user configs: `~/.dotfiles/modules/<module_name>/user/` mirroring its target path (e.g., `modules/base/user/.config/<app>/...` or `modules/base/user/.bashrc`).
+   - For system configs: `~/.dotfiles/modules/<module_name>/root/` mirroring its root target path (e.g., `modules/greeter/root/etc/greetd/config.toml`).
+2. Run `install.sh` or `stow -R` to apply symlinks.
 3. Commit all changes in a single commit.
 
-**Completion criterion**: the diff shows the new file in the correct domain directory AND `modules.toml` contains the new mapping. Both present — or the step is not done.
+**Completion criterion**: the file exists in the module's `user` or `root` stow directory and symlinks cleanly with GNU Stow.
 
 ### Committing changes
 
@@ -25,7 +26,7 @@ Commit when a **coherent unit of work** is complete — the full task the user a
 
 - Commit message: one line, English, imperative mood.
 - Good: `Add wezterm config` — Bad: `Added wezterm configuration files to the dotfiles repository`
-- Scope: `~/dotfiles` directory only.
+- Scope: `~/.dotfiles` directory only.
 
 ## Package Management
 
