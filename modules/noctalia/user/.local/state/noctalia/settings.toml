@@ -581,6 +581,7 @@ enabled = true
 
 [widget.keyboard_layout]
 glyph = "keyboard-filled"
+show_icon = false
 
 [widget.launcher]
 enabled = true
