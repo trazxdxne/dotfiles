@@ -274,7 +274,7 @@ repos = [
     "~/Projects/*/",
     "~/Programs/zapret-discord-youtube-linux",
     "~/Pictures/backgrounds",
-    "~/dotfiles"
+    "~/.dotfiles"
 ]
 
 # Set to `false` to skip pulling/fetching the predefined git repos

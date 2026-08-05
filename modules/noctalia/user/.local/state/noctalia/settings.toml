@@ -569,6 +569,7 @@ enabled = false
 
 [widget.clock]
 anchor = false
+enabled = false
 format = "          "
 scale = 1.1000000000000001
 

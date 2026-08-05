@@ -5,9 +5,9 @@ function dotpush
     end
     
     echo "⚙️  Get info..."
-    git -C ~/dotfiles add .
+    git -C ~/.dotfiles add .
     
-    set -l changed_files (git -C ~/dotfiles diff --name-only --cached | string join ', ')
+    set -l changed_files (git -C ~/.dotfiles diff --name-only --cached | string join ', ')
     
     if test -z "$changed_files"
         echo "❌ No news"
@@ -20,10 +20,10 @@ function dotpush
     end
     
     echo "📦  Creating commit..."
-    git -C ~/dotfiles commit -m "$commit_msg"
+    git -C ~/.dotfiles commit -m "$commit_msg"
     
     echo "🚀  Push to GitHub..."
-    git -C ~/dotfiles push
+    git -C ~/.dotfiles push
     
     echo "✅  Done!"
 end
