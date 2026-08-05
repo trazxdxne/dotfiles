@@ -11,6 +11,9 @@ packages = ["niri", "fuzzel", "uwsm"]
 packages.arch = ["xdg-desktop-portal-gnome"]
 packages.fedora = []
 
+[modules.niri.user_services]
+"alsa-volume-restore.service" = ".config/systemd/user/alsa-volume-restore.service"
+
 [modules.hyprland]
 description = "Hyprland compositor"
 packages = ["hyprland", "hyprlock"]
@@ -20,7 +23,7 @@ description = "AGS bar and widgets"
 packages = ["ags"]
 
 [modules.ags.user_services]
-"ags.service" = ".config/ags/ags.service"
+"ags.service" = ".config/systemd/user/ags.service"
 
 [modules.greeter]
 description = "Noctalia Greeter (greetd)"

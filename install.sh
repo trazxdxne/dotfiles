@@ -108,7 +108,8 @@ for mod in "${SELECTED_MODULES[@]}"; do
     # Root stow packages
     if [ -d "$DOTFILES_DIR/modules/$mod/root" ]; then
         echo "echo 'Stowing root package for $mod...'" >> "$ROOT_SH"
-        echo "stow -R -t / -d \"$DOTFILES_DIR/modules/$mod\" root" >> "$ROOT_SH"
+        echo "stow --adopt -R -t / -d \"$DOTFILES_DIR/modules/$mod\" root" >> "$ROOT_SH"
+        echo "git -C \"$DOTFILES_DIR\" checkout -- \"modules/$mod/root\"" >> "$ROOT_SH"
     fi
 done
 
@@ -144,7 +145,8 @@ echo "Stowing user packages..."
 for mod in "${SELECTED_MODULES[@]}"; do
     if [ -d "$DOTFILES_DIR/modules/$mod/user" ]; then
         echo "Stowing user package for $mod..."
-        stow -R -t "$HOME" -d "$DOTFILES_DIR/modules/$mod" user
+        stow --adopt -R -t "$HOME" -d "$DOTFILES_DIR/modules/$mod" user
+        git checkout -- "modules/$mod/user"
     fi
 done
 
