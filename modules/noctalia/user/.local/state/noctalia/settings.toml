@@ -593,6 +593,7 @@ display = "full"
 [widget.media]
 capsule_padding = 0
 hide_when_no_media = true
+max_length = 120
 
 [widget.network]
 enabled = false
