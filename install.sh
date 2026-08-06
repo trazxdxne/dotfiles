@@ -105,11 +105,10 @@ for mod in "${SELECTED_MODULES[@]}"; do
         POST_MESSAGES+=("$msg")
     fi
 
-    # Root stow packages
+    # Root package files (copied, not stowed, to ensure proper permissions in /etc)
     if [ -d "$DOTFILES_DIR/modules/$mod/root" ]; then
-        echo "echo 'Stowing root package for $mod...'" >> "$ROOT_SH"
-        echo "stow --adopt -R -t / -d \"$DOTFILES_DIR/modules/$mod\" root" >> "$ROOT_SH"
-        echo "git -C \"$DOTFILES_DIR\" checkout -- \"modules/$mod/root\"" >> "$ROOT_SH"
+        echo "echo 'Copying root package files for $mod...'" >> "$ROOT_SH"
+        echo "cp -a --remove-destination \"$DOTFILES_DIR/modules/$mod/root/.\" /" >> "$ROOT_SH"
     fi
 done
 
