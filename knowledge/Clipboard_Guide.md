@@ -37,5 +37,5 @@
 ## Как настроить внешний вид
 Окно истории является частью конфигурации AGS.
 Ты можешь изменять цвета, размеры, шрифты и поведение в исходниках AGS:
-- **Логика и разметка виджета**: `~/dotfiles/ags/clipboard.js`
-- **Стили (CSS)**: `~/dotfiles/ags/style.css` (в самом низу файла).
+- **Логика и разметка виджета**: `~/.dotfiles/modules/ags/user/.config/ags/clipboard.js`
+- **Стили (CSS)**: `~/.dotfiles/modules/ags/user/.config/ags/style.css` (в самом низу файла).

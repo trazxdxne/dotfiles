@@ -1,6 +1,6 @@
 # Настройка окружения: Инструкции и рецепты
 
-Практическое руководство по быстрой настройке звука, редактора, тем оформления, раскладки клавиатуры и терминала. Все настройки ориентированы на Wayland-композитор Niri и интегрированы с репозиторием [dotfiles](file:///home/trazxdxne/dotfiles).
+Практическое руководство по быстрой настройке звука, редактора, тем оформления, раскладки клавиатуры и терминала. Все настройки ориентированы на Wayland-композитор Niri и интегрированы с репозиторием [dotfiles](file:///home/trazxdxne/.dotfiles).
 
 ---
 
@@ -27,7 +27,7 @@
 ## 1. Как быстро восстановить окружение из дотфайлов
 
 Для переноса настроек и развертывания рабочей среды на новой системе используйте пошаговый сценарий из инструкции:
-* [Restore_Prompt.md](file:///home/trazxdxne/dotfiles/knowledge/Restore_Prompt.md)
+* [Restore_Prompt.md](file:///home/trazxdxne/.dotfiles/knowledge/Restore_Prompt.md)
 
 Сценарий автоматизирует установку необходимых утилит (git, gh, rclone), создание структуры папок в домашней директории, создание символических ссылок и конфигурацию резервного копирования.
 
@@ -84,7 +84,7 @@ yay -S catppuccin-gtk-theme-mocha && sudo pacman -S qt6ct qt5ct
 ```
 
 ### Шаг 2. Конфигурация GTK3
-Пропишите название темы в файле настроек [gtk-3.0/settings.ini](file:///home/trazxdxne/dotfiles/gtk-3.0/settings.ini):
+Пропишите название темы в файле настроек [gtk-3.0/settings.ini](file:///home/trazxdxne/.dotfiles/modules/base/user/.config/gtk-3.0/settings.ini):
 ```ini
 [Settings]
 gtk-theme-name=Velvet-Night
@@ -120,7 +120,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
 ```
 
 ### Шаг 5. Конфигурация Qt5 и Qt6
-1. Укажите Niri использовать `qt5ct` в качестве бэкенда тем. В файле [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl) добавьте:
+1. Укажите Niri использовать `qt5ct` в качестве бэкенда тем. В файле [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl) добавьте:
    ```kdl
    environment {
        QT_QPA_PLATFORMTHEME "qt5ct"
@@ -148,7 +148,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
 Для устранения скачков размера и сброса темы курсора при наведении на разные окна (Wayland, XWayland, Steam, Flatpak) необходимо настроить параметры в нескольких местах.
 
 ### Вариант А: Использование курсора Bibata Modern Classic
-1. В файле [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl) укажите параметры для самого композитора и экспортируйте переменные в окружение приложений:
+1. В файле [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl) укажите параметры для самого композитора и экспортируйте переменные в окружение приложений:
    ```kdl
    cursor {
        xcursor-theme "Bibata-Modern-Classic"
@@ -160,7 +160,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
        XCURSOR_SIZE "20"
    }
    ```
-2. Обновите тему в конфигах GTK [gtk-3.0/settings.ini](file:///home/trazxdxne/dotfiles/gtk-3.0/settings.ini) и [gtk-4.0/settings.ini](file:///home/trazxdxne/dotfiles/gtk-4.0/settings.ini):
+2. Обновите тему в конфигах GTK [gtk-3.0/settings.ini](file:///home/trazxdxne/.dotfiles/modules/base/user/.config/gtk-3.0/settings.ini) и [gtk-4.0/settings.ini](file:///home/trazxdxne/.dotfiles/modules/base/user/.config/gtk-4.0/settings.ini):
    ```ini
    gtk-cursor-theme-name=Bibata-Modern-Classic
    gtk-cursor-theme-size=20
@@ -187,7 +187,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
    mkdir -p ~/.icons
    cp -r ~/Projects/arch-cursor-complete/ArchCursorComplete ~/.icons/
    ```
-3. Укажите тему `ArchCursorComplete` в настройках [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl) в блоках `cursor` и `environment`.
+3. Укажите тему `ArchCursorComplete` в настройках [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl) в блоках `cursor` и `environment`.
 4. Обновите наследование в файле `~/.icons/default/index.theme`:
    ```ini
    [Icon Theme]
@@ -199,7 +199,7 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
 ## 5. Как настроить границы окон, отступы и автозапуск в Niri
 
 ### Шаг 1. Отключение клиентского декорирования (CSD) и исправление углов
-Чтобы избежать конфликтов с закруглениями окон приложений и убрать просвечивающие цветные пятна фокус-ринга по углам, добавьте в [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl):
+Чтобы избежать конфликтов с закруглениями окон приложений и убрать просвечивающие цветные пятна фокус-ринга по углам, добавьте в [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl):
 ```kdl
 prefer-no-csd
 
@@ -211,7 +211,7 @@ window-rule {
 ```
 
 ### Шаг 2. Настройка рамок окон и внешних отступов экрана
-Настройте ширину и розовый цвет рамки активного окна, а также внешние отступы `struts` в секции `layout` файла [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl):
+Настройте ширину и розовый цвет рамки активного окна, а также внешние отступы `struts` в секции `layout` файла [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl):
 ```kdl
 layout {
     gaps 8
@@ -230,14 +230,14 @@ layout {
 ```
 
 ### Шаг 3. Настройка запуска базовых системных демонов
-Убедитесь, что Niri запускает агент авторизации Polkit и менеджер ключей на старте. Добавьте в [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl):
+Убедитесь, что Niri запускает агент авторизации Polkit и менеджер ключей на старте. Добавьте в [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl):
 ```kdl
 spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 ```
 
 ### Шаг 4. Настройка лаунчера приложений Fuzzel
-Для идеального соответствия теме настройте файл конфигурации лаунчера [fuzzel/fuzzel.ini](file:///home/trazxdxne/dotfiles/fuzzel/fuzzel.ini):
+Для идеального соответствия теме настройте файл конфигурации лаунчера [fuzzel/fuzzel.ini](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/fuzzel/fuzzel.ini):
 ```ini
 [main]
 font=monospace:size=12
@@ -269,7 +269,7 @@ radius=0
    ```bash
    sudo pacman -S xwayland-satellite
    ```
-2. Экспортируйте переменную `DISPLAY` при старте Niri в файле [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl):
+2. Экспортируйте переменную `DISPLAY` при старте Niri в файле [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl):
    ```kdl
    spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY"
    ```
@@ -322,7 +322,7 @@ fi
    ```ini
    Exec=/home/trazxdxne/Projects/discord-linux-bypass/discord_run.sh --url -- %u
    ```
-3. Если вы используете автозапуск в Niri, обновите команду запуска Discord в файле [niri-autostart/config.kdl](file:///home/trazxdxne/dotfiles/niri-autostart/config.kdl), указав полный путь к скрипту обхода:
+3. Если вы используете автозапуск в Niri, обновите команду запуска Discord в файле [niri-autostart/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri-autostart/config.kdl), указав полный путь к скрипту обхода:
    ```kdl
    window app-id="discord" {
        command "/home/trazxdxne/Projects/discord-linux-bypass/discord_run.sh"
@@ -338,16 +338,16 @@ fi
 
 ### Шаг 1. Системное отключение встроенного звука (PCI/HDMI)
 Чтобы исключить конфликты устройств в alsamixer, заблокируйте встроенный аудиомодуль Intel.
-Создайте системный файл конфигурации [modprobe.d/disable-hda.conf](file:///home/trazxdxne/dotfiles/modprobe.d/disable-hda.conf) (требуются root-права):
+Создайте системный файл конфигурации [modprobe.d/disable-hda.conf](file:///home/trazxdxne/.dotfiles/modules/system-hw/root/etc/modprobe.d/disable-hda.conf) (требуются root-права):
 ```ini
 blacklist snd_hda_intel
 ```
 *(Для применения настроек перезагрузите систему).*
 
 ### Шаг 2. Предотвращение автосна USB-аудио и сброса громкости
-Создайте правила WirePlumber в директории репозитория [wireplumber/wireplumber.conf.d/](file:///home/trazxdxne/dotfiles/wireplumber/wireplumber.conf.d/):
+Создайте правила WirePlumber в директории репозитория [wireplumber/wireplumber.conf.d/](file:///home/trazxdxne/.dotfiles/modules/audio/user/.config/wireplumber/wireplumber.conf.d/):
 
-1. **Отключение программного микшера (использование аппаратного)** в [50-audio-rules.conf](file:///home/trazxdxne/dotfiles/wireplumber/wireplumber.conf.d/50-audio-rules.conf):
+1. **Отключение программного микшера (использование аппаратного)** в [50-audio-rules.conf](file:///home/trazxdxne/.dotfiles/modules/audio/user/.config/wireplumber/wireplumber.conf.d/50-audio-rules.conf):
    ```conf
    monitor.alsa.rules = [
      {
@@ -356,7 +356,7 @@ blacklist snd_hda_intel
      }
    ]
    ```
-2. **Отключение приостановки (suspend/idle) для USB-устройств** в [51-usb-volume-fix.conf](file:///home/trazxdxne/dotfiles/wireplumber/wireplumber.conf.d/51-usb-volume-fix.conf):
+2. **Отключение приостановки (suspend/idle) для USB-устройств** в [51-usb-volume-fix.conf](file:///home/trazxdxne/.dotfiles/modules/audio/user/.config/wireplumber/wireplumber.conf.d/51-usb-volume-fix.conf):
    ```conf
    monitor.alsa.rules = [
      {
@@ -365,7 +365,7 @@ blacklist snd_hda_intel
      }
    ]
    ```
-3. **Фиксация начальной громкости на безопасном уровне** в [99-force-volume.conf](file:///home/trazxdxne/dotfiles/wireplumber/wireplumber.conf.d/99-force-volume.conf):
+3. **Фиксация начальной громкости на безопасном уровне** в [99-force-volume.conf](file:///home/trazxdxne/.dotfiles/modules/audio/user/.config/wireplumber/wireplumber.conf.d/99-force-volume.conf):
    ```conf
    wireplumber.settings = {
      node.stream.default-playback-volume = 0.2
@@ -420,7 +420,7 @@ blacklist snd_hda_intel
 Настройка переключения языков по Caps Lock, включение правого Alt в качестве переключателя 3-го уровня (для ввода символов « » — — и т.д.).
 
 ### В среде Niri
-Настройка выполняется прямо в файле [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl) в секции `input`:
+Настройка выполняется прямо в файле [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl) в секции `input`:
 ```kdl
 input {
     keyboard {
@@ -447,13 +447,13 @@ input {
 Устранение задержек запуска WezTerm на связке Wayland + NVIDIA и настройка копирования/вставки в русской раскладке.
 
 ### Шаг 1. Исправление медленного запуска (зависаний OpenGL)
-На видеокартах NVIDIA под Wayland нативный OpenGL-рендерер WezTerm может медленно открывать новые окна. Чтобы исправить это, настройте шорткат запуска в [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl) с флагами `--always-new-process`:
+На видеокартах NVIDIA под Wayland нативный OpenGL-рендерер WezTerm может медленно открывать новые окна. Чтобы исправить это, настройте шорткат запуска в [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl) с флагами `--always-new-process`:
 ```kdl
 Mod+Return { spawn "wezterm" "start" "--always-new-process"; }
 ```
 
 ### Шаг 2. Настройка темы, цветовой палитры и горячих клавиш
-Настройте файл конфигурации терминала [wezterm/wezterm.lua](file:///home/trazxdxne/dotfiles/wezterm/wezterm.lua):
+Настройте файл конфигурации терминала [wezterm/wezterm.lua](file:///home/trazxdxne/.dotfiles/modules/base/user/.wezterm.lua):
 
 1. **Цветовая схема Velvet Night** с переопределением ANSI-палитры (для лучшей читаемости в alsamixer/TUI):
    ```lua
@@ -586,7 +586,7 @@ session    optional     pam_gnome_keyring.so auto_start
 Это позволит передавать пароль пользователя при входе в диспетчер ключей gnome-keyring-daemon.
 
 ### Шаг 2. Конфигурация hyprlock
-Настройки блокировщика экрана находятся в файле `~/.config/hypr/hyprlock.conf` (который ссылается на `~/dotfiles/hypr/hyprlock.conf`). Основные параметры:
+Настройки блокировщика экрана находятся в файле `~/.config/hypr/hyprlock.conf` (который ссылается на `~/.dotfiles/modules/hyprland/user/.config/hypr/hyprlock.conf`). Основные параметры:
 * `path = screenshot` и `blur_passes = 3` для размытия текущего изображения на экране.
 * Отображение текущего времени через `$TIME` и раскладки клавиатуры через `$LAYOUT`.
 * Применение шрифта `Adwaita Sans` для текстовых полей и заголовков.
@@ -597,7 +597,7 @@ Super+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "hyprlock"; }
 ```
 
 ### Шаг 3. Автоматическая блокировка при переходе в спящий режим
-Для вызова блокировки перед засыпанием компьютера создана пользовательская служба systemd `~/.config/systemd/user/lock-on-sleep.service` (ссылающаяся на `~/dotfiles/systemd/lock-on-sleep.service`):
+Для вызова блокировки перед засыпанием компьютера создана пользовательская служба systemd `~/.config/systemd/user/lock-on-sleep.service` (ссылающаяся на `~/.dotfiles/modules/hyprland/user/.config/systemd/user/lock-on-sleep.service`):
 ```ini
 [Unit]
 Description=Lock screen before sleep listener
@@ -624,11 +624,11 @@ systemctl --user enable --now lock-on-sleep.service
 Для того чтобы меню Quickshell или другие пользовательские приложения могли выполнять действия выключения, перезагрузки, сна и гибернации без запроса пароля суперпользователя, необходимо настроить правила Polkit.
 
 > [!IMPORTANT]
-> **Важная особенность:** Системная служба `polkit.service` в современных дистрибутивах (например, Arch Linux) запускается с параметром `ProtectHome=yes` в файле службы systemd. Это означает, что процесс `polkitd` не имеет доступа к домашней директории пользователя `/home`. Поэтому файл правил **нельзя делать символической ссылкой** на файл в папке дотфайлов `~/dotfiles/polkit-1/10-power.rules` — его необходимо физически скопировать в системную директорию `/etc/polkit-1/rules.d/`.
+> **Важная особенность:** Системная служба `polkit.service` в современных дистрибутивах (например, Arch Linux) запускается с параметром `ProtectHome=yes` в файле службы systemd. Это означает, что процесс `polkitd` не имеет доступа к домашней директории пользователя `/home`. Поэтому файл правил **нельзя делать символической ссылкой** на файл в папке дотфайлов `~/.dotfiles/modules/system-hw/root/etc/polkit-1/rules.d/10-power.rules` — его необходимо физически скопировать в системную директорию `/etc/polkit-1/rules.d/`.
 
 1. Скопируйте файл правил из дотфайлов:
    ```bash
-   pkexec cp ~/dotfiles/polkit-1/10-power.rules /etc/polkit-1/rules.d/10-power.rules
+   pkexec cp ~/.dotfiles/modules/system-hw/root/etc/polkit-1/rules.d/10-power.rules /etc/polkit-1/rules.d/10-power.rules
    ```
 2. Перезапустите службу Polkit, чтобы применить изменения:
    ```bash
@@ -782,10 +782,10 @@ xdg-mime default io.github.celluloid_player.Celluloid.desktop audio/mpeg audio/m
    ```bash
    make combined.bin
    ```
-5. Сохраните полученный файл `combined.bin` в `~/dotfiles/edid/combined.bin` и скопируйте в системную папку прошивок:
+5. Сохраните полученный файл `combined.bin` в `~/.dotfiles/modules/system-hw/root/usr/lib/firmware/edid/combined.bin` и скопируйте в системную папку прошивок:
    ```bash
    pkexec mkdir -p /usr/lib/firmware/edid
-   pkexec cp ~/dotfiles/edid/combined.bin /usr/lib/firmware/edid/combined.bin
+   pkexec cp ~/.dotfiles/modules/system-hw/root/usr/lib/firmware/edid/combined.bin /usr/lib/firmware/edid/combined.bin
    ```
 
 ### Шаг 2. Добавление файла в Initramfs
@@ -808,7 +808,7 @@ pkexec limine-mkinitcpio
 После перезагрузки система создаст виртуальный монитор `HDMI-A-1` с поддержкой обоих разрешений: `2400x1080` и `1600x720`.
 
 ### Шаг 5. Выбор разрешения в Niri
-Поскольку виртуальный дисплей поддерживает оба разрешения, вы можете переключаться между ними в файле [niri/config.kdl](file:///home/trazxdxne/dotfiles/niri/config.kdl):
+Поскольку виртуальный дисплей поддерживает оба разрешения, вы можете переключаться между ними в файле [niri/config.kdl](file:///home/trazxdxne/.dotfiles/modules/niri/user/.config/niri/config.kdl):
 * **Для режима высокого качества (2400x1080):**
   ```kdl
   output "HDMI-A-1" {
