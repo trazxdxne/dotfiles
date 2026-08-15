@@ -51,19 +51,12 @@ packages = ["wayvnc"]
 [modules.system-hw.root_services]
 enable = ["systemd-oomd"]
 
-[modules.livesync]
-description = "Obsidian LiveSync (Docker + CouchDB)"
-packages = ["docker", "docker-compose", "tailscale"]
-packages.fedora = ["docker-ce", "docker-compose-plugin", "tailscale"]
+[modules.syncthing]
+description = "Syncthing file synchronization"
+packages = ["syncthing"]
 
-[modules.livesync.root_services]
-enable = ["docker", "tailscaled"]
-
-[modules.livesync.root_commands]
-usermod = "usermod -aG docker $SUDO_USER"
-
-[modules.livesync.post_message]
-text = "Run modules/livesync/iac/obsidian-livesync/setup.sh to initialize CouchDB and Tailscale serve"
+[modules.syncthing.user_services]
+"syncthing.service" = ""
 
 [modules.minecraft]
 description = "Minecraft Server Management"
