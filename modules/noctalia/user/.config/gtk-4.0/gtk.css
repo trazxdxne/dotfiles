@@ -99,3 +99,5 @@ rubberband, .rubberband {
   @define-color shade_color rgba(0,0,0,0.36);
   @define-color scrollbar_outline_color rgba(0,0,0,0.5);
 }
+
+@import url("noctalia.css");

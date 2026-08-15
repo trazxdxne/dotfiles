@@ -1,4 +1,4 @@
-config_version = 8
+config_version = 12
 
 [accessibility]
 high_contrast = false
@@ -367,6 +367,7 @@ temperature_night = 3000
 [notification]
 border = false
 layer = "top"
+max_visible = 2
 show_actions = false
 
 [osd]
@@ -456,7 +457,6 @@ settings_show_advanced = true
     open_near_click_wallpaper = true
     session_placement = "floating"
     session_position = "center"
-    transparency_mode = "solid"
     wallpaper_placement = "attached"
 
     [shell.screen_corners]
@@ -582,7 +582,7 @@ enabled = true
 
 [widget.keyboard_layout]
 glyph = "keyboard-filled"
-show_icon = false
+show_glyph = false
 
 [widget.launcher]
 enabled = true
@@ -594,6 +594,7 @@ display = "full"
 capsule_padding = 0
 hide_when_no_media = true
 max_length = 120
+title_scroll = "on_hover"
 
 [widget.network]
 enabled = false

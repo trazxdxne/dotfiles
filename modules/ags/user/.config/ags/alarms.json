@@ -13,14 +13,14 @@
     "days": "All",
     "enabled": false,
     "note": "Snapchat",
-    "nextRingTs": 1785772800
+    "nextRingTs": 1786118400
   },
   {
     "id": "1785254889560",
-    "time": "01:55",
+    "time": "02:00",
     "days": "All",
-    "enabled": false,
+    "enabled": true,
     "note": "TikTok",
-    "nextRingTs": 1785704100
+    "nextRingTs": 1786827600
   }
 ]
