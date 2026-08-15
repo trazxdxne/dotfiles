@@ -82,7 +82,7 @@ for mod in "${SELECTED_MODULES[@]}"; do
     # Distro-specific packages
     while read -r pkg; do
         [ -n "$pkg" ] && PACKAGES+=("$pkg")
-    done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].packages.${DISTRO}[]? // empty")
+    done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].distro_packages.${DISTRO}[]? // empty")
 
     # Root Services
     while read -r srv; do
@@ -92,12 +92,12 @@ for mod in "${SELECTED_MODULES[@]}"; do
     # Root Commands
     while read -r cmd; do
         [ -n "$cmd" ] && ROOT_COMMANDS+=("$cmd")
-    done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].root_commands | to_entries[]? | .value")
+    done < <(echo "$JSON_DATA" | jq -r "(.modules[\"$mod\"].root_commands // {}) | to_entries[]? | .value")
 
     # User Services
     while read -r srv; do
         [ -n "$srv" ] && USER_SERVICES+=("$srv")
-    done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].user_services | to_entries[]? | .key")
+    done < <(echo "$JSON_DATA" | jq -r "(.modules[\"$mod\"].user_services // {}) | to_entries[]? | .key")
 
     # Post Message
     msg=$(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].post_message.text // empty")

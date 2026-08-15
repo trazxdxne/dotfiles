@@ -2,14 +2,14 @@
 description = "Shell, terminal, base settings"
 always = true
 packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum", "stow"]
-packages.arch = []
-packages.fedora = []
+distro_packages.arch = []
+distro_packages.fedora = []
 
 [modules.niri]
 description = "Niri compositor"
 packages = ["niri", "fuzzel", "uwsm"]
-packages.arch = ["xdg-desktop-portal-gnome"]
-packages.fedora = []
+distro_packages.arch = ["xdg-desktop-portal-gnome"]
+distro_packages.fedora = []
 
 [modules.niri.user_services]
 "alsa-volume-restore.service" = ".config/systemd/user/alsa-volume-restore.service"
@@ -28,8 +28,8 @@ packages = ["ags"]
 [modules.greeter]
 description = "Noctalia Greeter (greetd)"
 packages = ["greetd"]
-packages.arch = ["greetd-noctalia"]
-packages.fedora = []
+distro_packages.arch = ["greetd-noctalia"]
+distro_packages.fedora = []
 
 [modules.greeter.root_services]
 enable = ["greetd"]
@@ -41,8 +41,8 @@ packages = ["noctalia"]
 [modules.audio]
 description = "Audio (WirePlumber)"
 packages = ["wireplumber", "pipewire"]
-packages.arch = ["pipewire-pulse"]
-packages.fedora = ["pipewire-pulseaudio"]
+distro_packages.arch = ["pipewire-pulse"]
+distro_packages.fedora = ["pipewire-pulseaudio"]
 
 [modules.system-hw]
 description = "System hardware (polkit, modprobe, EDID, VNC, systemd-oomd)"
