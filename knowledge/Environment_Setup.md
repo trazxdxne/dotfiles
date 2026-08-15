@@ -856,41 +856,45 @@ sudo bash -c 'systemctl enable --now systemd-resolved && mkdir -p /etc/NetworkMa
 
 ---
 
-## 14. Как развернуть Obsidian LiveSync (Self-hosted) для синхронизации через Tailscale
+## 14. Синхронизация заметок Obsidian
 
-Полная инструкция от нуля, включая:
+### Вариант 1: Syncthing P2P (Рекомендуемый / Активный)
+
+Фоновая синхронизация между ПК и телефоном без необходимости держать центральный сервер или постоянно включенный ПК:
+
+1. **Установка на ПК**:
+   ```bash
+   pkexec pacman -S syncthing
+   systemctl --user enable --now syncthing.service
+   ```
+2. **Правила `.stignore` в хранилище (`~/Documents/Obsidian Vault/.stignore`)**:
+   ```text
+   (?d).obsidian/workspace.json
+   (?d).obsidian/workspace-mobile.json
+   (?d).obsidian/workspace-*.json
+   (?d).obsidian/cache/
+   (?d).trash/
+   (?d).stversions/
+   ```
+3. **Веб-интерфейс ПК**: `http://127.0.0.1:8384`
+4. **Android**: Установите `Syncthing-Fork`, отсканируйте QR-код ПК, примите папку `Obsidian Vault` и откройте её в Obsidian на телефоне как хранилище.
+
+---
+
+### Вариант 2: Obsidian LiveSync (Self-hosted CouchDB + Tailscale)
 
 1. **Предварительные требования** — Docker, Tailscale, systemd-resolved (см. [секцию 13](#13-как-настроить-корректное-разрешение-имен-tailscale-systemd-resolved)).
 2. **Установка Docker** — `pkexec pacman -S docker docker-compose`, добавление в группу `docker`, включение сервиса `docker`.
-3. **Развёртывание CouchDB** — клонирование dotfiles, создание `.env`, `docker compose -f ~/obsidian-livesync/docker-compose.yml up -d`.
-4. **Инициализация CouchDB** — для настройки базы данных и пользователя admin:
+3. **Развёртывание CouchDB** — создание `.env`, запуск `docker compose up -d`.
+4. **Инициализация CouchDB**:
    ```bash
-   # Выполните этот скрипт инициализации CouchDB (замените admin и password на ваши)
    curl -X PUT http://admin:password@127.0.0.1:5984/_users
    curl -X PUT http://admin:password@127.0.0.1:5984/_replicator
    curl -X PUT http://admin:password@127.0.0.1:5984/_global_changes
-   # Проверка
    curl -X GET http://admin:password@127.0.0.1:5984/_all_dbs
    ```
 5. **Настройка Tailscale Serve** — `tailscale serve --bg http://127.0.0.1:5984`.
-6. **Настройка Exit Node** — копирование `99-tailscale.conf`, `sysctl --system`, `tailscale set --advertise-exit-node`.
-7. **Настройка Obsidian LiveSync плагина** — URI, логин/пароль, выбор Live/Periodic, первая синхронизация PC→Android.
-8. **Автозапуск после перезагрузки** — весь стек поднимается сам, `sudo tailscale up` **не нужен** повторно:
-
-   | Компонент | Автозапуск | Механизм |
-   |---|---|---|
-   | `tailscaled` | ✅ | systemd unit (`systemctl enable tailscaled`) |
-   | `docker` | ✅ | systemd unit (`systemctl enable docker`) |
-   | CouchDB контейнер | ✅ | `restart: unless-stopped` в compose |
-   | Tailscale Serve | ✅ | `--bg` сохраняет конфиг навсегда в Tailscale state |
-   | Tailscale авторизация | ✅ одноразовая | `tailscale up` нужен **только при первом** подключении к tailnet |
-
-9. **Нюансы и решение проблем**:
-   - Caddy не нужен — Tailscale Serve даёт HTTPS бесплатно.
-   - Если DNS не работает — см. секцию 13.
-   - Docker socket permission denied — проверить группу `docker` и перелогиниться.
-   - CouchDB `max_document_size` и `max_http_request_size` (50МБ и 4ГБ) — требуются для обработки вложений Obsidian.
-   - `tailscale up` после ребута — **не требуется**, демон `tailscaled` поднимается автоматически и восстанавливает подключение.
+6. **Настройка Obsidian LiveSync плагина** — URI, логин/пароль, выбор Live/Periodic, первая синхронизация PC→Android.
 
 ---
 

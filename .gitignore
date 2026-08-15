@@ -22,11 +22,7 @@ ags/alarms.json
 micro/backups/
 micro/buffers/
 
-# Obsidian LiveSync secrets & data
-iac/obsidian-livesync/.env
-iac/obsidian-livesync/data/
-iac/obsidian-livesync/caddy_data/
-iac/obsidian-livesync/caddy_config/
+# Noctalia generated
 .config/niri/noctalia.kdl
 .config/hypr/noctalia.lua
 .config/fish/fish_variables
