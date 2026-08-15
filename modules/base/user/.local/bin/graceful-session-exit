@@ -1,42 +1,156 @@
-#!/bin/bash
+#!/usr/bin/env python3
+import os
+import re
+import signal
+import subprocess
+import time
 
-# Получаем уникальные PID всех процессов (кроме самого Noctalia, иначе он убьет сам себя и прервет процесс перезагрузки)
-PIDS=$(niri msg -j windows | jq -r 'map(select(.app_id != "dev.noctalia.Noctalia")) | .[].pid' | sort -u)
+EXCLUDED_BINARIES = {
+    "niri",
+    "hyprland",
+    "sway",
+    "kwin_wayland",
+    "mutter",
+    "weston",
+    "wayfire",
+    "river",
+    "labwc",
+    "Xwayland",
+    "xwayland-satellite",
+    "Xorg",
+    "noctalia",
+    "ags",
+    "gjs",
+    "waybar",
+    "eww",
+    "ironbar",
+    "dunst",
+    "mako",
+    "swaync",
+    "wayvnc",
+    "wl-copy",
+    "wl-paste",
+    "cliphist",
+    "clipman",
+    "wlsunset",
+    "hyprpaper",
+    "swaybg",
+    "mpvpaper",
+    "swww-daemon",
+    "pipewire",
+    "wireplumber",
+    "pipewire-pulse",
+    "dbus-broker",
+    "dbus-daemon",
+}
 
-# Если окон нет, просто выходим
-if [ -z "$PIDS" ]; then
-    exit 0
-fi
+EXCLUDED_PREFIXES = (
+    "xdg-desktop-portal",
+    "polkit",
+    "systemd",
+)
 
-# Отправляем мягкий сигнал SIGTERM всем GUI процессам
-for pid in $PIDS; do
-    kill -15 $pid 2>/dev/null
-done
 
-# Ждем максимум 5 секунд до полного завершения
-TIMEOUT=50
-COUNT=0
-while [ $COUNT -lt $TIMEOUT ]; do
-    RUNNING=0
-    for pid in $PIDS; do
-        if kill -0 $pid 2>/dev/null; then
-            RUNNING=1
-            break
-        fi
-    done
-    
-    # Если никто больше не запущен, выходим из цикла
-    if [ $RUNNING -eq 0 ]; then
-        break
-    fi
-    
-    sleep 0.1
-    COUNT=$((COUNT + 1))
-done
+def get_gui_pids():
+    my_pid = os.getpid()
+    parent_pid = os.getppid()
 
-# Добиваем зависшие процессы (если такие остались)
-for pid in $PIDS; do
-    kill -9 $pid 2>/dev/null
-done
+    try:
+        ss_out = subprocess.check_output(
+            ["ss", "-u", "-x", "-p"], stderr=subprocess.DEVNULL
+        ).decode("utf-8", errors="ignore")
+    except Exception:
+        return set()
 
-exit 0
+    server_peer_inodes = set()
+    inode_to_pids = {}
+
+    for line in ss_out.splitlines():
+        parts = line.split()
+        if len(parts) < 8 or parts[1] != "ESTAB":
+            continue
+
+        l_addr = parts[4]
+        l_port = parts[5]
+        p_port = parts[7]
+
+        pids = [int(m) for m in re.findall(r"pid=(\d+)", line)]
+        for pid in pids:
+            inode_to_pids.setdefault(l_port, set()).add(pid)
+
+        if any(k in l_addr for k in ["wayland-", "/tmp/.X11-unix", "xwls-"]):
+            if p_port not in ("*", "0"):
+                server_peer_inodes.add(p_port)
+
+    candidate_pids = set()
+    for inode in server_peer_inodes:
+        if inode in inode_to_pids:
+            candidate_pids.update(inode_to_pids[inode])
+
+    target_pids = set()
+    for pid in candidate_pids:
+        if pid in (my_pid, parent_pid):
+            continue
+
+        try:
+            with open(f"/proc/{pid}/comm") as f:
+                comm = f.read().strip()
+        except OSError:
+            continue
+
+        try:
+            exe_path = os.readlink(f"/proc/{pid}/exe")
+            exe_name = os.path.basename(exe_path)
+        except OSError:
+            exe_name = comm
+
+        if comm in EXCLUDED_BINARIES or exe_name in EXCLUDED_BINARIES:
+            continue
+        if any(comm.startswith(pfx) or exe_name.startswith(pfx) for pfx in EXCLUDED_PREFIXES):
+            continue
+
+        target_pids.add(pid)
+
+    return target_pids
+
+
+def is_running(pid):
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def main():
+    pids = get_gui_pids()
+    if not pids:
+        return
+
+    for pid in pids:
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError:
+            pass
+
+    timeout = 5.0
+    interval = 0.1
+    elapsed = 0.0
+
+    while elapsed < timeout:
+        running = [pid for pid in pids if is_running(pid)]
+        if not running:
+            return
+        time.sleep(interval)
+        elapsed += interval
+
+    for pid in pids:
+        if is_running(pid):
+            try:
+                os.kill(pid, signal.SIGKILL)
+            except OSError:
+                pass
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,17 @@
+[Unit]
+Description=Graceful GUI session exit
+Documentation=man:systemd.special(7)
+DefaultDependencies=no
+BindsTo=graphical-session.target
+Before=graphical-session.target wayland-wm@*.service wayland-session-shutdown.target
+After=graphical-session-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/true
+ExecStop=%h/.local/bin/graceful-session-exit
+TimeoutStopSec=7
+
+[Install]
+WantedBy=graphical-session.target

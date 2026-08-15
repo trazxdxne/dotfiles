@@ -382,7 +382,7 @@ binds {
 
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
-    Ctrl+Alt+Delete { quit; }
+    Ctrl+Alt+Delete { spawn "uwsm" "stop"; }
 
     Mod+Shift+P { power-off-monitors; }
 }

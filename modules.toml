@@ -5,6 +5,9 @@ packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum", "stow"]
 distro_packages.arch = []
 distro_packages.fedora = []
 
+[modules.base.user_services]
+"graceful-session-exit.service" = ".config/systemd/user/graceful-session-exit.service"
+
 [modules.niri]
 description = "Niri compositor"
 packages = ["niri", "fuzzel", "uwsm"]
