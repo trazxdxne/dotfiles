@@ -136,6 +136,7 @@ disable = ["hyprpm"]
 
 # Custom commands
 [commands]
+"Antigravity CLI" = "agypatch"
 "niri-autostart" = "cargo install --path ~/Projects/niri-autostart --root ~/.local --locked --force"
 "Equicord" = "git -C ~/Programs/Equicord checkout -- package.json pnpm-lock.yaml && git -C ~/Programs/Equicord pull --rebase && cp -f ~/Projects/equicord-os-display-name/osDisplayName.ts ~/Programs/Equicord/src/userplugins/osDisplayName.ts && cd ~/Programs/Equicord && COREPACK_ENABLE_STRICT=0 pnpm install && COREPACK_ENABLE_STRICT=0 pnpm build && echo | COREPACK_ENABLE_STRICT=0 pnpm inject"
 "anicli-ru-patch" = "~/Projects/anicli-ru-celluloid/patch.sh"
