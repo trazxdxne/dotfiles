@@ -382,7 +382,7 @@ binds {
 
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
-    Alt+Alt+Delete { quit; }
+    Ctrl+Alt+Delete { quit; }
 
     Mod+Shift+P { power-off-monitors; }
 }
