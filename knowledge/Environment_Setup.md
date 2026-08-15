@@ -879,6 +879,43 @@ sudo bash -c 'systemctl enable --now systemd-resolved && mkdir -p /etc/NetworkMa
 3. **Веб-интерфейс ПК**: `http://127.0.0.1:8384`
 4. **Android**: Установите `Syncthing-Fork`, отсканируйте QR-код ПК, примите папку `Obsidian Vault` и откройте её в Obsidian на телефоне как хранилище.
 
+#### Настройка на Windows 11 (3 устройства: Linux, Android, Windows 11)
+
+В топологии из 3-х устройств (Linux, Android, Windows) телефон выполняет роль постоянного связующего звена (моста). При переключении между Linux и Windows заметки автоматически актуализируются через телефон:
+
+1. **Установка на Windows 11**:
+   Установите клиент через PowerShell / Терминал Windows:
+   ```powershell
+   winget install SyncTrayzor.SyncTrayzor
+   ```
+   *(SyncTrayzor сворачивается в трей, автозапускается при входе в систему и отслеживает изменения файлов).*
+
+2. **Сопряжение с телефоном и Linux**:
+   - В SyncTrayzor откройте «Действия» -> «Показать ID».
+   - На телефоне добавьте Windows-ПК через «+» (сканированием QR-кода).
+   - На телефоне в настройках папки `Obsidian Vault` во вкладке «Общий доступ» включите Windows-ПК.
+   - В SyncTrayzor на Windows примите входящую папку (например, в `C:\Users\<User>\Documents\Obsidian Vault`).
+
+3. **Файл `.stignore` на Windows**:
+   Создайте или убедитесь в наличии `.stignore` в папке хранилища на Windows:
+   ```text
+   (?d).obsidian/workspace.json
+   (?d).obsidian/workspace-mobile.json
+   (?d).obsidian/workspace-*.json
+   (?d).obsidian/cache/
+   (?d).trash/
+   (?d).stversions/
+   ```
+
+4. **Как происходит обмен при работе (Dual-boot или 2 ПК + телефон)**:
+   ```
+      [ Linux PC ] <-----------> [ Android (Телефон-мост) ] <-----------> [ Windows 11 PC ]
+   (активен на работе)          (всегда держит свежие копии)            (активен вечером)
+   ```
+   - Поработали в Linux -> изменения улетели на телефон.
+   - Перезагрузились в Windows 11 -> SyncTrayzor подтянул свежие правки с телефона.
+   - Поработали в Windows 11 -> изменения улетели на телефон -> при загрузке Linux сразу скачались на Linux.
+
 #### Восстановление хранилища при переустановке Linux (заметки на телефоне)
 
 1. На новом Linux разверните дотфайлы (`./install.sh`) — Syncthing установится и запустится автоматически.
