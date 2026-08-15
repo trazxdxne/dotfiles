@@ -436,7 +436,6 @@ settings_show_advanced = true
     privilege_command = "pkexec"
 
     [shell.launcher]
-    app_grid = false
     categories = false
     compact = true
     session_search = false
@@ -621,6 +620,13 @@ workspace_group_capsule = false
 color = "#000000"
 enabled = true
 type = "noctalia/true-transparency:transparent_widget"
+
+[widget.tray]
+capsule = true
+capsule_padding = 4
+capsule_radius = "auto"
+drawer = true
+match_adjacent_spacing = true
 
 [widget."trazxdxne/alarms-panel:clock"]
 enabled = true
