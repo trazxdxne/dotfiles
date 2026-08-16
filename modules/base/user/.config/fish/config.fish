@@ -10,11 +10,11 @@ end
 
 
 # Set default terminal editor
-set -gx EDITOR micro
-set -gx VISUAL micro
+set -gx EDITOR fresh
+set -gx VISUAL fresh
 
 # Aliases
-alias nano micro
+alias nano fresh
 
 # Added by Antigravity CLI installer
 set -gx PATH "/home/trazxdxne/.local/bin" $PATH

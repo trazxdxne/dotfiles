@@ -615,6 +615,7 @@ group_by_workspace = true
 hide_empty_workspaces = true
 inactive_opacity = 0.65000000000000002
 workspace_group_capsule = false
+workspace_label_placement = "inside"
 
 [widget.transparent_widget]
 color = "#000000"
