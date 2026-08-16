@@ -1,5 +1,5 @@
 {
-  "theme": "terminal",
+  "theme": "builtin://dark",
   "check_for_updates": false,
   "self_update": false,
   "lsp_enabled": false,
@@ -32,10 +32,7 @@
     "mouse_hover_enabled": false,
     "show_status_bar": true,
     "status_bar": {
-      "left": [
-        "{cursor}",
-        "{messages}"
-      ],
+      "left": ["{filename}", "{remote}", "{cursor}", "{messages}"],
       "right": [
         "{line_ending}",
         "{encoding}",
