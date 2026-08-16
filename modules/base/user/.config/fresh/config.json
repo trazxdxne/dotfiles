@@ -1,0 +1,61 @@
+{
+  "theme": "terminal",
+  "check_for_updates": false,
+  "self_update": false,
+  "lsp_enabled": false,
+  "editor": {
+    "show_tab_bar": false,
+    "show_menu_bar": false,
+    "show_vertical_scrollbar": false,
+    "show_horizontal_scrollbar": false,
+    "show_tilde": false,
+    "use_terminal_bg": true,
+    "animations": false,
+    "cursor_jump_animation": false,
+    "restore_previous_session": false,
+    "hot_exit": false,
+    "auto_create_empty_buffer_on_last_buffer_close": false,
+    "line_numbers": true,
+    "relative_line_numbers": false,
+    "highlight_current_line": false,
+    "highlight_occurrences": false,
+    "syntax_highlighting": true,
+    "auto_indent": true,
+    "auto_close": true,
+    "auto_surround": true,
+    "tab_size": 4,
+    "use_tabs": false,
+    "quick_suggestions": false,
+    "completion_popup_auto_show": false,
+    "enable_inlay_hints": false,
+    "diagnostics_inline_text": false,
+    "mouse_hover_enabled": false,
+    "show_status_bar": true,
+    "status_bar": {
+      "left": [
+        "{cursor}",
+        "{messages}"
+      ],
+      "right": [
+        "{line_ending}",
+        "{encoding}",
+        "{language}"
+      ],
+      "separator": "  "
+    }
+  },
+  "file_explorer": {
+    "auto_open_on_last_buffer_close": false
+  },
+  "warnings": {
+    "show_status_indicator": false
+  },
+  "plugins": {
+    "git_gutter": { "enabled": false },
+    "git_statusbar": { "enabled": false },
+    "git_blame": { "enabled": false },
+    "welcome": { "enabled": false },
+    "dashboard": { "enabled": false },
+    "diagnostics_panel": { "enabled": false }
+  }
+}

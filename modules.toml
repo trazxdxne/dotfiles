@@ -2,7 +2,7 @@
 description = "Shell, terminal, base settings"
 always = true
 packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum", "stow"]
-distro_packages.arch = []
+distro_packages.arch = ["fresh-editor"]
 distro_packages.fedora = []
 
 [modules.base.user_services]
