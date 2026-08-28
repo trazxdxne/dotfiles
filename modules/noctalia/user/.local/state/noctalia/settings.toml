@@ -41,7 +41,7 @@ order = [ "default", "bar" ]
     capsule_radius = 12
     contact_shadow = true
     enabled = true
-    end = [ "battery", "group:g2", "group:g1", "keyboard_layout", "notifications" ]
+    end = [ "battery", "tray", "group:g1", "ram", "keyboard_layout", "notifications" ]
     font_family = "Adwaita Sans"
     font_weight = 500
     hover_highlight = true
@@ -64,17 +64,6 @@ order = [ "default", "bar" ]
         fill = "surface_variant"
         id = "g1"
         members = [ "volume", "media" ]
-        opacity = 1.0
-        padding = 6.0
-        radius = 12.0
-
-        [[bar.default.capsule_group]]
-        accordion = false
-        accordion_direction = "end"
-        enabled = true
-        fill = "surface_variant"
-        id = "g2"
-        members = [ "tray", "ram" ]
         opacity = 1.0
         padding = 6.0
         radius = 12.0
@@ -120,9 +109,9 @@ reserve_space = false
 show_dots = true
 
 [hooks]
-logging_out = ""
-rebooting = ""
-shutting_down = ""
+logging_out = "/home/trazxdxne/.local/bin/graceful-session-exit"
+rebooting = "/home/trazxdxne/.local/bin/graceful-session-exit"
+shutting_down = "/home/trazxdxne/.local/bin/graceful-session-exit"
 
 [hot_corners]
 enabled = false

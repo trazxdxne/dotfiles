@@ -39,7 +39,8 @@
         "{language}"
       ],
       "separator": "  "
-    }
+    },
+    "auto_read_only": false
   },
   "file_explorer": {
     "auto_open_on_last_buffer_close": false
