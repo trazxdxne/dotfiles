@@ -1,4 +1,4 @@
-config_version = 12
+config_version = 13
 
 [accessibility]
 high_contrast = false
@@ -41,7 +41,7 @@ order = [ "default", "bar" ]
     capsule_radius = 12
     contact_shadow = true
     enabled = true
-    end = [ "battery", "tray", "group:g1", "keyboard_layout", "notifications" ]
+    end = [ "battery", "group:g2", "group:g1", "keyboard_layout", "notifications" ]
     font_family = "Adwaita Sans"
     font_weight = 500
     hover_highlight = true
@@ -50,7 +50,7 @@ order = [ "default", "bar" ]
     padding = 6
     panel_overlap = 1
     shadow = false
-    start = [ "taskbar", "ram" ]
+    start = [ "taskbar" ]
     thickness = 30
 
         [bar.default.monitor.HDMI-A-1]
@@ -58,10 +58,23 @@ order = [ "default", "bar" ]
         font_family = "Adwaita Sans"
 
         [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
         enabled = true
         fill = "surface_variant"
         id = "g1"
         members = [ "volume", "media" ]
+        opacity = 1.0
+        padding = 6.0
+        radius = 12.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        enabled = true
+        fill = "surface_variant"
+        id = "g2"
+        members = [ "tray", "ram" ]
         opacity = 1.0
         padding = 6.0
         radius = 12.0
@@ -153,6 +166,8 @@ widget_order = [
     cx = 960.0
     cy = 607.0
     output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "login_box"
 
@@ -178,6 +193,8 @@ widget_order = [
     cx = 1200.0
     cy = 720.0
     output = "HDMI-A-1"
+    placement_height = 1080.0
+    placement_width = 2400.0
     rotation = 0.0
     type = "login_box"
 
@@ -203,6 +220,8 @@ widget_order = [
     cx = 236.0
     cy = 391.0
     output = "WAYLAND-1"
+    placement_height = 0.0
+    placement_width = 0.0
     rotation = 0.0
     type = "login_box"
 
@@ -228,6 +247,8 @@ widget_order = [
     cx = 471.0
     cy = 901.0
     output = "winit"
+    placement_height = 0.0
+    placement_width = 0.0
     rotation = 0.0
     type = "login_box"
 
@@ -253,6 +274,8 @@ widget_order = [
     cx = 960.0
     cy = 412.0
     output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "clock"
 
@@ -274,6 +297,8 @@ widget_order = [
     cx = 1828.0
     cy = 1044.0
     output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "button"
 
@@ -292,6 +317,8 @@ widget_order = [
     cx = 1740.0
     cy = 1044.0
     output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "button"
 
@@ -310,6 +337,8 @@ widget_order = [
     cx = 1872.0
     cy = 1044.0
     output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "button"
 
@@ -328,6 +357,8 @@ widget_order = [
     cx = 1784.0
     cy = 1044.0
     output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "button"
 
@@ -346,6 +377,8 @@ widget_order = [
     cx = 960.0
     cy = 508.0
     output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "clock"
 
@@ -399,7 +432,7 @@ transparency_panel_placement = "floating"
 transparency_panel_position = "auto"
 
 [plugins]
-auto_update = true
+auto_update = "all"
 enabled = [ "noctalia/bitwarden", "noctalia/timer" ]
 
     [[plugins.source]]
