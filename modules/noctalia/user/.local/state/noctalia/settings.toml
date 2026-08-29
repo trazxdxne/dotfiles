@@ -45,13 +45,13 @@ order = [ "default", "bar" ]
     font_family = "Adwaita Sans"
     font_weight = 500
     hover_highlight = true
-    margin_edge = 6
-    margin_ends = 6
+    margin_ends = 0
     padding = 6
     panel_overlap = 1
+    radius = 0
     shadow = false
     start = [ "taskbar" ]
-    thickness = 30
+    thickness = 26
 
         [bar.default.monitor.HDMI-A-1]
         enabled = false
@@ -362,9 +362,9 @@ widget_order = [
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000007]
     box_height = 32.0
-    box_width = 320.0
+    box_width = 352.0
     cx = 960.0
-    cy = 508.0
+    cy = 540.0
     output = "DP-1"
     placement_height = 1080.0
     placement_width = 1920.0
@@ -373,7 +373,7 @@ widget_order = [
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000007.settings]
         background = false
-        center_text = false
+        center_text = true
         clock_style = "digital"
         color = "secondary"
         format = "{:%A %d %B %Y}"
@@ -451,7 +451,7 @@ settings_show_advanced = true
 
     [shell.animation]
     enabled = true
-    speed = 2.0000000298023224
+    speed = 3.0000000447034836
 
     [shell.greeter_sync]
     auto_sync = true
@@ -528,6 +528,7 @@ settings_show_advanced = true
 
     [shell.shadow]
     alpha = 0.4999999888241291
+    direction = "center"
 
 [theme]
 builtin = "Catppuccin"

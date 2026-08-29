@@ -17,7 +17,7 @@
     "anchor": ["TOP"],
 
     // Margin (px) from the top edge of the screen.
-    "marginTop": 8,
+    "marginTop": 0,
 
     // Which monitor to show the bar on.
     // Values: "primary" or the connector name e.g. "DP-1", "HDMI-A-1"
