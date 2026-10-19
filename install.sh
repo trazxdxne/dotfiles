@@ -15,6 +15,12 @@ else
     exit 1
 fi
 
+if [ "$DISTRO" = "fedora" ]; then
+    echo "Enabling Fedora COPR repositories..."
+    sudo dnf copr enable -y solopasha/hyprland || true
+    sudo dnf copr enable -y atim/gum || true
+fi
+
 if ! command -v gum &> /dev/null; then
     echo "Installing gum for interactivity..."
     sudo $PKG_INSTALL gum
@@ -59,6 +65,39 @@ if [ ${#SELECTED_MODULES[@]} -eq 0 ]; then
     exit 0
 fi
 
+# Detect GPU
+DETECTED_GPU=""
+if command -v lspci &> /dev/null; then
+    VGA_INFO=$(lspci -nn | grep -E "VGA|3D|Display" || true)
+    if echo "$VGA_INFO" | grep -iq "NVIDIA"; then
+        DETECTED_GPU="nvidia"
+    elif echo "$VGA_INFO" | grep -iq -E "AMD|Advanced Micro Devices|ATI"; then
+        DETECTED_GPU="amd"
+    fi
+fi
+
+if [ -z "$DETECTED_GPU" ]; then
+    for vendor_file in /sys/class/drm/card*/device/vendor; do
+        if [ -f "$vendor_file" ]; then
+            VENDOR=$(cat "$vendor_file" 2>/dev/null || true)
+            if [ "$VENDOR" = "0x10de" ]; then
+                DETECTED_GPU="nvidia"
+                break
+            elif [ "$VENDOR" = "0x1002" ]; then
+                DETECTED_GPU="amd"
+                break
+            fi
+        fi
+    done
+fi
+
+if [ -n "$DETECTED_GPU" ]; then
+    echo "Auto-detected GPU: $DETECTED_GPU"
+else
+    echo "Could not auto-detect GPU. Please select your primary GPU:"
+    DETECTED_GPU=$(gum choose "amd" "nvidia" "intel" "none")
+fi
+
 echo "Generating /tmp/dotfiles-root.sh..."
 ROOT_SH="/tmp/dotfiles-root.sh"
 cat > "$ROOT_SH" << 'EOF'
@@ -83,6 +122,13 @@ for mod in "${SELECTED_MODULES[@]}"; do
     while read -r pkg; do
         [ -n "$pkg" ] && PACKAGES+=("$pkg")
     done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].distro_packages.${DISTRO}[]? // empty")
+
+    # GPU-specific packages
+    if [ -n "$DETECTED_GPU" ]; then
+        while read -r pkg; do
+            [ -n "$pkg" ] && PACKAGES+=("$pkg")
+        done < <(echo "$JSON_DATA" | jq -r ".modules[\"$mod\"].gpu_packages.${DETECTED_GPU}.${DISTRO}.packages[]? // empty")
+    fi
 
     # Root Services
     while read -r srv; do
@@ -109,6 +155,14 @@ for mod in "${SELECTED_MODULES[@]}"; do
     if [ -d "$DOTFILES_DIR/modules/$mod/root" ]; then
         echo "echo 'Copying root package files for $mod...'" >> "$ROOT_SH"
         echo "cp -a --remove-destination \"$DOTFILES_DIR/modules/$mod/root/.\" /" >> "$ROOT_SH"
+        if [ "$DETECTED_GPU" = "amd" ] && [ "$mod" = "system-hw" ]; then
+            echo "if [ -f /etc/default/limine ]; then" >> "$ROOT_SH"
+            echo "    sed -i 's/nvidia_drm.modeset=1 nvidia_drm.fbdev=1 //g' /etc/default/limine" >> "$ROOT_SH"
+            echo "fi" >> "$ROOT_SH"
+            echo "if [ -f /etc/mkinitcpio.conf ]; then" >> "$ROOT_SH"
+            echo "    sed -i 's/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm/MODULES=(/g' /etc/mkinitcpio.conf" >> "$ROOT_SH"
+            echo "fi" >> "$ROOT_SH"
+        fi
     fi
 done
 
