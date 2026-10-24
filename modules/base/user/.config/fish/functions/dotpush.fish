@@ -1,29 +1,29 @@
 function dotpush
     set -l commit_msg $argv
     if test -z "$commit_msg"
-        read -P "📝 Commit (Enter fot auto): " commit_msg
+        read -P ":: Commit message (Enter for auto): " commit_msg
     end
     
-    echo "⚙️  Get info..."
+    echo ":: Getting git status..."
     git -C ~/.dotfiles add .
     
     set -l changed_files (git -C ~/.dotfiles diff --name-only --cached | string join ', ')
     
     if test -z "$changed_files"
-        echo "❌ No news"
+        echo "[-] No changes to commit."
         return 1
     end
     
     if test -z "$commit_msg"
         set commit_msg "update $changed_files"
-        echo "🤖 Generated commit: $commit_msg"
+        echo ":: Generated commit: $commit_msg"
     end
     
-    echo "📦  Creating commit..."
+    echo ":: Creating commit..."
     git -C ~/.dotfiles commit -m "$commit_msg"
     
-    echo "🚀  Push to GitHub..."
+    echo ":: Pushing to GitHub..."
     git -C ~/.dotfiles push
     
-    echo "✅  Done!"
+    echo "[+] Done."
 end
