@@ -15,17 +15,9 @@ hl.monitor({
     position = "0x0",
     scale    = "1",
 })
-hl.monitor({
-    output   = "HDMI-A-1",
-    mode     = "2400x1080",
-    position = "0x1080",
-    scale    = "1",
-})
 
--- Niri had workspace "1 ", which was on HDMI-A-1
 hl.workspace_rule({ workspace = "1", monitor = "DP-1" })
-hl.workspace_rule({ workspace = "2", monitor = "DP-1" })
-hl.workspace_rule({ workspace = "3", monitor = "HDMI-A-1" }) 
+hl.workspace_rule({ workspace = "2", monitor = "DP-1" }) 
 
 
 ---------------------
@@ -46,7 +38,6 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("noctalia")
     hl.exec_cmd("systemctl --user start ags.service")
     hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
-    hl.exec_cmd("wayvnc -f 60 -r --output=HDMI-A-1 0.0.0.0")
 end)
 
 

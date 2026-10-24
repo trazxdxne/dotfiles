@@ -1,0 +1,2 @@
+[commands]
+"noctalia-greeter" = "cd ~/Projects/noctalia-greeter && git pull --rebase && meson setup build-release --prefix=/usr --buildtype=release --reconfigure && meson compile -C build-release && pkexec sh -c 'cd /home/trazxdxne/Projects/noctalia-greeter && meson install -C build-release && ./scripts/setup_greeter_system.sh'"

@@ -1,19 +1,24 @@
+[modules.network]
+description = "Network bootstrap, DNS over TLS, Zapret and Cloudflare WARP"
+always = true
+packages = []
+
 [modules.base]
 description = "Shell, terminal, base settings"
 always = true
 packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum", "stow"]
-distro_packages.arch = ["fresh-editor"]
-distro_packages.fedora = ["fresh-editor"]
+distro_packages.arch = ["fresh-editor", "p7zip"]
+distro_packages.fedora = ["fresh-editor", "p7zip", "p7zip-plugins"]
 
+[modules.ai-skills]
+description = "AI Agent skills and prompts"
+packages = []
 
 [modules.niri]
 description = "Niri compositor"
-packages = ["niri", "fuzzel", "uwsm"]
+packages = ["niri", "fuzzel"]
 distro_packages.arch = ["xdg-desktop-portal-gnome"]
 distro_packages.fedora = ["xdg-desktop-portal-gnome"]
-
-[modules.niri.user_services]
-"alsa-volume-restore.service" = ".config/systemd/user/alsa-volume-restore.service"
 
 [modules.hyprland]
 description = "Hyprland compositor"
@@ -45,9 +50,12 @@ packages = ["wireplumber", "pipewire"]
 distro_packages.arch = ["pipewire-pulse"]
 distro_packages.fedora = ["pipewire-pulseaudio"]
 
+[modules.audio.user_services]
+"alsa-volume-restore.service" = ".config/systemd/user/alsa-volume-restore.service"
+
 [modules.system-hw]
-description = "System hardware (polkit, modprobe, EDID, VNC, systemd-oomd)"
-packages = ["wayvnc"]
+description = "System hardware (polkit, modprobe, systemd-oomd)"
+packages = []
 distro_packages.arch = []
 distro_packages.fedora = []
 
@@ -55,7 +63,7 @@ distro_packages.fedora = []
 packages = ["vulkan-radeon", "mesa", "libva-mesa-driver", "mesa-vdpau", "amd-ucode"]
 
 [modules.system-hw.gpu_packages.amd.fedora]
-packages = ["mesa-vulkan-drivers", "mesa-dri-drivers", "mesa-va-drivers", "mesa-vdpau-drivers", "microcode_ctl"]
+packages = ["mesa-vulkan-drivers", "mesa-dri-drivers", "mesa-va-drivers-freeworld", "mesa-vdpau-drivers", "microcode_ctl"]
 
 [modules.system-hw.gpu_packages.nvidia.arch]
 packages = ["nvidia", "nvidia-utils", "nvidia-settings"]

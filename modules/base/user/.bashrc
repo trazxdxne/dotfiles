@@ -9,19 +9,25 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
-
 # Set default terminal editor
-export EDITOR=micro
-export VISUAL=micro
+if command -v fresh &> /dev/null; then
+    export EDITOR=fresh
+    export VISUAL=fresh
+    alias nano=fresh
+elif command -v micro &> /dev/null; then
+    export EDITOR=micro
+    export VISUAL=micro
+    alias nano=micro
+fi
 
 # Aliases
-alias nano=micro
+alias zapret="cd ~/.dotfiles/modules/network/zapret && ./service.sh"
 
-# Added by Antigravity CLI installer
-export PATH="/home/trazxdxne/.local/bin:$PATH"
+# Local bin
+export PATH="$HOME/.local/bin:$PATH"
 
 # pnpm
-export PNPM_HOME="/home/trazxdxne/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;

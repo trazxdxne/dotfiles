@@ -1,3 +1,3 @@
-function zapret --wraps='cd ~/Programs/zapret-discord-youtube-linux/ && ./service.sh' --description 'alias zapret=cd ~/Programs/zapret-discord-youtube-linux/ && ./service.sh'
-    cd ~/Programs/zapret-discord-youtube-linux/ && ./service.sh $argv
+function zapret --wraps='cd ~/.dotfiles/modules/network/zapret/ && ./service.sh' --description 'alias zapret=cd ~/.dotfiles/modules/network/zapret/ && ./service.sh'
+    cd ~/.dotfiles/modules/network/zapret/ && ./service.sh $argv
 end

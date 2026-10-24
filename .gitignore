@@ -2,10 +2,12 @@
 *.log
 ags/ags.log
 
-# Editor & System backups
+# Editor & System backups & cache
 *.save*
 *~
 *.bak
+*.tmp
+*.swp
 .DS_Store
 
 # Package Caches
@@ -14,18 +16,14 @@ node_modules/
 .cache/
 
 # Build artifacts
-qml-niri/build/
 **/build/
 
-# App State & Data
-ags/alarms.json
-micro/backups/
-micro/buffers/
+# App State & Dynamic files
+**/alarms.json
+**/backups/
+**/buffers/
+fish_variables
 
-# Noctalia generated
-.config/niri/noctalia.kdl
-.config/hypr/noctalia.lua
-.config/fish/fish_variables
-.config/micro/backups/
-.config/micro/buffers/
-.config/ags/alarms.json
+# Generated theme links/files
+**/noctalia.kdl
+**/noctalia.lua

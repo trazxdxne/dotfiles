@@ -1,8 +1,18 @@
 workspace "1"
 workspace "2"
-workspace "1 " {
-    open-on-output "HDMI-A-1"
+
+environment {
+    QT_QPA_PLATFORM "wayland;xcb"
+    QT_QPA_PLATFORMTHEME "qt5ct"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+    QT_SCALE_FACTOR_ROUNDING_POLICY "RoundPreferFloor"
+    GDK_BACKEND "wayland"
+    MOZ_ENABLE_WAYLAND "1"
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
 }
+
+spawn-at-startup "noctalia"
+spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 
 input {
     keyboard {
@@ -26,11 +36,6 @@ output "DP-1" {
     scale 1
     transform "normal"
     position x=0 y=0
-}
-output "HDMI-A-1" {
-    mode "2400x1080"
-    scale 1
-    position x=0 y=1080
 }
 
 layout {
@@ -128,12 +133,6 @@ window-rule {
     default-column-display "tabbed"
 }
 
-window-rule {
-    match app-id="^brave-chddojmiiokipokdfcabeikjhljgcafd-Default$"
-    match app-id="^brave-agimnkijcaahngcdmfeangaknmldooml-Default$"
-    open-on-workspace "1 "
-    default-column-display "tabbed"
-}
 
 window-rule {
      match title="Picture in picture"
@@ -231,10 +230,10 @@ window-rule {
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
-    Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "uwsm" "app" "--" "wezterm" "start" "--always-new-process"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "wezterm" "start" "--always-new-process"; }
     Mod+Space hotkey-overlay-title="Run an Application Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+L hotkey-overlay-title="Lock the Screen" { spawn "noctalia" "msg" "session lock"; }
-    Mod+E hotkey-overlay-title="Open a File Manager" { spawn "uwsm" "app" "--" "nautilus"; }
+    Mod+E hotkey-overlay-title="Open a File Manager" { spawn "nautilus"; }
 
     //Mod+Alt+X          allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
     Mod+Alt+Z            allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
