@@ -2,38 +2,42 @@
 
 ## Privilege Escalation
 
-`pkexec` gates every command that needs root: package installs (`pkexec pacman -S …`), system-file edits under `/etc/` or `/usr/`, service management (`pkexec systemctl …`), and root-owned artifacts in `~` (Docker volumes, etc.). Everything else runs unprivileged.
+- **Interactive agent commands:** `pkexec` gates every standalone command the agent runs that needs root: package installs, system-file edits under `/etc/` or `/usr/`, service management (`pkexec systemctl …`), and root-owned artifacts in `~`. Everything else runs unprivileged.
+- **Inside `install.sh`:** Authenticate once via `sudo -v < /dev/tty` (explicitly binding to `/dev/tty` so TUI tools like `gum` never starve `stdin`) and keep the timestamp alive, or batch root operations into a single `pkexec` invocation.
 
-## Dotfiles
+## Dotfiles Architecture (Arch & Fedora)
 
-The repository follows a module-based GNU Stow structure located at `~/.dotfiles`:
-- User configs go to `~/.dotfiles/modules/<module_name>/user/` (stowed relative to `~`).
-- System files go to `~/.dotfiles/modules/<module_name>/root/` (stowed relative to `/`, requires root).
+The repository (`~/.dotfiles`) is cross-distro (Arch Linux and Fedora) and follows a module-based structure under `~/.dotfiles/modules/<module_name>/`:
 
-### Onboarding a new config
+- **`user/`** — User configs (stowed relative to `~` via GNU Stow).
+- **`root/`** — Common system files (copied to `/`, never symlinked).
+- **`root-arch/` & `root-fedora/`** — Distro-specific system files (e.g., `mkinitcpio`, `pacman`, PAM, boot/initramfs). Never place distro-specific `/etc/pam.d/`, `/etc/security/`, or bootloader configs into common `root/`.
 
-1. Place the new file in the corresponding module directory:
-   - For user configs: `~/.dotfiles/modules/<module_name>/user/` mirroring its target path (e.g., `modules/base/user/.config/<app>/...` or `modules/base/user/.bashrc`).
-   - For system configs: `~/.dotfiles/modules/<module_name>/root/` mirroring its root target path (e.g., `modules/greeter/root/etc/greetd/config.toml`).
-2. Run `install.sh` or `stow -R` to apply symlinks.
-3. Commit all changes in a single commit.
+### Deploying configs (`user/` vs `root/`)
 
-**Completion criterion**: the file exists in the module's `user` or `root` stow directory and symlinks cleanly with GNU Stow.
+1. **User configs (`user/`):** Mirror target path relative to `~` (e.g., `modules/base/user/.config/<app>/...`) and symlink via `stow -R`.
+2. **System configs (`root/`, `root-arch/`, `root-fedora/`):** Mirror target path relative to `/` (e.g., `modules/greeter/root/etc/greetd/config.toml`). Deploy by **copying** (`install` or `cp -r` with `chown root:root` and `.bak` backup of existing files). Never symlink `/etc` or `/usr` to `~` (breaks Fedora SELinux `user_home_t`).
+3. **SELinux context restoration:** On Fedora (or whenever `restorecon` exists), run `restorecon -Rv` on every modified path under `/etc/`, `/usr/`, `/opt/`, or `/var/` after copying files or placing custom binaries (`nfqws`, `zapret` scripts, systemd units).
+
+**Completion criterion**: `user/` files symlink cleanly with GNU Stow; `root*` files copy cleanly with `root:root` ownership and valid `restorecon` contexts (`etc_t`, `bin_t`, `systemd_unit_file_t`).
 
 ### Committing changes
 
 Commit when a **coherent unit of work** is complete — the full task the user asked for, not individual fixes along the way. One atomic commit per logical change. After committing, `git push`.
 
 - Commit message: one line, English, imperative mood.
-- Good: `Add wezterm config` — Bad: `Added wezterm configuration files to the dotfiles repository`
+- Good: `Separate Arch and Fedora root configs` — Bad: `Fixed black screen and SELinux issues on Fedora`
 - Scope: `~/.dotfiles` directory only.
 
 ## Package Management
 
-| Source | Command | Notes |
-|--------|---------|-------|
-| Official repos | `pkexec pacman -S --noconfirm …` | Default choice |
-| AUR (rare) | `yay -S …` | No pkexec. Only when the package is absent from official repos |
+Detect the active distribution via `/etc/os-release` before running package commands:
+
+| Distro / Source | Command | Notes |
+|-----------------|---------|-------|
+| Arch (Official) | `pkexec pacman -S --noconfirm …` | Default on Arch |
+| Arch (AUR) | `yay -S …` | No `pkexec`. Only when absent from official repos |
+| Fedora | `pkexec dnf install -y …` | Default on Fedora |
 
 ## Web Research
 
