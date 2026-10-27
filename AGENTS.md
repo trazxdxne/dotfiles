@@ -5,13 +5,13 @@
 - **Interactive agent commands:** `pkexec` gates every standalone command the agent runs that needs root: package installs, system-file edits under `/etc/` or `/usr/`, service management (`pkexec systemctl …`), and root-owned artifacts in `~`. Everything else runs unprivileged.
 - **Inside `install.sh`:** Authenticate once via `sudo -v < /dev/tty` (explicitly binding to `/dev/tty` so TUI tools like `gum` never starve `stdin`) and keep the timestamp alive, or batch root operations into a single `pkexec` invocation.
 
-## Dotfiles Architecture (Arch & Fedora)
+## Dotfiles Architecture (Arch/CachyOS & Fedora)
 
-The repository (`~/.dotfiles`) is cross-distro (Arch Linux and Fedora) and follows a module-based structure under `~/.dotfiles/modules/<module_name>/`:
+The current host is **CachyOS** (Arch-based). The repository (`~/.dotfiles`) targets both **Arch-based distros (CachyOS, Arch)** and **Fedora-based distros** under `~/.dotfiles/modules/<module_name>/`:
 
 - **`user/`** — User configs (stowed relative to `~` via GNU Stow).
-- **`root/`** — Common system files (copied to `/`, never symlinked).
-- **`root-arch/` & `root-fedora/`** — Distro-specific system files (e.g., `mkinitcpio`, `pacman`, PAM, boot/initramfs). Never place distro-specific `/etc/pam.d/`, `/etc/security/`, or bootloader configs into common `root/`.
+- **`root/`** — Common cross-distro system files (copied to `/`, never symlinked).
+- **`root-arch/` & `root-fedora/`** — Distro-specific system files (e.g., `mkinitcpio`, `pacman`, CachyOS/Arch configs, PAM, boot/initramfs). Never place distro-specific `/etc/pam.d/`, `/etc/security/`, or bootloader configs into common `root/`.
 
 ### Deploying configs (`user/` vs `root/`)
 
@@ -29,14 +29,14 @@ Commit when a **coherent unit of work** is complete — the full task the user a
 - Good: `Separate Arch and Fedora root configs` — Bad: `Fixed black screen and SELinux issues on Fedora`
 - Scope: `~/.dotfiles` directory only.
 
-## Package Management
+## Package Management & Distro Detection
 
-Detect the active distribution via `/etc/os-release` before running package commands:
+Detect the active distribution family via `/etc/os-release` by matching both `ID` and `ID_LIKE` (`arch` / `cachyos` vs `fedora`):
 
 | Distro / Source | Command | Notes |
 |-----------------|---------|-------|
-| Arch (Official) | `pkexec pacman -S --noconfirm …` | Default on Arch |
-| Arch (AUR) | `yay -S …` | No `pkexec`. Only when absent from official repos |
+| Arch / CachyOS (Official) | `pkexec pacman -S --noconfirm …` | Default on CachyOS & Arch |
+| Arch / CachyOS (AUR) | `yay -S …` | No `pkexec`. Only when absent from official repos |
 | Fedora | `pkexec dnf install -y …` | Default on Fedora |
 
 ## Web Research
