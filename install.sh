@@ -86,19 +86,44 @@ for cmd_name in stow jq gum curl git; do
     fi
 done
 
+if [[ "$DISTRO" == "fedora" ]]; then
+    if ! rpm -q rpmfusion-free-release &>/dev/null; then
+        echo ":: installing rpmfusion"
+        sudo dnf install -y \
+            "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+            "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" || true
+    fi
+
+    if [[ ! -f /etc/yum.repos.d/cloudflare-warp.repo ]]; then
+        echo ":: adding cloudflare warp repo"
+        sudo rpm --import https://pkg.cloudflareclient.com/pubkey.gpg || true
+        sudo curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo >/dev/null || true
+    fi
+elif [[ "$DISTRO" == "arch" ]]; then
+    if grep -q "^#\[multilib\]" /etc/pacman.conf; then
+        echo ":: enabling multilib in pacman.conf"
+        sudo sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
+    fi
+
+    if ! grep -q "^\[chaotic-aur\]" /etc/pacman.conf; then
+        echo ":: enabling chaotic-aur repository"
+        sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com 2>/dev/null || true
+        sudo pacman-key --lsign-key 3056513887B78AEB 2>/dev/null || true
+        sudo pacman -U --noconfirm --needed \
+            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || true
+        if ! grep -q "^\[chaotic-aur\]" /etc/pacman.conf; then
+            echo -e "\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist" | sudo tee -a /etc/pacman.conf >/dev/null
+        fi
+        sudo pacman -Sy --noconfirm
+    fi
+fi
+
 if [[ ${#MISSING_BASE[@]} -gt 0 ]]; then
     echo ":: installing missing base dependencies: ${MISSING_BASE[*]}"
     if [[ "$DISTRO" == "fedora" ]]; then
-        if ! rpm -q rpmfusion-free-release &>/dev/null; then
-            sudo dnf install -y \
-                "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
-                "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" || true
-        fi
         sudo dnf install -y "${MISSING_BASE[@]}"
     elif [[ "$DISTRO" == "arch" ]]; then
-        if grep -q "^#\[multilib\]" /etc/pacman.conf; then
-            sudo sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
-        fi
         sudo pacman -S --needed --noconfirm "${MISSING_BASE[@]}"
     fi
 fi
