@@ -6,8 +6,8 @@ packages = []
 [modules.base]
 description = "Shell, terminal, base settings"
 always = true
-packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow"]
-distro_packages.arch = ["p7zip"]
+packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow", "topgrade"]
+distro_packages.arch = ["p7zip", "fresh-editor-bin"]
 distro_packages.fedora = ["p7zip", "p7zip-plugins"]
 
 [modules.ai-skills]
