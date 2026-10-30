@@ -6,17 +6,11 @@ if [[ "$EUID" -eq 0 ]]; then
     exit 1
 fi
 
-echo ":: authenticating sudo"
-sudo -v < /dev/tty
-
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-SUDO_KEEPALIVE_PID=$!
-trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT
-
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DOTFILES_DIR"
 
 if [[ -f /etc/os-release ]]; then
+    # shellcheck disable=SC1091
     . /etc/os-release
     DISTRO_ID="${ID:-unknown}"
     DISTRO_LIKE="${ID_LIKE:-}"
@@ -38,6 +32,52 @@ case "$DISTRO_ID $DISTRO_LIKE" in
         ;;
 esac
 echo ":: detected distro: $DISTRO ($DISTRO_ID)"
+
+rollback_network() {
+    echo ":: rolling back network and dns configurations"
+    if [[ -f /etc/resolv.conf.bak ]]; then
+        sudo cp -f /etc/resolv.conf.bak /etc/resolv.conf
+        sudo rm -f /etc/resolv.conf.bak
+        echo ":: restored /etc/resolv.conf from backup"
+    elif [[ -L /etc/resolv.conf ]]; then
+        sudo rm -f /etc/resolv.conf
+    fi
+    sudo rm -f /etc/systemd/resolved.conf.d/malw-dns.conf
+    sudo rm -f /etc/NetworkManager/conf.d/systemd-resolved.conf
+    if [[ "$DISTRO" == "arch" ]]; then
+        sudo systemctl disable --now systemd-resolved 2>/dev/null || true
+        sudo systemctl restart NetworkManager 2>/dev/null || true
+    elif [[ "$DISTRO" == "fedora" ]]; then
+        sudo systemctl restart systemd-resolved NetworkManager 2>/dev/null || true
+    fi
+    sudo systemctl disable --now zapret_discord_youtube.service 2>/dev/null || true
+    sudo rm -f /etc/systemd/system/zapret_discord_youtube.service
+    sudo systemctl daemon-reload
+    if [[ -x /opt/zapret/service.sh ]]; then
+        sudo /opt/zapret/service.sh kill 2>/dev/null || true
+    fi
+    if command -v nft &>/dev/null; then
+        sudo nft delete table inet zapret 2>/dev/null || true
+    fi
+    sudo rm -rf /opt/zapret /usr/local/bin/zapret
+    echo ":: network rollback completed successfully"
+}
+
+if [[ "${1:-}" == "--rollback-network" ]]; then
+    echo ":: authenticating sudo for rollback"
+    # shellcheck disable=SC2024
+    sudo -v < /dev/tty
+    rollback_network
+    exit 0
+fi
+
+echo ":: authenticating sudo"
+# shellcheck disable=SC2024
+sudo -v < /dev/tty
+
+while true; do sudo -n true; sleep 50; kill -0 "$$" 2>/dev/null || exit; done 2>/dev/null &
+SUDO_KEEPALIVE_PID=$!
+trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT
 
 DETECTED_GPU=""
 if command -v lspci &>/dev/null; then
@@ -73,28 +113,59 @@ if [[ -n "$DETECTED_GPU" ]]; then
     echo ":: detected gpu: $DETECTED_GPU"
 fi
 
-DETECTED_IFACE=$(ip route show default 2>/dev/null | awk '/default/ {print $5}' | head -n1)
-DETECTED_IFACE="${DETECTED_IFACE:-any}"
-echo ":: detected network interface: $DETECTED_IFACE"
+echo ":: configuring network and dns"
+if [[ "$DISTRO" == "arch" ]]; then
+    echo ":: logging: setting up systemd-resolved integration for NetworkManager"
+    sudo mkdir -p /etc/NetworkManager/conf.d
+    echo -e "[main]\ndns=systemd-resolved" | sudo tee /etc/NetworkManager/conf.d/systemd-resolved.conf >/dev/null
+    if [[ -f /etc/resolv.conf && ! -L /etc/resolv.conf ]]; then
+        echo ":: logging: backing up /etc/resolv.conf to /etc/resolv.conf.bak"
+        sudo cp -f /etc/resolv.conf /etc/resolv.conf.bak
+    fi
+    echo ":: logging: linking /etc/resolv.conf -> /run/systemd/resolve/stub-resolv.conf"
+    sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+fi
 
-echo ":: configuring systemd-resolved DNS over TLS"
+echo ":: logging: installing /etc/systemd/resolved.conf.d/malw-dns.conf"
 sudo mkdir -p /etc/systemd/resolved.conf.d
 if [[ -f "$DOTFILES_DIR/modules/network/root/etc/systemd/resolved.conf.d/malw-dns.conf" ]]; then
     sudo install -Dm644 "$DOTFILES_DIR/modules/network/root/etc/systemd/resolved.conf.d/malw-dns.conf" /etc/systemd/resolved.conf.d/malw-dns.conf
 fi
-sudo systemctl enable --now systemd-resolved
-sudo systemctl restart systemd-resolved
 
-echo ":: generating zapret configuration"
-ZAPRET_DIR="$DOTFILES_DIR/modules/network/zapret"
-if [[ -f "$ZAPRET_DIR/conf.env.template" ]]; then
-    sed "s/__INTERFACE__/$DETECTED_IFACE/g" "$ZAPRET_DIR/conf.env.template" > "$ZAPRET_DIR/conf.env"
+if command -v restorecon &>/dev/null; then
+    sudo restorecon -Rv /etc/systemd/resolved.conf.d /etc/resolv.conf /etc/NetworkManager/conf.d 2>/dev/null || true
 fi
 
-echo ":: setting up zapret service"
-if [[ -d "$ZAPRET_DIR" ]]; then
-    chmod +x "$ZAPRET_DIR/nfqws" "$ZAPRET_DIR/service.sh" "$ZAPRET_DIR"/auto_tune*.sh 2>/dev/null || true
-    sudo tee /etc/systemd/system/zapret_discord_youtube.service > /dev/null << UNIT_EOF
+echo ":: logging: restarting systemd-resolved and NetworkManager"
+sudo systemctl enable --now systemd-resolved
+sudo systemctl restart systemd-resolved
+if systemctl is-active --quiet NetworkManager; then
+    sudo systemctl restart NetworkManager
+fi
+
+echo ":: configuring zapret"
+ZAPRET_DIR="$DOTFILES_DIR/modules/network/zapret"
+if [[ ! -x "$ZAPRET_DIR/nfqws" || ! -d "$ZAPRET_DIR/zapret-latest" ]]; then
+    echo ":: downloading zapret binaries and dependencies"
+    (cd "$ZAPRET_DIR" && bash ./service.sh download-deps --default)
+fi
+
+sed "s/__INTERFACE__/any/g" "$ZAPRET_DIR/conf.env.template" > "$ZAPRET_DIR/conf.env"
+
+echo ":: deploying zapret to /opt/zapret"
+sudo mkdir -p /opt/zapret
+sudo cp -r "$ZAPRET_DIR"/* /opt/zapret/
+sudo chown -R root:root /opt/zapret
+sudo chmod +x /opt/zapret/service.sh /opt/zapret/nfqws /opt/zapret/auto_tune*.sh 2>/dev/null || true
+
+sudo mkdir -p /usr/local/bin
+sudo tee /usr/local/bin/zapret > /dev/null << 'WRAPPER_EOF'
+#!/usr/bin/env bash
+exec /opt/zapret/service.sh "$@"
+WRAPPER_EOF
+sudo chmod +x /usr/local/bin/zapret
+
+sudo tee /etc/systemd/system/zapret_discord_youtube.service > /dev/null << UNIT_EOF
 [Unit]
 Description=Zapret Discord Youtube Service
 After=network-online.target
@@ -102,24 +173,29 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=$ZAPRET_DIR
+WorkingDirectory=/opt/zapret
 User=root
-ExecStart=/usr/bin/env bash $ZAPRET_DIR/service.sh daemon
-ExecStop=/usr/bin/env bash $ZAPRET_DIR/service.sh kill
+ExecStart=/usr/bin/env bash /opt/zapret/service.sh daemon
+ExecStop=/usr/bin/env bash /opt/zapret/service.sh kill
 ExecStopPost=/usr/bin/env echo "Zapret service stopped"
 PIDFile=/run/zapret_discord_youtube.pid
 
 [Install]
 WantedBy=multi-user.target
 UNIT_EOF
-    sudo systemctl daemon-reload
-    sudo systemctl enable --now zapret_discord_youtube.service
+
+if command -v restorecon &>/dev/null; then
+    sudo restorecon -Rv /opt/zapret /usr/local/bin/zapret /etc/systemd/system/zapret_discord_youtube.service 2>/dev/null || true
 fi
 
+sudo systemctl daemon-reload
+sudo systemctl enable --now zapret_discord_youtube.service
+
 echo ":: verifying network connectivity"
-sleep 3
+sleep 2
 if ! curl -Is --connect-timeout 5 https://github.com >/dev/null 2>&1 && ! curl -Is --connect-timeout 5 https://1.1.1.1 >/dev/null 2>&1; then
-    echo "error: network connectivity verification failed" >&2
+    echo "error: network connectivity verification failed, rolling back network" >&2
+    rollback_network
     exit 1
 fi
 echo ":: network is online and bypass is active"
@@ -129,8 +205,8 @@ if [[ "$DISTRO" == "fedora" ]]; then
     if ! rpm -q rpmfusion-free-release &>/dev/null; then
         echo ":: installing rpmfusion"
         sudo dnf install -y \
-            https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-            https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm || true
+            "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+            "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" || true
     fi
 
     if [[ ! -f /etc/yum.repos.d/cloudflare-warp.repo ]]; then
@@ -151,12 +227,12 @@ fi
 
 if [[ -z "$DETECTED_GPU" ]]; then
     echo ":: select GPU:"
-    DETECTED_GPU=$(gum choose "amd" "nvidia" "intel" "none" < /dev/tty)
+    DETECTED_GPU=$(gum choose "amd" "nvidia" "intel" "none" < /dev/tty || echo "none")
     DETECTED_GPU="${DETECTED_GPU:-none}"
     echo ":: selected gpu: $DETECTED_GPU"
 fi
 
-JSON_DATA=$(python3 -c 'import sys,tomllib,json; json.dump(tomllib.load(sys.stdin.buffer), sys.stdout)' < modules.toml)
+JSON_DATA=$(python3 -c 'import sys,tomllib,json; json.dump(tomllib.load(sys.stdin.buffer), sys.stdout)' < "$DOTFILES_DIR/modules.toml")
 MODULES=$(echo "$JSON_DATA" | jq -r '.modules | keys[]')
 
 ALWAYS_MODULES=()
@@ -172,18 +248,24 @@ for mod in $MODULES; do
     fi
 done
 
-echo ":: select optional modules to install (space to toggle, enter to confirm):"
-SELECTED_OPTIONAL=$(printf "%s\n" "${OPTIONAL_MODULES[@]}" | gum choose --no-limit < /dev/tty)
-
 SELECTED_MODULES=("${ALWAYS_MODULES[@]}")
-while IFS= read -r line; do
-    if [[ -n "$line" ]]; then
-        mod_name=$(echo "$line" | awk '{print $1}')
-        SELECTED_MODULES+=("$mod_name")
-    fi
-done <<< "$SELECTED_OPTIONAL"
+
+if [[ ${#OPTIONAL_MODULES[@]} -gt 0 ]]; then
+    echo ":: select optional modules to install (space to toggle, enter to confirm):"
+    SELECTED_OPTIONAL=$(gum choose --no-limit "${OPTIONAL_MODULES[@]}" < /dev/tty || true)
+    while IFS= read -r line; do
+        if [[ -n "$line" ]]; then
+            mod_name=$(echo "$line" | awk '{print $1}')
+            SELECTED_MODULES+=("$mod_name")
+        fi
+    done <<< "$SELECTED_OPTIONAL"
+fi
 
 echo ":: selected modules: ${SELECTED_MODULES[*]}"
+
+echo ":: re-authenticating sudo credentials"
+# shellcheck disable=SC2024
+sudo -v < /dev/tty
 
 ALL_PACKAGES=()
 if [[ "$DISTRO" == "fedora" ]]; then
@@ -232,7 +314,7 @@ done
 
 UNIQUE_PACKAGES=()
 if [[ ${#ALL_PACKAGES[@]} -gt 0 ]]; then
-    UNIQUE_PACKAGES=($(echo "${ALL_PACKAGES[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+    mapfile -t UNIQUE_PACKAGES < <(printf "%s\n" "${ALL_PACKAGES[@]}" | sort -u)
 fi
 
 if [[ ${#UNIQUE_PACKAGES[@]} -gt 0 ]]; then
@@ -240,31 +322,53 @@ if [[ ${#UNIQUE_PACKAGES[@]} -gt 0 ]]; then
     if [[ "$DISTRO" == "fedora" ]]; then
         sudo dnf install -y --skip-unavailable "${UNIQUE_PACKAGES[@]}"
     elif [[ "$DISTRO" == "arch" ]]; then
-        sudo pacman -S --noconfirm --needed "${UNIQUE_PACKAGES[@]}"
+        ARCH_OFFICIAL=()
+        ARCH_AUR=()
+        for pkg in "${UNIQUE_PACKAGES[@]}"; do
+            if pacman -Si "$pkg" &>/dev/null; then
+                ARCH_OFFICIAL+=("$pkg")
+            elif command -v yay &>/dev/null; then
+                ARCH_AUR+=("$pkg")
+            fi
+        done
+        if [[ ${#ARCH_OFFICIAL[@]} -gt 0 ]]; then
+            sudo pacman -S --noconfirm --needed "${ARCH_OFFICIAL[@]}"
+        fi
+        if [[ ${#ARCH_AUR[@]} -gt 0 ]]; then
+            yay -S --noconfirm --needed "${ARCH_AUR[@]}"
+        fi
     fi
 fi
 
 for mod in "${SELECTED_MODULES[@]}"; do
-    if [[ -d "$DOTFILES_DIR/modules/$mod/root" ]]; then
-        echo ":: deploying root files for $mod"
-        (
-            cd "$DOTFILES_DIR/modules/$mod/root"
-            find . -type f | while read -r file; do
-                target_file="/${file#./}"
-                target_dir="$(dirname "$target_file")"
-                sudo mkdir -p "$target_dir"
-                sudo install -Dm644 "$file" "$target_file"
-            done
-        )
-        if [[ "$DETECTED_GPU" == "amd" && "$mod" == "system-hw" ]]; then
-            if [[ -f /etc/default/limine ]]; then
-                sudo sed -i 's/nvidia_drm.modeset=1 nvidia_drm.fbdev=1 //g' /etc/default/limine
-            fi
-            if [[ -f /etc/mkinitcpio.conf ]]; then
-                sudo sed -i 's/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm/MODULES=(/g' /etc/mkinitcpio.conf
-            fi
+    for root_dir in "$DOTFILES_DIR/modules/$mod/root" "$DOTFILES_DIR/modules/$mod/root-$DISTRO"; do
+        if [[ -d "$root_dir" ]]; then
+            echo ":: deploying root files from $root_dir"
+            (
+                cd "$root_dir"
+                find . -type f | while read -r file; do
+                    target_file="/${file#./}"
+                    target_dir="$(dirname "$target_file")"
+                    sudo mkdir -p "$target_dir"
+                    if [[ -f "$target_file" && ! -L "$target_file" ]]; then
+                        sudo cp -f "$target_file" "${target_file}.bak"
+                    elif [[ -L "$target_file" ]]; then
+                        sudo rm -f "$target_file"
+                    fi
+                    if grep -q "__USER__" "$file" 2>/dev/null; then
+                        sed "s/__USER__/$USER/g" "$file" | sudo tee "$target_file" >/dev/null
+                        sudo chmod 644 "$target_file"
+                    else
+                        sudo install -Dm644 "$file" "$target_file"
+                    fi
+                    sudo chown root:root "$target_file"
+                    if command -v restorecon &>/dev/null; then
+                        sudo restorecon -Rv "$target_file" 2>/dev/null || true
+                    fi
+                done
+            )
         fi
-    fi
+    done
 done
 
 if systemctl list-unit-files | grep -q "warp-svc.service"; then

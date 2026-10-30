@@ -1,6 +1,0 @@
-[terminal]
-vt = 1
-
-[default_session]
-command = "env XCURSOR_THEME=ArchCursorComplete XCURSOR_SIZE=24 /usr/bin/noctalia-greeter-session --user trazxdxne"
-user = "greeter"

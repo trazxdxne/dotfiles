@@ -6,9 +6,9 @@ packages = []
 [modules.base]
 description = "Shell, terminal, base settings"
 always = true
-packages = ["fish", "wezterm", "fastfetch", "micro", "topgrade", "gum", "stow"]
-distro_packages.arch = ["fresh-editor", "p7zip"]
-distro_packages.fedora = ["fresh-editor", "p7zip", "p7zip-plugins"]
+packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow"]
+distro_packages.arch = ["p7zip"]
+distro_packages.fedora = ["p7zip", "p7zip-plugins"]
 
 [modules.ai-skills]
 description = "AI Agent skills and prompts"
@@ -34,7 +34,7 @@ packages = ["ags"]
 [modules.greeter]
 description = "Noctalia Greeter (greetd)"
 packages = ["greetd"]
-distro_packages.arch = ["greetd-noctalia"]
+distro_packages.arch = ["noctalia-greeter"]
 distro_packages.fedora = []
 
 [modules.greeter.root_services]
@@ -50,9 +50,6 @@ packages = ["wireplumber", "pipewire"]
 distro_packages.arch = ["pipewire-pulse"]
 distro_packages.fedora = ["pipewire-pulseaudio"]
 
-[modules.audio.user_services]
-"alsa-volume-restore.service" = ".config/systemd/user/alsa-volume-restore.service"
-
 [modules.system-hw]
 description = "System hardware (polkit, modprobe, systemd-oomd)"
 packages = []
@@ -60,10 +57,10 @@ distro_packages.arch = []
 distro_packages.fedora = []
 
 [modules.system-hw.gpu_packages.amd.arch]
-packages = ["vulkan-radeon", "mesa", "libva-mesa-driver", "mesa-vdpau", "amd-ucode"]
+packages = ["vulkan-radeon", "mesa", "libva-mesa-driver", "amd-ucode"]
 
 [modules.system-hw.gpu_packages.amd.fedora]
-packages = ["mesa-vulkan-drivers", "mesa-dri-drivers", "mesa-va-drivers-freeworld", "mesa-vdpau-drivers", "microcode_ctl"]
+packages = ["mesa-vulkan-drivers", "mesa-dri-drivers", "mesa-va-drivers-freeworld", "microcode_ctl"]
 
 [modules.system-hw.gpu_packages.nvidia.arch]
 packages = ["nvidia", "nvidia-utils", "nvidia-settings"]
@@ -84,10 +81,6 @@ packages = ["syncthing"]
 [modules.minecraft]
 description = "Minecraft Server Management"
 packages = []
-
-[modules.minecraft.user_services]
-"minecraft-backup.timer" = ".config/systemd/user/minecraft-backup.timer"
-"minecraft-backup.service" = ".config/systemd/user/minecraft-backup.service"
 
 [modules.zen]
 description = "Zen Browser"

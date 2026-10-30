@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -e
-git -C /home/trazxdxne/Projects/open-antigravity-patcher pull --rebase -q 2>/dev/null || true
-exec python3 /home/trazxdxne/Projects/open-antigravity-patcher/auto_patch.py "$@"

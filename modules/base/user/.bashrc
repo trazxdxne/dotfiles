@@ -21,7 +21,11 @@ elif command -v micro &> /dev/null; then
 fi
 
 # Aliases
-alias zapret="cd ~/.dotfiles/modules/network/zapret && ./service.sh"
+if [[ -x /opt/zapret/service.sh ]]; then
+    alias zapret="/opt/zapret/service.sh"
+else
+    alias zapret="cd ~/.dotfiles/modules/network/zapret && ./service.sh"
+fi
 
 # Local bin
 export PATH="$HOME/.local/bin:$PATH"

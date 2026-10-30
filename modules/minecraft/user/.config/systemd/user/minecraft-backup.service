@@ -1,9 +1,0 @@
-[Unit]
-Description=Minecraft Server Rustic Backup
-
-[Service]
-Type=oneshot
-ExecStart=%h/Projects/minecraft_server/backup.sh
-Environment=RUSTIC_PASSWORD=
-StandardOutput=journal
-StandardError=journal
