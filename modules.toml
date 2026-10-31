@@ -20,6 +20,9 @@ packages = ["niri", "fuzzel", "xwayland-satellite"]
 distro_packages.arch = ["xdg-desktop-portal-gnome"]
 distro_packages.fedora = ["xdg-desktop-portal-gnome"]
 
+[modules.niri.user_services]
+"xwayland-satellite.service" = ".config/systemd/user/xwayland-satellite.service"
+
 [modules.hyprland]
 description = "Hyprland compositor"
 packages = ["hyprland", "hyprlock"]
@@ -45,10 +48,13 @@ description = "Noctalia theming engine"
 packages = ["noctalia"]
 
 [modules.audio]
-description = "Audio (WirePlumber)"
-packages = ["wireplumber", "pipewire"]
-distro_packages.arch = ["pipewire-pulse"]
-distro_packages.fedora = ["pipewire-pulseaudio"]
+description = "Audio (WirePlumber, EasyEffects)"
+packages = ["wireplumber", "pipewire", "easyeffects"]
+distro_packages.arch = ["pipewire-pulse", "calf", "lsp-plugins-lv2"]
+distro_packages.fedora = ["pipewire-pulseaudio", "calf", "lsp-plugins-lv2"]
+
+[modules.audio.user_services]
+"alsa-volume-restore.service" = ".config/systemd/user/alsa-volume-restore.service"
 
 [modules.system-hw]
 description = "System hardware (polkit, modprobe, systemd-oomd)"
