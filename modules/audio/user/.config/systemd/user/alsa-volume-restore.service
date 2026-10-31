@@ -5,7 +5,7 @@ Requires=wireplumber.service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'for i in $(seq 1 10); do pactl set-sink-volume alsa_output.usb-3142_fifine_Headset-00.analog-stereo 54741 65536 2>/dev/null && pactl set-default-sink effect_input.virtual-surround-7.1-hesuvi 2>/dev/null && exit 0; sleep 1; done; exit 1'
+ExecStart=/bin/sh -c 'for i in $(seq 1 10); do pactl set-sink-volume alsa_output.usb-3142_fifine_Headset-00.analog-stereo 86% 100% 2>/dev/null && pactl set-default-sink effect_input.virtual-surround-7.1-hesuvi 2>/dev/null && exit 0; sleep 1; done; exit 1'
 RemainAfterExit=yes
 
 [Install]
