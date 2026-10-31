@@ -69,7 +69,7 @@ resolve_zapret_version() {
     fi
 
     local tag
-    tag=$(curl -fsSL "https://api.github.com/repos/${ZAPRET_REPO}/releases/latest" \
+    tag=$(curl -4 -fsSL "https://api.github.com/repos/${ZAPRET_REPO}/releases/latest" \
         | grep -oP '"tag_name":\s*"\K(.*?)(?=")' || true)
 
     [[ -z "$tag" ]] && handle_error "Не удалось определить последний релиз zapret"
@@ -83,10 +83,10 @@ download_zapret_release() {
     local url="https://github.com/${ZAPRET_REPO}/releases/download/${tag}/${archive}"
     local tmp="/tmp/${archive}"
     
-    elevate rm -rf "$tmp"
+    rm -rf "$tmp"
 
     log "Скачивание zapret: $url" >&2
-    curl -fL "$url" -o "$tmp" || handle_error "Ошибка при скачивании zapret"
+    curl -4 -fL "$url" -o "$tmp" || handle_error "Ошибка при скачивании zapret"
     echo "$tmp"
 }
 

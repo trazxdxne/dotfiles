@@ -236,6 +236,7 @@ else
     sudo cp -r "$ZAPRET_DIR"/* /opt/zapret/
     sudo chown -R root:root /opt/zapret
     sudo chmod +x /opt/zapret/service.sh /opt/zapret/nfqws /opt/zapret/auto_tune*.sh 2>/dev/null || true
+    sudo chmod 644 /opt/zapret/zapret-latest/bin/*.bin /opt/zapret/zapret-latest/lists/*.txt 2>/dev/null || true
 
     sudo mkdir -p /usr/local/bin
     sudo tee /usr/local/bin/zapret > /dev/null << 'WRAPPER_EOF'

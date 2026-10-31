@@ -175,6 +175,28 @@ setup_repository() {
     rm -rf "$REPO_DIR/.git"
     "$BASE_DIR/src/rename_bat.sh" || handle_error "Ошибка при переименовании файлов"
 
+    if [[ -d "$REPO_DIR/bin" ]]; then
+        if [[ ! -f "$REPO_DIR/bin/ACTIVE_DISCORD_UDP.bin" ]]; then
+            if [[ -f "$REPO_DIR/bin/quic_initial_steamcommunity_com.bin" ]]; then
+                cp "$REPO_DIR/bin/quic_initial_steamcommunity_com.bin" "$REPO_DIR/bin/ACTIVE_DISCORD_UDP.bin"
+            elif [[ -f "$REPO_DIR/bin/quic_initial_www_google_com.bin" ]]; then
+                cp "$REPO_DIR/bin/quic_initial_www_google_com.bin" "$REPO_DIR/bin/ACTIVE_DISCORD_UDP.bin"
+            elif [[ -f "$REPO_DIR/bin/stun.bin" ]]; then
+                cp "$REPO_DIR/bin/stun.bin" "$REPO_DIR/bin/ACTIVE_DISCORD_UDP.bin"
+            fi
+        fi
+
+        if [[ ! -f "$REPO_DIR/bin/ACTIVE_GAME_UDP.bin" ]]; then
+            if [[ -f "$REPO_DIR/bin/quic_initial_4pda_to.bin" ]]; then
+                cp "$REPO_DIR/bin/quic_initial_4pda_to.bin" "$REPO_DIR/bin/ACTIVE_GAME_UDP.bin"
+            elif [[ -f "$REPO_DIR/bin/quic_initial_www_google_com.bin" ]]; then
+                cp "$REPO_DIR/bin/quic_initial_www_google_com.bin" "$REPO_DIR/bin/ACTIVE_GAME_UDP.bin"
+            fi
+        fi
+
+        chmod 644 "$REPO_DIR/bin"/*.bin 2>/dev/null || true
+    fi
+
     # Создаём пользовательские списки (только если в стратегиях есть директория lists)
     if [[ -d "$REPO_DIR/lists" ]]; then
         local user_lists_dir="$BASE_DIR/user-lists"
