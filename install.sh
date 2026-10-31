@@ -234,7 +234,7 @@ else
     echo ":: deploying zapret to /opt/zapret"
     sudo mkdir -p /opt/zapret
     sudo cp -r "$ZAPRET_DIR"/* /opt/zapret/
-    sudo chown -R root:root /opt/zapret
+    sudo chown -R "$USER:$USER" /opt/zapret
     sudo chmod +x /opt/zapret/service.sh /opt/zapret/nfqws /opt/zapret/auto_tune*.sh 2>/dev/null || true
     sudo chmod 644 /opt/zapret/zapret-latest/bin/*.bin /opt/zapret/zapret-latest/lists/*.txt 2>/dev/null || true
 
