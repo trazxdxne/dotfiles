@@ -10,9 +10,11 @@ packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow", "topgrade"]
 distro_packages.arch = ["p7zip", "fresh-editor", "otf-geist-mono-nerd"]
 distro_packages.fedora = ["p7zip", "p7zip-plugins"]
 
-[modules.ai-skills]
-description = "AI Agent skills and prompts"
+[modules.antigravity]
+description = "Antigravity AI Agent configuration, skills and patcher"
 packages = []
+distro_packages.arch = ["python", "git"]
+distro_packages.fedora = ["python3", "git"]
 
 [modules.niri]
 description = "Niri compositor"

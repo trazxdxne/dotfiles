@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PATCHER_DIR="$HOME/.local/share/eligibility-antigravity-patcher"
+REPO_URL="https://github.com/QNIX-Dev/eligibility-antigravity-patcher"
+
+if [[ ! -d "$PATCHER_DIR/.git" ]]; then
+    mkdir -p "$(dirname "$PATCHER_DIR")"
+    git clone "$REPO_URL" "$PATCHER_DIR"
+else
+    git -C "$PATCHER_DIR" pull --quiet --ff-only 2>/dev/null || true
+fi
+
+PYTHON_BIN=$(command -v python3 2>/dev/null || command -v python 2>/dev/null)
+if [[ -z "$PYTHON_BIN" ]]; then
+    echo "error: python3 is not installed or not in PATH" >&2
+    exit 1
+fi
+
+exec "$PYTHON_BIN" "$PATCHER_DIR/manager.py" patch "$@"

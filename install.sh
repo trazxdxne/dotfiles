@@ -517,6 +517,27 @@ if [[ " ${SELECTED_MODULES[*]} " =~ " zen " ]] && [[ -f "$DOTFILES_DIR/modules/z
     done
 fi
 
+if [[ " ${SELECTED_MODULES[*]} " =~ " antigravity " ]]; then
+    TITUS_DIR="$HOME/Projects/titus-ai"
+    if [[ ! -d "$TITUS_DIR/.git" ]]; then
+        echo ":: cloning titus-ai repository"
+        mkdir -p "$HOME/Projects"
+        git clone https://github.com/trazxdxne/titus-ai.git "$TITUS_DIR"
+    else
+        echo ":: updating titus-ai repository"
+        git -C "$TITUS_DIR" pull --ff-only 2>/dev/null || true
+    fi
+
+    if [[ -f "$TITUS_DIR/scripts/install-antigravity.sh" ]]; then
+        echo ":: installing titus-ai antigravity configuration"
+        bash "$TITUS_DIR/scripts/install-antigravity.sh"
+    fi
+
+    if [[ -f "$HOME/.local/bin/agypatch" ]]; then
+        chmod +x "$HOME/.local/bin/agypatch"
+    fi
+fi
+
 echo ":: activating user audio services"
 systemctl --user daemon-reload
 systemctl --user enable --now pipewire.service wireplumber.service 2>/dev/null || true
