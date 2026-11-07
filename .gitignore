@@ -33,7 +33,6 @@ fish_variables
 **/.local/state/noctalia/usage_counts.json
 **/.config/fresh/tsconfig.json
 **/.config/fresh/types/
-**/awg0.conf
 
 # Generated theme links/files
 **/noctalia.kdl
