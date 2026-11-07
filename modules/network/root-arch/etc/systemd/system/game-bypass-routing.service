@@ -1,0 +1,13 @@
+[Unit]
+Description=Game Bypass Routing & NFTables Service
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/game-bypass-routing.sh start
+ExecStop=/usr/local/bin/game-bypass-routing.sh stop
+
+[Install]
+WantedBy=multi-user.target

@@ -56,9 +56,19 @@ rollback_network() {
     if [[ -x /opt/zapret/service.sh ]]; then
         sudo /opt/zapret/service.sh kill 2>/dev/null || true
     fi
+    sudo systemctl disable --now awg-quick@awg0.service 2>/dev/null || true
+    sudo systemctl disable --now game-bypass-routing.service 2>/dev/null || true
+    sudo rm -f /etc/systemd/system/game-bypass-routing.service /usr/local/bin/game-bypass-routing.sh
     if command -v nft &>/dev/null; then
         sudo nft delete table inet zapret 2>/dev/null || true
+        sudo nft delete table inet game_bypass 2>/dev/null || true
     fi
+    while ip rule show | grep -q "fwmark 0x51 lookup main"; do
+        sudo ip rule del fwmark 0x51 lookup main priority 100 2>/dev/null || break
+    done
+    while ip -6 rule show 2>/dev/null | grep -q "fwmark 0x51 lookup main"; do
+        sudo ip -6 rule del fwmark 0x51 lookup main priority 100 2>/dev/null || break
+    done
     sudo rm -rf /opt/zapret /usr/local/bin/zapret
     echo ":: network rollback completed successfully"
 }
@@ -456,11 +466,16 @@ for mod in "${SELECTED_MODULES[@]}"; do
                         sudo rm -f "$target_file"
                     fi
 
+                    file_mode="644"
+                    if [[ -x "$file" ]]; then
+                        file_mode="755"
+                    fi
+
                     if [[ -n "$tmp_rendered" ]]; then
-                        sudo install -Dm644 "$tmp_rendered" "$target_file"
+                        sudo install -Dm"$file_mode" "$tmp_rendered" "$target_file"
                         rm -f "$tmp_rendered"
                     else
-                        sudo install -Dm644 "$file" "$target_file"
+                        sudo install -Dm"$file_mode" "$file" "$target_file"
                     fi
                     sudo chown root:root "$target_file"
                     if command -v restorecon &>/dev/null; then
@@ -488,16 +503,33 @@ if [[ ${#ROOT_COMMANDS[@]} -gt 0 ]]; then
     done
 fi
 
-if [[ " ${SELECTED_MODULES[*]} " =~ " network " ]] && command -v warp-cli &>/dev/null; then
-    if ! warp-cli status 2>/dev/null | grep -iq "Connected"; then
-        echo ":: connecting cloudflare warp"
-        warp-cli registration new 2>/dev/null || true
-        warp-cli connect 2>/dev/null || true
-        sleep 2
+if [[ " ${SELECTED_MODULES[*]} " =~ " network " ]]; then
+    if [[ "$DISTRO" == "arch" ]]; then
+        if [[ -f /etc/amnezia/amneziawg/awg0.conf ]]; then
+            echo ":: enabling awg-quick@awg0.service"
+            sudo systemctl enable --now awg-quick@awg0.service 2>/dev/null || true
+        else
+            echo ":: notice: /etc/amnezia/amneziawg/awg0.conf not found. Template available at modules/network/awg0.conf.template"
+        fi
+    elif command -v warp-cli &>/dev/null; then
+        if ! warp-cli status 2>/dev/null | grep -iq "Connected"; then
+            echo ":: connecting cloudflare warp"
+            warp-cli registration new 2>/dev/null || true
+            warp-cli connect 2>/dev/null || true
+            sleep 2
+        fi
     fi
 fi
 
 echo ":: stowing user configurations"
+mkdir -p "$HOME/.config/fish/functions" "$HOME/.local/bin"
+if [[ -L "$HOME/.config/fish/functions" ]]; then
+    rm -f "$HOME/.config/fish/functions"
+    mkdir -p "$HOME/.config/fish/functions"
+fi
+if [[ -L "$HOME/.agents" ]] && [[ ! -e "$HOME/.agents" ]]; then
+    rm -f "$HOME/.agents"
+fi
 for mod in "${SELECTED_MODULES[@]}"; do
     if [[ -d "$DOTFILES_DIR/modules/$mod/user" ]]; then
         echo ":: stowing $mod"
@@ -515,6 +547,55 @@ if [[ " ${SELECTED_MODULES[*]} " =~ " zen " ]] && [[ -f "$DOTFILES_DIR/modules/z
             cp -f "$DOTFILES_DIR/modules/zen/user/.config/zen/user.js" "$zen_dir/user.js"
         fi
     done
+fi
+
+if [[ " ${SELECTED_MODULES[*]} " =~ " niri " ]]; then
+    NIRI_AUTOSTART_DIR="$HOME/Projects/niri-autostart"
+    if [[ ! -d "$NIRI_AUTOSTART_DIR/.git" ]]; then
+        echo ":: cloning niri-autostart repository"
+        mkdir -p "$HOME/Projects"
+        git clone https://github.com/trazxdxne/niri-autostart.git "$NIRI_AUTOSTART_DIR"
+    else
+        echo ":: updating niri-autostart repository"
+        git -C "$NIRI_AUTOSTART_DIR" pull --ff-only 2>/dev/null || true
+    fi
+
+    if command -v cargo &>/dev/null && [[ -f "$NIRI_AUTOSTART_DIR/Cargo.toml" ]]; then
+        echo ":: building and installing niri-autostart"
+        cargo install --path "$NIRI_AUTOSTART_DIR" --root "$HOME/.local" --locked --force 2>/dev/null || true
+    fi
+fi
+
+if [[ " ${SELECTED_MODULES[*]} " =~ " base " ]]; then
+    EQUICORD_PLUGIN_DIR="$HOME/Projects/equicord-os-display-name"
+    if [[ ! -d "$EQUICORD_PLUGIN_DIR/.git" ]]; then
+        echo ":: cloning equicord-os-display-name repository"
+        mkdir -p "$HOME/Projects"
+        git clone https://github.com/trazxdxne/equicord-os-display-name.git "$EQUICORD_PLUGIN_DIR"
+    else
+        echo ":: updating equicord-os-display-name repository"
+        git -C "$EQUICORD_PLUGIN_DIR" pull --ff-only 2>/dev/null || true
+    fi
+
+    EQUICORD_DIR="$HOME/Programs/Equicord"
+    if [[ ! -d "$EQUICORD_DIR/.git" ]]; then
+        echo ":: cloning Equicord repository"
+        mkdir -p "$HOME/Programs"
+        git clone https://github.com/Equicord/Equicord.git "$EQUICORD_DIR"
+    else
+        echo ":: updating Equicord repository"
+        git -C "$EQUICORD_DIR" pull --rebase 2>/dev/null || true
+    fi
+
+    if [[ -f "$EQUICORD_PLUGIN_DIR/osDisplayName.ts" && -d "$EQUICORD_DIR/src/userplugins" ]]; then
+        echo ":: copying custom equicord plugin"
+        cp -f "$EQUICORD_PLUGIN_DIR/osDisplayName.ts" "$EQUICORD_DIR/src/userplugins/osDisplayName.ts"
+    fi
+
+    if command -v pnpm &>/dev/null && [[ -d "$EQUICORD_DIR" ]]; then
+        echo ":: building and injecting Equicord"
+        (cd "$EQUICORD_DIR" && COREPACK_ENABLE_STRICT=0 pnpm install && COREPACK_ENABLE_STRICT=0 pnpm build && echo | COREPACK_ENABLE_STRICT=0 pnpm inject) 2>/dev/null || true
+    fi
 fi
 
 if [[ " ${SELECTED_MODULES[*]} " =~ " antigravity " ]]; then
@@ -535,6 +616,9 @@ if [[ " ${SELECTED_MODULES[*]} " =~ " antigravity " ]]; then
 
     if [[ -f "$HOME/.local/bin/agypatch" ]]; then
         chmod +x "$HOME/.local/bin/agypatch"
+    fi
+    if [[ -f "$HOME/.local/bin/agyp" ]]; then
+        chmod +x "$HOME/.local/bin/agyp"
     fi
 fi
 

@@ -1,0 +1,20 @@
+[Interface]
+PrivateKey = YOUR_PRIVATE_KEY_HERE
+Address = 172.16.0.2/32, fd00::2/128
+DNS = 1.1.1.1, 1.0.0.1
+# AmneziaWG specific obfuscation parameters
+Jc = 4
+Jmin = 40
+Jmax = 70
+S1 = 0
+S2 = 0
+H1 = 1
+H2 = 2
+H3 = 3
+H4 = 4
+
+[Peer]
+PublicKey = YOUR_PEER_PUBLIC_KEY_HERE
+Endpoint = YOUR_PEER_ENDPOINT_IP:PORT
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 25

@@ -396,7 +396,7 @@ blacklist snd_hda_intel
    [Service]
    Type=oneshot
    ExecStartPre=/bin/sleep 2
-   ExecStart=/usr/bin/pactl set-sink-volume alsa_output.usb-3142_fifine_Headset-00.analog-stereo 86% 100%
+   ExecStart=/usr/bin/pactl set-sink-volume alsa_output.usb-3142_fifine_Headset-00.analog-stereo 85% 100%
    RemainAfterExit=yes
 
    [Install]

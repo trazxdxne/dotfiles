@@ -6,7 +6,11 @@ REPO_URL="https://github.com/QNIX-Dev/eligibility-antigravity-patcher"
 
 if [[ ! -d "$PATCHER_DIR/.git" ]]; then
     mkdir -p "$(dirname "$PATCHER_DIR")"
-    git clone "$REPO_URL" "$PATCHER_DIR"
+    if [[ -d "$HOME/eligibility-antigravity-patcher/.git" ]]; then
+        cp -a "$HOME/eligibility-antigravity-patcher" "$PATCHER_DIR"
+    else
+        git clone "$REPO_URL" "$PATCHER_DIR"
+    fi
 else
     git -C "$PATCHER_DIR" pull --quiet --ff-only 2>/dev/null || true
 fi
@@ -17,4 +21,8 @@ if [[ -z "$PYTHON_BIN" ]]; then
     exit 1
 fi
 
-exec "$PYTHON_BIN" "$PATCHER_DIR/manager.py" patch "$@"
+if [[ $# -eq 0 ]]; then
+    exec "$PYTHON_BIN" "$PATCHER_DIR/manager.py" patch
+else
+    exec "$PYTHON_BIN" "$PATCHER_DIR/manager.py" "$@"
+fi

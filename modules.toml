@@ -1,13 +1,18 @@
 [modules.network]
-description = "Network bootstrap, DNS over TLS, Zapret and Cloudflare WARP"
+description = "Network bootstrap, DNS over TLS, Zapret, AmneziaWG and Game Split-Tunneling"
 always = true
 packages = []
+distro_packages.arch = ["amneziawg-tools", "amneziawg-dkms"]
+distro_packages.fedora = []
+
+[modules.network.root_services]
+enable = ["game-bypass-routing"]
 
 [modules.base]
 description = "Shell, terminal, base settings"
 always = true
 packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow", "topgrade"]
-distro_packages.arch = ["p7zip", "fresh-editor", "otf-geist-mono-nerd"]
+distro_packages.arch = ["p7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "nodejs", "pnpm", "discord"]
 distro_packages.fedora = ["p7zip", "p7zip-plugins"]
 
 [modules.antigravity]
@@ -19,7 +24,7 @@ distro_packages.fedora = ["python3", "git"]
 [modules.niri]
 description = "Niri compositor"
 packages = ["niri", "fuzzel", "xwayland-satellite"]
-distro_packages.arch = ["xdg-desktop-portal-gnome"]
+distro_packages.arch = ["xdg-desktop-portal-gnome", "rust"]
 distro_packages.fedora = ["xdg-desktop-portal-gnome"]
 
 [modules.niri.user_services]
