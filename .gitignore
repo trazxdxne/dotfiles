@@ -37,3 +37,7 @@ fish_variables
 # Generated theme links/files
 **/noctalia.kdl
 **/noctalia.lua
+
+# Generated environment configs
+conf.env
+**/conf.env

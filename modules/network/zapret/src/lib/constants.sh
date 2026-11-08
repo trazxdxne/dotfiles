@@ -43,3 +43,4 @@ MAIN_REPO_REV="1.10.4"
 # Репозиторий zapret (для nfqws)
 ZAPRET_REPO="bol-van/zapret"
 ZAPRET_RECOMMENDED_VERSION="v72.9"
+ZAPRET_SHA256="1e14dc6320dd7b5a1f28ab8145ac76d7a7010ca3cbe71824aa4aa407f7279ddf"

@@ -87,6 +87,16 @@ download_zapret_release() {
 
     log "Скачивание zapret: $url" >&2
     curl -4 -fL "$url" -o "$tmp" || handle_error "Ошибка при скачивании zapret"
+
+    if [[ "$tag" == "$ZAPRET_RECOMMENDED_VERSION" && -n "${ZAPRET_SHA256:-}" ]]; then
+        local actual_hash
+        actual_hash=$(sha256sum "$tmp" | awk '{print $1}')
+        if [[ "$actual_hash" != "$ZAPRET_SHA256" ]]; then
+            rm -rf "$tmp"
+            handle_error "Ошибка проверки контрольной суммы zapret: ожидалось $ZAPRET_SHA256, получено $actual_hash"
+        fi
+    fi
+
     echo "$tmp"
 }
 

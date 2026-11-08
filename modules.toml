@@ -25,7 +25,7 @@ distro_packages.fedora = ["python3", "git"]
 description = "Niri compositor"
 packages = ["niri", "fuzzel", "xwayland-satellite"]
 distro_packages.arch = ["xdg-desktop-portal-gnome", "rust"]
-distro_packages.fedora = ["xdg-desktop-portal-gnome"]
+distro_packages.fedora = ["xdg-desktop-portal-gnome", "cargo"]
 
 [modules.niri.user_services]
 "xwayland-satellite.service" = ".config/systemd/user/xwayland-satellite.service"
