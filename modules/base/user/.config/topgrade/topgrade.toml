@@ -9,6 +9,7 @@ repos = [
 
 [commands]
 "Antigravity CLI" = "agypatch"
+"niri-autostart" = "if command -v cargo >/dev/null 2>&1 && [ -d ~/Projects/niri-autostart ]; then git -C ~/Projects/niri-autostart pull --ff-only && cargo install --path ~/Projects/niri-autostart --root ~/.local --locked --force; fi"
 "Equicord" = "if command -v pnpm >/dev/null 2>&1 && [ -d ~/Programs/Equicord ]; then git -C ~/Projects/equicord-os-display-name pull --ff-only 2>/dev/null || true; git -C ~/Programs/Equicord checkout -- package.json pnpm-lock.yaml && git -C ~/Programs/Equicord pull --rebase && cp -f ~/Projects/equicord-os-display-name/osDisplayName.ts ~/Programs/Equicord/src/userplugins/osDisplayName.ts && cd ~/Programs/Equicord && COREPACK_ENABLE_STRICT=0 pnpm install && COREPACK_ENABLE_STRICT=0 pnpm build && echo | COREPACK_ENABLE_STRICT=0 pnpm inject; fi"
 
 [containers]

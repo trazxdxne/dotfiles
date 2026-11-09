@@ -23,12 +23,9 @@ distro_packages.fedora = ["python3", "git"]
 
 [modules.niri]
 description = "Niri compositor"
-packages = ["niri", "fuzzel", "xwayland-satellite", "nirinit"]
+packages = ["niri", "fuzzel"]
 distro_packages.arch = ["xdg-desktop-portal-gnome", "rust"]
 distro_packages.fedora = ["xdg-desktop-portal-gnome", "cargo"]
-
-[modules.niri.user_services]
-"nirinit.service" = ".config/systemd/user/nirinit.service"
 
 [modules.ags]
 description = "AGS bar and widgets"

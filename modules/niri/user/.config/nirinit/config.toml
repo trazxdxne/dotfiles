@@ -1,7 +1,0 @@
-[skip]
-apps = ["steam", "org.wezfurlong.wezterm"]
-
-[launch]
-"com.ayugram.desktop" = "AyuGram"
-"discord" = "discord"
-"brave-origin" = "brave-origin"
