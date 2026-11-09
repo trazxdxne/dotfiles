@@ -5,7 +5,7 @@ autostart {
                 proportion 0.67
             }
             window app-id="com.ayugram.desktop" {
-                command "AyuGram" "-autostart"
+                command "AyuGram"
                 height { proportion 1.0; }
             }
             window app-id="discord" {
