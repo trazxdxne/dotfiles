@@ -23,16 +23,12 @@ distro_packages.fedora = ["python3", "git"]
 
 [modules.niri]
 description = "Niri compositor"
-packages = ["niri", "fuzzel", "xwayland-satellite"]
+packages = ["niri", "fuzzel", "xwayland-satellite", "nirinit"]
 distro_packages.arch = ["xdg-desktop-portal-gnome", "rust"]
 distro_packages.fedora = ["xdg-desktop-portal-gnome", "cargo"]
 
 [modules.niri.user_services]
-"xwayland-satellite.service" = ".config/systemd/user/xwayland-satellite.service"
-
-[modules.hyprland]
-description = "Hyprland compositor"
-packages = ["hyprland", "hyprlock"]
+"nirinit.service" = ".config/systemd/user/nirinit.service"
 
 [modules.ags]
 description = "AGS bar and widgets"

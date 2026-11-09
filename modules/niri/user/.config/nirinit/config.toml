@@ -1,0 +1,7 @@
+[skip]
+apps = ["steam"]
+
+[launch]
+"com.ayugram.desktop" = "AyuGram"
+"discord" = "discord"
+"brave-origin" = "brave-origin"

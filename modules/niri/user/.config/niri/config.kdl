@@ -1,5 +1,9 @@
-workspace "1"
-workspace "2"
+workspace "1" {
+    open-on-output "DP-3"
+}
+workspace "2" {
+    open-on-output "DP-3"
+}
 
 environment {
     QT_QPA_PLATFORM "wayland;xcb"

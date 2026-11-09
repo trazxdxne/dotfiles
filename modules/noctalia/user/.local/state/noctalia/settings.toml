@@ -100,11 +100,11 @@ enabled = false
     [hot_corners.top_right]
     action = "none"
 
-[idle]
-pre_action_fade_seconds = 2
-
 [lockscreen]
 blurred_desktop = false
+edge_smoothness = 0.99999997764825821
+transition = [ "zoom" ]
+transition_duration = 300
 
 [lockscreen_widgets]
 enabled = true
@@ -471,6 +471,7 @@ settings_show_advanced = true
     [shell.launcher]
     categories = false
     compact = true
+    ignore_mouse = true
     session_search = false
     show_icons = true
 
@@ -550,7 +551,7 @@ source = "builtin"
 wallpaper_scheme = "m3-rainbow"
 
     [theme.templates]
-    builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "niri", "qt", "wezterm" ]
+    builtin_ids = [ "btop", "gtk3", "gtk4", "kcolorscheme", "kitty", "niri", "qt", "wezterm" ]
     community_ids = [ "obsidian", "zed", "micro", "antigravity", "obs", "steam", "telegram" ]
 
 [wallpaper]
