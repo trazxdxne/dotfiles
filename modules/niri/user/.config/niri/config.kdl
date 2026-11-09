@@ -17,6 +17,7 @@ environment {
 
 spawn-at-startup "noctalia"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
+spawn-at-startup "/home/trazxdxne/.local/bin/niri-layout-helper"
 
 input {
     keyboard {
@@ -114,6 +115,7 @@ layer-rule {
 
 window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    open-on-workspace "2"
     default-column-width {}
     open-maximized true
     open-focused true

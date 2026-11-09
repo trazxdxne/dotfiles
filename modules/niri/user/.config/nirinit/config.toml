@@ -1,5 +1,5 @@
 [skip]
-apps = ["steam"]
+apps = ["steam", "org.wezfurlong.wezterm"]
 
 [launch]
 "com.ayugram.desktop" = "AyuGram"

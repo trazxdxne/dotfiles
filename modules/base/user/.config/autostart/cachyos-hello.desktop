@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=CachyOS Hello
+Exec=/usr/bin/cachyos-hello
+Hidden=true

@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Ensures Discord and AyuGram are merged into Column 1 as tabs on startup,
+# and Brave is in Column 2.
+
+for _ in {1..30}; do
+    windows=$(niri msg -j windows 2>/dev/null)
+    ayugram_id=$(echo "$windows" | jq -r '.[] | select(.app_id=="com.ayugram.desktop") | .id' | head -n1)
+    discord_id=$(echo "$windows" | jq -r '.[] | select(.app_id=="discord") | .id' | head -n1)
+
+    if [[ -n "$ayugram_id" && -n "$discord_id" ]]; then
+        break
+    fi
+    sleep 0.5
+done
+
+if [[ -z "$ayugram_id" || -z "$discord_id" ]]; then
+    exit 0
+fi
+
+windows=$(niri msg -j windows 2>/dev/null)
+ayugram_col=$(echo "$windows" | jq -r ".[] | select(.id==$ayugram_id) | .layout.pos_in_scrolling_layout[0]")
+discord_col=$(echo "$windows" | jq -r ".[] | select(.id==$discord_id) | .layout.pos_in_scrolling_layout[0]")
+
+if [[ -n "$ayugram_col" && -n "$discord_col" && "$ayugram_col" != "$discord_col" ]]; then
+    if (( ayugram_col > discord_col )); then
+        diff=$((ayugram_col - discord_col))
+        niri msg action focus-window --id "$ayugram_id"
+        for ((i=1; i<diff; i++)); do
+            niri msg action move-column-left
+        done
+        niri msg action consume-or-expel-window-left
+    else
+        diff=$((discord_col - ayugram_col))
+        niri msg action focus-window --id "$discord_id"
+        for ((i=1; i<diff; i++)); do
+            niri msg action move-column-left
+        done
+        niri msg action consume-or-expel-window-left
+    fi
+fi
+
+# Ensure tabbed display and full tab height
+windows=$(niri msg -j windows 2>/dev/null)
+h1=$(echo "$windows" | jq -r ".[] | select(.id==$ayugram_id) | .layout.tile_size[1]")
+if (( $(echo "$h1 < 800" | bc -l 2>/dev/null || echo 0) )); then
+    niri msg action focus-window --id "$ayugram_id"
+    niri msg action toggle-column-tabbed-display
+    niri msg action reset-window-height
+fi
+
+# Set column 1 width to 1266
+niri msg action focus-window --id "$discord_id"
+niri msg action set-column-width "1266" 2>/dev/null || true
+
+# Focus Brave if present
+brave_id=$(echo "$windows" | jq -r '.[] | select(.app_id=="brave-origin") | .id' | head -n1)
+if [[ -n "$brave_id" ]]; then
+    niri msg action focus-window --id "$brave_id"
+fi
