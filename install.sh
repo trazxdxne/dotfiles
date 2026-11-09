@@ -733,11 +733,11 @@ if [[ " ${SELECTED_MODULES[*]} " =~ " base " ]]; then
     plugin_changed="$REPO_CHANGED"
 
     EQUICORD_DIR="$HOME/Programs/Equicord"
-    EQUICORD_PINNED_TAG="v1.15.15.0"
-    sync_repo "https://github.com/Equicord/Equicord.git" "$EQUICORD_DIR" "$EQUICORD_PINNED_TAG"
+    sync_repo "https://github.com/Equicord/Equicord.git" "$EQUICORD_DIR"
     equicord_changed="$REPO_CHANGED"
 
-    if [[ -f "$EQUICORD_PLUGIN_DIR/osDisplayName.ts" && -d "$EQUICORD_DIR/src/userplugins" ]]; then
+    if [[ -f "$EQUICORD_PLUGIN_DIR/osDisplayName.ts" ]]; then
+        mkdir -p "$EQUICORD_DIR/src/userplugins"
         if [[ ! -f "$EQUICORD_DIR/src/userplugins/osDisplayName.ts" ]] || ! cmp -s "$EQUICORD_PLUGIN_DIR/osDisplayName.ts" "$EQUICORD_DIR/src/userplugins/osDisplayName.ts"; then
             printf ":: copying custom equicord plugin\n"
             cp -f "$EQUICORD_PLUGIN_DIR/osDisplayName.ts" "$EQUICORD_DIR/src/userplugins/osDisplayName.ts"
