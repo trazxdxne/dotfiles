@@ -91,3 +91,9 @@ packages = []
 [modules.zen]
 description = "Zen Browser"
 packages = []
+
+[modules.reshade]
+description = "ReShade with Momo presets for Steam/Proton (Dead by Daylight)"
+packages = []
+distro_packages.arch = ["p7zip", "curl", "git"]
+distro_packages.fedora = ["p7zip", "p7zip-plugins", "curl", "git"]

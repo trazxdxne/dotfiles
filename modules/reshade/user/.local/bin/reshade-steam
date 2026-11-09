@@ -1,0 +1,251 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RESHADE_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/reshade"
+RESHADE_BIN_DIR="$RESHADE_DATA_DIR/reshade/latest"
+RESHADE_SHADERS_DIR="$RESHADE_DATA_DIR/ReShade_shaders"
+RESHADE_PRESETS_DIR="$RESHADE_DATA_DIR/presets"
+RESHADE_INI_TEMPLATE="$RESHADE_DATA_DIR/ReShade.ini"
+
+BUNDLED_PRESETS_DIR="$(cd "$SCRIPT_DIR/../share/reshade/presets" 2>/dev/null && pwd || true)"
+BUNDLED_INI="$(cd "$SCRIPT_DIR/../share/reshade" 2>/dev/null && pwd || true)/ReShade.ini"
+
+mkdir -p "$RESHADE_DATA_DIR" "$RESHADE_BIN_DIR" "$RESHADE_SHADERS_DIR"
+
+if [[ ! -d "$RESHADE_PRESETS_DIR" || -z "$(ls -A "$RESHADE_PRESETS_DIR" 2>/dev/null)" ]]; then
+    if [[ -n "$BUNDLED_PRESETS_DIR" && -d "$BUNDLED_PRESETS_DIR" && "$BUNDLED_PRESETS_DIR" != "$RESHADE_PRESETS_DIR" ]]; then
+        mkdir -p "$RESHADE_PRESETS_DIR"
+        cp -rn "$BUNDLED_PRESETS_DIR"/* "$RESHADE_PRESETS_DIR"/ 2>/dev/null || true
+    fi
+fi
+
+if [[ ! -f "$RESHADE_INI_TEMPLATE" && -f "$BUNDLED_INI" ]]; then
+    cp -f "$BUNDLED_INI" "$RESHADE_INI_TEMPLATE"
+fi
+
+sync_git_repo() {
+    local url="$1"
+    local dest="$2"
+    local branch="${3:-}"
+
+    if [[ ! -d "$dest/.git" ]]; then
+        printf ":: cloning %s -> %s\n" "$url" "$dest"
+        mkdir -p "$(dirname "$dest")"
+        if [[ -n "$branch" ]]; then
+            git clone --depth 1 --branch "$branch" "$url" "$dest" || return 1
+        else
+            git clone --depth 1 "$url" "$dest" || return 1
+        fi
+    else
+        printf ":: updating %s\n" "$dest"
+        git -C "$dest" pull --ff-only 2>/dev/null || true
+    fi
+}
+
+download_reshade() {
+    if [[ -f "$RESHADE_BIN_DIR/ReShade64.dll" && -f "$RESHADE_BIN_DIR/ReShade32.dll" ]]; then
+        printf ":: reshade binaries already present\n"
+        return 0
+    fi
+
+    printf ":: downloading latest reshade\n"
+    local setup_url
+    setup_url=$(curl -sL "https://reshade.me" 2>/dev/null | grep -oP '/downloads/ReShade_Setup_[0-9.]+\.exe' | head -n1 || true)
+    if [[ -z "$setup_url" ]]; then
+        setup_url="/downloads/ReShade_Setup_6.8.0.exe"
+    fi
+    local full_url="https://reshade.me${setup_url}"
+
+    local tmp_dir
+    tmp_dir=$(mktemp -d)
+    if curl -sSL "$full_url" -o "$tmp_dir/reshade_setup.exe"; then
+        7z e "$tmp_dir/reshade_setup.exe" -o"$RESHADE_BIN_DIR" ReShade64.dll ReShade32.dll ReShade64.json ReShade32.json -y >/dev/null
+    fi
+    rm -rf "$tmp_dir"
+}
+
+sync_shaders() {
+    local repos=(
+        "https://github.com/crosire/reshade-shaders.git|$RESHADE_SHADERS_DIR/reshade-shaders|slim"
+        "https://github.com/crosire/reshade-shaders.git|$RESHADE_SHADERS_DIR/reshade-shaders-legacy|legacy"
+        "https://github.com/CeeJayDK/SweetFX.git|$RESHADE_SHADERS_DIR/sweetfx-shaders|master"
+        "https://github.com/martymcmodding/qUINT.git|$RESHADE_SHADERS_DIR/quint-shaders|master"
+        "https://github.com/BlueSkyDefender/AstrayFX.git|$RESHADE_SHADERS_DIR/astrayfx-shaders|master"
+        "https://github.com/prod80/prod80-ReShade-Repository.git|$RESHADE_SHADERS_DIR/prod80-shaders|master"
+        "https://github.com/FransBouma/OtisFX.git|$RESHADE_SHADERS_DIR/otisfx-shaders|master"
+        "https://github.com/luluco250/FXShaders.git|$RESHADE_SHADERS_DIR/fxshaders|master"
+        "https://github.com/Fubaxiusz/fubax-shaders.git|$RESHADE_SHADERS_DIR/fubax-shaders|master"
+    )
+
+    for item in "${repos[@]}"; do
+        IFS="|" read -r url dest branch <<< "$item"
+        sync_git_repo "$url" "$dest" "$branch"
+    done
+}
+
+merge_shaders() {
+    printf ":: merging reshade shaders and textures\n"
+    local merged_shaders="$RESHADE_SHADERS_DIR/Merged/Shaders"
+    local merged_textures="$RESHADE_SHADERS_DIR/Merged/Textures"
+
+    mkdir -p "$merged_shaders" "$merged_textures"
+
+    find "$RESHADE_SHADERS_DIR" -maxdepth 4 -type f \( -name "*.fx" -o -name "*.fxh" \) ! -path "*/Merged/*" | while IFS= read -r file; do
+        local fname
+        fname=$(basename "$file")
+        if [[ ! -e "$merged_shaders/$fname" ]]; then
+            ln -sf "$file" "$merged_shaders/$fname"
+        fi
+    done
+
+    find "$RESHADE_SHADERS_DIR" -maxdepth 4 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.dds" \) ! -path "*/Merged/*" | while IFS= read -r file; do
+        local fname
+        fname=$(basename "$file")
+        if [[ ! -e "$merged_textures/$fname" ]]; then
+            ln -sf "$file" "$merged_textures/$fname"
+        fi
+    done
+}
+
+get_steam_libraries() {
+    local candidates=(
+        "$HOME/.local/share/Steam"
+        "$HOME/.steam/steam"
+        "$HOME/.steam/root"
+    )
+    for vdf in "$HOME/.local/share/Steam/config/libraryfolders.vdf" \
+               "$HOME/.local/share/Steam/steamapps/libraryfolders.vdf" \
+               "$HOME/.steam/steam/config/libraryfolders.vdf"; do
+        if [[ -f "$vdf" ]]; then
+            while IFS= read -r p; do
+                [[ -n "$p" ]] && candidates+=("$p")
+            done < <(grep -oP '"path"\s+"\K[^"]+' "$vdf" 2>/dev/null || true)
+        fi
+    done
+
+    printf "%s\n" "${candidates[@]}" | sort -u
+}
+
+find_dbd_binary_dir() {
+    while IFS= read -r lib; do
+        if [[ -d "$lib/steamapps/common/Dead by Daylight" ]]; then
+            local bin_dir
+            bin_dir=$(find "$lib/steamapps/common/Dead by Daylight" -name "DeadByDaylight-Win64-Shipping.exe" -printf "%h\n" 2>/dev/null | head -n1 || true)
+            if [[ -n "$bin_dir" && -d "$bin_dir" ]]; then
+                printf "%s\n" "$bin_dir"
+                return 0
+            fi
+        fi
+    done < <(get_steam_libraries)
+    return 1
+}
+
+install_to_dir() {
+    local target_dir="$1"
+    local dll_name="${2:-dxgi}"
+
+    if [[ ! -d "$target_dir" ]]; then
+        printf "error: target directory '%s' does not exist\n" "$target_dir" >&2
+        return 1
+    fi
+
+    printf ":: installing reshade into %s (dll: %s.dll)\n" "$target_dir" "$dll_name"
+
+    ln -sf "$RESHADE_BIN_DIR/ReShade64.dll" "$target_dir/$dll_name.dll"
+    if [[ "$dll_name" == "dxgi" ]]; then
+        ln -sf "$RESHADE_BIN_DIR/ReShade64.dll" "$target_dir/d3d12.dll"
+    fi
+
+    ln -sfn "$RESHADE_SHADERS_DIR" "$target_dir/ReShade_shaders"
+    ln -sfn "$RESHADE_PRESETS_DIR" "$target_dir/reshade-presets"
+
+    if [[ -f "$RESHADE_PRESETS_DIR/Normal.ini" ]]; then
+        ln -sf "$RESHADE_PRESETS_DIR/Normal.ini" "$target_dir/Normal.ini"
+    fi
+
+    if [[ ! -f "$target_dir/ReShade.ini" && -f "$RESHADE_INI_TEMPLATE" ]]; then
+        cp -f "$RESHADE_INI_TEMPLATE" "$target_dir/ReShade.ini"
+    fi
+
+    printf ":: reshade installed successfully\n"
+    printf ":: steam launch options:\n"
+    printf "   WINEDLLOVERRIDES=\"d3dcompiler_47=n;%s=n,b\" %%command%%\n" "$dll_name"
+}
+
+uninstall_from_dir() {
+    local target_dir="$1"
+    if [[ ! -d "$target_dir" ]]; then
+        printf "error: target directory '%s' does not exist\n" "$target_dir" >&2
+        return 1
+    fi
+
+    printf ":: removing reshade from %s\n" "$target_dir"
+    rm -f "$target_dir/dxgi.dll" "$target_dir/d3d12.dll" "$target_dir/d3d11.dll"
+    rm -f "$target_dir/ReShade_shaders" "$target_dir/reshade-presets"
+    rm -f "$target_dir/ReShade.ini" "$target_dir/ReShade.log" "$target_dir/Normal.ini"
+    printf ":: reshade removed successfully\n"
+}
+
+setup_all() {
+    download_reshade
+    sync_shaders
+    merge_shaders
+
+    local dbd_dir
+    dbd_dir=$(find_dbd_binary_dir || true)
+    if [[ -n "$dbd_dir" ]]; then
+        printf ":: detected Dead by Daylight at %s\n" "$dbd_dir"
+        install_to_dir "$dbd_dir" "dxgi"
+    fi
+}
+
+case "${1:-}" in
+    --setup|setup)
+        setup_all
+        ;;
+    --dbd|dbd)
+        dbd_dir=$(find_dbd_binary_dir || true)
+        if [[ -n "$dbd_dir" ]]; then
+            install_to_dir "$dbd_dir" "${2:-dxgi}"
+        else
+            printf "error: Dead by Daylight executable not found\n" >&2
+            exit 1
+        fi
+        ;;
+    install)
+        if [[ -z "${2:-}" || "${2:-}" == "dbd" ]]; then
+            dbd_dir=$(find_dbd_binary_dir || true)
+            if [[ -n "$dbd_dir" ]]; then
+                install_to_dir "$dbd_dir" "${3:-dxgi}"
+            else
+                printf "error: Dead by Daylight not found. Supply path: reshade-steam install <game_dir>\n" >&2
+                exit 1
+            fi
+        else
+            install_to_dir "$2" "${3:-dxgi}"
+        fi
+        ;;
+    uninstall)
+        if [[ -z "${2:-}" || "${2:-}" == "dbd" ]]; then
+            dbd_dir=$(find_dbd_binary_dir || true)
+            if [[ -n "$dbd_dir" ]]; then
+                uninstall_from_dir "$dbd_dir"
+            fi
+        else
+            uninstall_from_dir "$2"
+        fi
+        ;;
+    update|update-shaders)
+        download_reshade
+        sync_shaders
+        merge_shaders
+        ;;
+    list-presets)
+        printf ":: available momo reshades presets:\n"
+        find "$RESHADE_PRESETS_DIR" -name "*.ini" -printf "   %f\n" 2>/dev/null | sort
+        ;;
+    *)
+        printf "usage: reshade-steam [--setup | --dbd | install [path] | uninstall [path] | update | list-presets]\n"
+        ;;
+esac

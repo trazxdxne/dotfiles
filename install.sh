@@ -733,6 +733,13 @@ if [[ " ${SELECTED_MODULES[*]} " =~ " zen " ]] && [[ -f "$DOTFILES_DIR/modules/z
     done
 fi
 
+if [[ " ${SELECTED_MODULES[*]} " =~ " reshade " ]]; then
+    if [[ -x "$DOTFILES_DIR/modules/reshade/user/.local/bin/reshade-steam" ]]; then
+        printf ":: configuring reshade for steam/proton\n"
+        bash "$DOTFILES_DIR/modules/reshade/user/.local/bin/reshade-steam" --setup
+    fi
+fi
+
 if [[ " ${SELECTED_MODULES[*]} " =~ " niri " ]]; then
     NIRI_AUTOSTART_DIR="$HOME/Projects/niri-autostart"
     sync_repo "https://github.com/trazxdxne/niri-autostart.git" "$NIRI_AUTOSTART_DIR"
