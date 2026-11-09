@@ -256,8 +256,8 @@ binds {
     Mod+Up    { focus-window-up; }
     Mod+Right { focus-column-right; }
     //Mod+H                     { focus-column-left; }
-    //Mod+Alt+WheelScrollDown   { focus-window-down; }
-    //Mod+Alt+WheelScrollUp     { focus-window-up; }
+    Mod+Ctrl+WheelScrollDown   { focus-window-down; }
+    Mod+Ctrl+WheelScrollUp     { focus-window-up; }
     //Mod+L                     { focus-column-right; }
 
     Mod+Alt+Left  { move-column-left; }
