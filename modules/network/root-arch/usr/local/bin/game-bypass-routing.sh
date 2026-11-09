@@ -13,18 +13,20 @@ start() {
 
     echo ":: preparing game-bypass cgroups"
     mkdir -p /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/game.slice/game-bypass.slice 2>/dev/null || true
+    chown -R 1000:1000 /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/game.slice 2>/dev/null || true
     if command -v loginctl >/dev/null 2>&1; then
         for uid in $(loginctl list-users --no-legend 2>/dev/null | awk '{print $1}'); do
             mkdir -p "/sys/fs/cgroup/user.slice/user-${uid}.slice/user@${uid}.service/game.slice/game-bypass.slice" 2>/dev/null || true
+            chown -R "${uid}:${uid}" "/sys/fs/cgroup/user.slice/user-${uid}.slice/user@${uid}.service/game.slice" 2>/dev/null || true
         done
     fi
 
     echo ":: adding policy routing rules"
     if ! ip rule show | grep -q "fwmark 0x51 lookup main"; then
-        ip rule add fwmark 0x51 lookup main priority 100
+        ip rule add fwmark 0x51 lookup main priority 90
     fi
     if ! ip -6 rule show 2>/dev/null | grep -q "fwmark 0x51 lookup main"; then
-        ip -6 rule add fwmark 0x51 lookup main priority 100 2>/dev/null || true
+        ip -6 rule add fwmark 0x51 lookup main priority 90 2>/dev/null || true
     fi
 
     echo ":: configuring nftables for game-bypass"
@@ -47,10 +49,10 @@ stop() {
     echo ":: stopping game-bypass routing"
     nft delete table inet game_bypass 2>/dev/null || true
     while ip rule show | grep -q "fwmark 0x51 lookup main"; do
-        ip rule del fwmark 0x51 lookup main priority 100 2>/dev/null || break
+        ip rule del fwmark 0x51 lookup main 2>/dev/null || break
     done
     while ip -6 rule show 2>/dev/null | grep -q "fwmark 0x51 lookup main"; do
-        ip -6 rule del fwmark 0x51 lookup main priority 100 2>/dev/null || break
+        ip -6 rule del fwmark 0x51 lookup main 2>/dev/null || break
     done
     echo ":: game-bypass routing stopped"
 }

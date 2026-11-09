@@ -36,9 +36,9 @@ printf ":: detected distro: %s (%s)\n" "$DISTRO" "$DISTRO_ID"
 rollback_network() {
     printf ":: rolling back network and dns configurations\n"
     if [[ "$DISTRO" == "arch" ]]; then
-        if [[ -f /etc/resolv.conf.bak ]]; then
+        if [[ -f /etc/resolv.conf.bak && -s /etc/resolv.conf.bak ]] && grep -q "nameserver" /etc/resolv.conf.bak 2>/dev/null; then
             sudo rm -f /etc/resolv.conf
-            sudo cp /etc/resolv.conf.bak /etc/resolv.conf
+            sudo cp -p /etc/resolv.conf.bak /etc/resolv.conf
             sudo rm -f /etc/resolv.conf.bak
             printf ":: restored /etc/resolv.conf from backup\n"
         elif [[ -L /etc/resolv.conf ]]; then
@@ -636,10 +636,33 @@ fi
 
 if [[ " ${SELECTED_MODULES[*]} " =~ " network " ]]; then
     if [[ "$DISTRO" == "arch" ]]; then
+        found_conf=""
+        while IFS= read -r conf_candidate; do
+            if [[ -f "$conf_candidate" ]] && grep -q "\[Interface\]" "$conf_candidate" 2>/dev/null && grep -q "\[Peer\]" "$conf_candidate" 2>/dev/null; then
+                found_conf="$conf_candidate"
+                break
+            fi
+        done < <(find "$HOME" -maxdepth 2 -type f \( -name "*WARP*.conf" -o -name "ghd*.conf" -o -name "mlw*.conf" \) 2>/dev/null | sort -V -r)
+
+        if [[ -n "$found_conf" ]]; then
+            printf ":: deploying AmneziaWG configuration from %s\n" "$found_conf"
+            sudo mkdir -p /etc/amnezia/amneziawg
+            sudo install -Dm600 "$found_conf" /etc/amnezia/amneziawg/awg0.conf
+            mkdir -p "$DOTFILES_DIR/modules/network/root-arch/etc/amnezia/amneziawg"
+            cp -f "$found_conf" "$DOTFILES_DIR/modules/network/root-arch/etc/amnezia/amneziawg/awg0.conf"
+        fi
+
         if [[ -f /etc/amnezia/amneziawg/awg0.conf ]]; then
-            printf ":: enabling awg-quick@awg0.service\n"
-            if ! sudo systemctl enable --now awg-quick@awg0.service; then
-                printf "warning: failed to enable awg-quick@awg0.service\n" >&2
+            printf ":: configuring awg-quick@awg0.service\n"
+            sudo systemctl enable awg-quick@awg0.service
+            if systemctl is-active --quiet awg-quick@awg0.service 2>/dev/null; then
+                if ! sudo systemctl restart awg-quick@awg0.service; then
+                    printf "warning: failed to restart awg-quick@awg0.service\n" >&2
+                fi
+            else
+                if ! sudo systemctl start awg-quick@awg0.service; then
+                    printf "warning: failed to start awg-quick@awg0.service\n" >&2
+                fi
             fi
         else
             printf ":: notice: /etc/amnezia/amneziawg/awg0.conf not found. Template available at modules/network/awg0.conf.template\n"
