@@ -12,7 +12,7 @@ enable = ["game-bypass-routing"]
 description = "Shell, terminal, base settings"
 always = true
 packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow", "topgrade", "wl-clipboard", "libnotify"]
-distro_packages.arch = ["p7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "nodejs", "pnpm", "discord", "gnome-keyring", "brave-origin-bin"]
+distro_packages.arch = ["7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "nodejs", "pnpm", "discord", "gnome-keyring", "brave-origin-bin"]
 distro_packages.fedora = ["p7zip", "p7zip-plugins", "gnome-keyring", "nodejs", "pnpm"]
 
 [modules.antigravity]
@@ -65,7 +65,7 @@ distro_packages.arch = ["v4l2loopback-dkms"]
 distro_packages.fedora = ["akmod-v4l2loopback"]
 
 [modules.system-hw.gpu_packages.amd.arch]
-packages = ["vulkan-radeon", "mesa", "libva-mesa-driver", "amd-ucode"]
+packages = ["vulkan-radeon", "mesa", "amd-ucode"]
 
 [modules.system-hw.gpu_packages.amd.fedora]
 packages = ["mesa-vulkan-drivers", "mesa-dri-drivers", "mesa-va-drivers-freeworld", "microcode_ctl"]
@@ -99,5 +99,5 @@ distro_packages.fedora = []
 [modules.reshade]
 description = "ReShade with Momo presets for Steam/Proton (Dead by Daylight)"
 packages = []
-distro_packages.arch = ["p7zip", "curl", "git"]
+distro_packages.arch = ["7zip", "curl", "git"]
 distro_packages.fedora = ["p7zip", "p7zip-plugins", "curl", "git"]

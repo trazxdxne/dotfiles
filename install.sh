@@ -127,6 +127,37 @@ if [[ "$DISTRO" == "fedora" ]]; then
     fi
 elif [[ "$DISTRO" == "arch" ]]; then
     arch_repo_updated=false
+    if [[ "$DISTRO_ID $DISTRO_LIKE" =~ cachyos ]] || [[ -f /etc/pacman.d/cachyos-mirrorlist ]]; then
+        if ! grep -q "^\[cachyos\]" /etc/pacman.conf; then
+            printf ":: enabling cachyos repositories in pacman.conf\n"
+            sudo python3 -c '
+conf_path = "/etc/pacman.conf"
+with open(conf_path, "r") as f:
+    lines = f.readlines()
+block = """[cachyos-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+
+[cachyos-core-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+
+[cachyos-extra-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+
+"""
+for i, line in enumerate(lines):
+    if line.strip() == "[core]":
+        lines.insert(i, block)
+        break
+with open(conf_path, "w") as f:
+    f.writelines(lines)
+'
+            arch_repo_updated=true
+        fi
+    fi
+
     if grep -q "^#\[multilib\]" /etc/pacman.conf; then
         printf ":: enabling multilib in pacman.conf\n"
         sudo sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
