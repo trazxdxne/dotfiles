@@ -93,10 +93,12 @@ SUDO_KEEPALIVE_PID=$!
 trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT
 
 MISSING_BASE=()
-for cmd_name in stow jq gum curl git python3; do
+for cmd_name in stow jq gum curl git python3 lspci; do
     if ! command -v "$cmd_name" &>/dev/null; then
         if [[ "$cmd_name" == "python3" && "$DISTRO" == "arch" ]]; then
             MISSING_BASE+=("python")
+        elif [[ "$cmd_name" == "lspci" ]]; then
+            MISSING_BASE+=("pciutils")
         else
             MISSING_BASE+=("$cmd_name")
         fi

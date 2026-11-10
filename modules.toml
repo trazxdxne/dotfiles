@@ -1,7 +1,7 @@
 [modules.network]
 description = "Network bootstrap, DNS over TLS, Zapret, AmneziaWG and Game Split-Tunneling"
 always = true
-packages = []
+packages = ["nftables"]
 distro_packages.arch = ["amneziawg-tools", "amneziawg-dkms"]
 distro_packages.fedora = []
 
@@ -11,9 +11,9 @@ enable = ["game-bypass-routing"]
 [modules.base]
 description = "Shell, terminal, base settings"
 always = true
-packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow", "topgrade"]
-distro_packages.arch = ["p7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "nodejs", "pnpm", "discord"]
-distro_packages.fedora = ["p7zip", "p7zip-plugins"]
+packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow", "topgrade", "wl-clipboard", "libnotify"]
+distro_packages.arch = ["p7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "nodejs", "pnpm", "discord", "gnome-keyring", "brave-origin-bin"]
+distro_packages.fedora = ["p7zip", "p7zip-plugins", "gnome-keyring", "nodejs", "pnpm"]
 
 [modules.antigravity]
 description = "Antigravity AI Agent configuration, skills and patcher"
@@ -23,13 +23,15 @@ distro_packages.fedora = ["python3", "git"]
 
 [modules.niri]
 description = "Niri compositor"
-packages = ["niri", "fuzzel"]
-distro_packages.arch = ["xdg-desktop-portal-gnome", "rust"]
+packages = ["niri", "fuzzel", "nautilus", "playerctl"]
+distro_packages.arch = ["xdg-desktop-portal-gnome", "rust", "xwayland-satellite"]
 distro_packages.fedora = ["xdg-desktop-portal-gnome", "cargo"]
 
 [modules.ags]
 description = "AGS bar and widgets"
-packages = ["ags"]
+packages = []
+distro_packages.arch = ["aylurs-gtk-shell"]
+distro_packages.fedora = ["aylurs-gtk-shell"]
 
 [modules.ags.user_services]
 "ags.service" = ".config/systemd/user/ags.service"
@@ -58,9 +60,9 @@ distro_packages.fedora = ["pipewire-pulseaudio", "calf", "lsp-plugins-lv2"]
 
 [modules.system-hw]
 description = "System hardware (polkit, modprobe, systemd-oomd)"
-packages = []
-distro_packages.arch = []
-distro_packages.fedora = []
+packages = ["polkit", "power-profiles-daemon"]
+distro_packages.arch = ["v4l2loopback-dkms"]
+distro_packages.fedora = ["akmod-v4l2loopback"]
 
 [modules.system-hw.gpu_packages.amd.arch]
 packages = ["vulkan-radeon", "mesa", "libva-mesa-driver", "amd-ucode"]
@@ -91,6 +93,8 @@ packages = []
 [modules.zen]
 description = "Zen Browser"
 packages = []
+distro_packages.arch = ["zen-browser-bin"]
+distro_packages.fedora = []
 
 [modules.reshade]
 description = "ReShade with Momo presets for Steam/Proton (Dead by Daylight)"
