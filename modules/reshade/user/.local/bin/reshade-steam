@@ -141,6 +141,46 @@ find_dbd_binary_dir() {
     return 1
 }
 
+find_dbd_compatdata_dir() {
+    while IFS= read -r lib; do
+        if [[ -d "$lib/steamapps/compatdata/381210/pfx" ]]; then
+            printf "%s\n" "$lib/steamapps/compatdata/381210/pfx"
+            return 0
+        fi
+    done < <(get_steam_libraries)
+    return 1
+}
+
+apply_wine_override() {
+    local pfx_dir="$1"
+    local dll_name="${2:-dxgi}"
+    local user_reg="$pfx_dir/user.reg"
+
+    if [[ ! -f "$user_reg" ]]; then
+        return 0
+    fi
+
+    if grep -q -E '\[Software\\+Wine\\+DllOverrides\]' "$user_reg"; then
+        if ! grep -q "\"$dll_name\"=" "$user_reg"; then
+            printf ":: configuring wine dll override (%s=native,builtin) in %s\n" "$dll_name" "$user_reg"
+            sed -E -i "/\[Software\\\\+Wine\\\\+DllOverrides\]/a \"$dll_name\"=\"native,builtin\"" "$user_reg"
+        else
+            printf ":: wine dll override for %s already configured in %s\n" "$dll_name" "$user_reg"
+        fi
+    fi
+}
+
+remove_wine_override() {
+    local pfx_dir="$1"
+    local dll_name="${2:-dxgi}"
+    local user_reg="$pfx_dir/user.reg"
+
+    if [[ -f "$user_reg" ]]; then
+        printf ":: removing wine dll override (%s) from %s\n" "$dll_name" "$user_reg"
+        sed -i "/\"$dll_name\"=\"native,builtin\"/d" "$user_reg"
+    fi
+}
+
 install_to_dir() {
     local target_dir="$1"
     local dll_name="${2:-dxgi}"
@@ -152,10 +192,18 @@ install_to_dir() {
 
     printf ":: installing reshade into %s (dll: %s.dll)\n" "$target_dir" "$dll_name"
 
-    ln -sf "$RESHADE_BIN_DIR/ReShade64.dll" "$target_dir/$dll_name.dll"
-    if [[ "$dll_name" == "dxgi" ]]; then
-        ln -sf "$RESHADE_BIN_DIR/ReShade64.dll" "$target_dir/d3d12.dll"
+    # Remove conflicting d3d12.dll symlink if present. In Proton, d3d12 is provided
+    # by vkd3d-proton. Shadowing d3d12 with ReShade breaks DX12 and causes circular hook crashes.
+    if [[ -L "$target_dir/d3d12.dll" ]]; then
+        local target_link
+        target_link=$(readlink "$target_dir/d3d12.dll" || true)
+        if [[ "$target_link" == *"ReShade"* ]]; then
+            printf ":: removing conflicting d3d12.dll ReShade symlink\n"
+            rm -f "$target_dir/d3d12.dll"
+        fi
     fi
+
+    ln -sf "$RESHADE_BIN_DIR/ReShade64.dll" "$target_dir/$dll_name.dll"
 
     ln -sfn "$RESHADE_SHADERS_DIR" "$target_dir/ReShade_shaders"
     ln -sfn "$RESHADE_PRESETS_DIR" "$target_dir/reshade-presets"
@@ -169,8 +217,8 @@ install_to_dir() {
     fi
 
     printf ":: reshade installed successfully\n"
-    printf ":: steam launch options:\n"
-    printf "   WINEDLLOVERRIDES=\"d3dcompiler_47=n;%s=n,b\" %%command%%\n" "$dll_name"
+    printf ":: steam launch options (optional if wine prefix override was applied):\n"
+    printf "   WINEDLLOVERRIDES=\"%s=n,b\" %%command%%\n" "$dll_name"
 }
 
 uninstall_from_dir() {
@@ -197,55 +245,82 @@ setup_all() {
     if [[ -n "$dbd_dir" ]]; then
         printf ":: detected Dead by Daylight at %s\n" "$dbd_dir"
         install_to_dir "$dbd_dir" "dxgi"
+        local dbd_pfx
+        dbd_pfx=$(find_dbd_compatdata_dir || true)
+        if [[ -n "$dbd_pfx" ]]; then
+            apply_wine_override "$dbd_pfx" "dxgi"
+        fi
     fi
 }
 
-case "${1:-}" in
-    --setup|setup)
-        setup_all
-        ;;
-    --dbd|dbd)
-        dbd_dir=$(find_dbd_binary_dir || true)
-        if [[ -n "$dbd_dir" ]]; then
-            install_to_dir "$dbd_dir" "${2:-dxgi}"
-        else
-            printf "error: Dead by Daylight executable not found\n" >&2
-            exit 1
-        fi
-        ;;
-    install)
-        if [[ -z "${2:-}" || "${2:-}" == "dbd" ]]; then
+main() {
+    case "${1:-}" in
+        --setup|setup)
+            setup_all
+            ;;
+        --dbd|dbd)
+            local dbd_dir
             dbd_dir=$(find_dbd_binary_dir || true)
             if [[ -n "$dbd_dir" ]]; then
-                install_to_dir "$dbd_dir" "${3:-dxgi}"
+                install_to_dir "$dbd_dir" "${2:-dxgi}"
+                local dbd_pfx
+                dbd_pfx=$(find_dbd_compatdata_dir || true)
+                if [[ -n "$dbd_pfx" ]]; then
+                    apply_wine_override "$dbd_pfx" "${2:-dxgi}"
+                fi
             else
-                printf "error: Dead by Daylight not found. Supply path: reshade-steam install <game_dir>\n" >&2
+                printf "error: Dead by Daylight executable not found\n" >&2
                 exit 1
             fi
-        else
-            install_to_dir "$2" "${3:-dxgi}"
-        fi
-        ;;
-    uninstall)
-        if [[ -z "${2:-}" || "${2:-}" == "dbd" ]]; then
-            dbd_dir=$(find_dbd_binary_dir || true)
-            if [[ -n "$dbd_dir" ]]; then
-                uninstall_from_dir "$dbd_dir"
+            ;;
+        install)
+            if [[ -z "${2:-}" || "${2:-}" == "dbd" ]]; then
+                local dbd_dir
+                dbd_dir=$(find_dbd_binary_dir || true)
+                if [[ -n "$dbd_dir" ]]; then
+                    install_to_dir "$dbd_dir" "${3:-dxgi}"
+                    local dbd_pfx
+                    dbd_pfx=$(find_dbd_compatdata_dir || true)
+                    if [[ -n "$dbd_pfx" ]]; then
+                        apply_wine_override "$dbd_pfx" "${3:-dxgi}"
+                    fi
+                else
+                    printf "error: Dead by Daylight not found. Supply path: reshade-steam install <game_dir>\n" >&2
+                    exit 1
+                fi
+            else
+                install_to_dir "$2" "${3:-dxgi}"
             fi
-        else
-            uninstall_from_dir "$2"
-        fi
-        ;;
-    update|update-shaders)
-        download_reshade
-        sync_shaders
-        merge_shaders
-        ;;
-    list-presets)
-        printf ":: available momo reshades presets:\n"
-        find "$RESHADE_PRESETS_DIR" -name "*.ini" -printf "   %f\n" 2>/dev/null | sort
-        ;;
-    *)
-        printf "usage: reshade-steam [--setup | --dbd | install [path] | uninstall [path] | update | list-presets]\n"
-        ;;
-esac
+            ;;
+        uninstall)
+            if [[ -z "${2:-}" || "${2:-}" == "dbd" ]]; then
+                local dbd_dir
+                dbd_dir=$(find_dbd_binary_dir || true)
+                if [[ -n "$dbd_dir" ]]; then
+                    uninstall_from_dir "$dbd_dir"
+                    local dbd_pfx
+                    dbd_pfx=$(find_dbd_compatdata_dir || true)
+                    if [[ -n "$dbd_pfx" ]]; then
+                        remove_wine_override "$dbd_pfx" "dxgi"
+                    fi
+                fi
+            else
+                uninstall_from_dir "$2"
+            fi
+            ;;
+        update|update-shaders)
+            download_reshade
+            sync_shaders
+            merge_shaders
+            ;;
+        list-presets)
+            printf ":: available momo reshades presets:\n"
+            find "$RESHADE_PRESETS_DIR" -name "*.ini" -printf "   %f\n" 2>/dev/null | sort
+            ;;
+        *)
+            printf "usage: reshade-steam [--setup | --dbd | install [path] | uninstall [path] | update | list-presets]\n"
+            ;;
+    esac
+}
+
+main "$@"
