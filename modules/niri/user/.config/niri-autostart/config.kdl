@@ -1,0 +1,27 @@
+autostart {
+    workspace "1" {
+        column {
+            width {
+                proportion 0.67
+            }
+            window app-id="com.ayugram.desktop" {
+                command "AyuGram"
+                height { proportion 1.0; }
+            }
+            window app-id="discord" {
+                command "discord"
+                height { proportion 1.0; }
+            }
+        }
+
+        column {
+            width {
+                proportion 1.0
+            }
+            window app-id="brave-origin" {
+                command "/opt/brave-origin-bin/brave-origin" "--new-window"
+                height { proportion 1.0; }
+            }
+        }
+    }
+}

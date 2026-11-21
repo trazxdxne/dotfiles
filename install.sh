@@ -187,9 +187,23 @@ if [[ -f "$DOTFILES_DIR/modules/zen/user/.config/zen/user.js" ]]; then
 fi
 
 # Ensure user executable permissions
-for script_file in "$HOME/.local/bin"/*; do
+for script_file in "$HOME/.local/bin"/* "$DOTFILES_DIR/modules/hyprland/user/.config/hypr/autostart.sh"; do
     [[ -f "$script_file" ]] && chmod +x "$script_file" 2>/dev/null || true
 done
+
+# Ensure niri-autostart binary is present for Niri layout convergence
+if [[ " ${MODULE_LIST[*]} " =~ " niri " ]] && [[ ! -x "$HOME/.local/bin/niri-autostart" ]]; then
+    printf ":: niri-autostart not found in ~/.local/bin, checking repository...\n"
+    NIRI_AUTOSTART_DIR="$HOME/Projects/niri-autostart"
+    if [[ ! -d "$NIRI_AUTOSTART_DIR/.git" ]]; then
+        mkdir -p "$HOME/Projects"
+        git clone "https://github.com/trazxdxne/niri-autostart.git" "$NIRI_AUTOSTART_DIR" || true
+    fi
+    if command -v cargo &>/dev/null && [[ -f "$NIRI_AUTOSTART_DIR/Cargo.toml" ]]; then
+        printf ":: building niri-autostart with cargo...\n"
+        cargo install --path "$NIRI_AUTOSTART_DIR" --root "$HOME/.local" --locked || true
+    fi
+fi
 
 # Activate audio user services
 if command -v systemctl &>/dev/null; then
