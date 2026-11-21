@@ -1,0 +1,65 @@
+{
+  "ecc-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/antigravity-hook-bridge.js --mode pre-tool-use --hook pre:bash:dispatcher",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/antigravity-hook-bridge.js --mode pre-tool-use --hook pre:edit-write:gateguard-fact-force",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "node scripts/hooks/antigravity-hook-bridge.js --mode pre-tool-use --hook pre:config-protection",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/antigravity-hook-bridge.js --mode pre-tool-use --hook pre:write:doc-file-warning",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/antigravity-hook-bridge.js --mode post-tool-use --hook post:edit:accumulator",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node scripts/hooks/antigravity-hook-bridge.js --mode stop --hook stop:format-typecheck",
+        "timeout": 300
+      },
+      {
+        "type": "command",
+        "command": "node scripts/hooks/antigravity-hook-bridge.js --mode stop --hook stop:check-console-log",
+        "timeout": 30
+      }
+    ]
+  }
+}

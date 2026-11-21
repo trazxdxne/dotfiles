@@ -12,6 +12,8 @@ ags/ags.log
 
 # Package Caches
 node_modules/
+!modules/antigravity/user/.gemini/**/node_modules/
+!modules/antigravity/user/.gemini/**/node_modules/**
 .npm/
 .cache/
 

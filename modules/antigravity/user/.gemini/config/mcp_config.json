@@ -1,0 +1,14 @@
+{
+    "mcpServers":  {
+                       "photocraft":  {
+                                          "args":  [
+                                                       "mcp",
+                                                       "--automation-read-root",
+                                                       ".",
+                                                       "--automation-write-root",
+                                                       "."
+                                                   ],
+                                          "command":  "photocraft-cli"
+                                      }
+                   }
+}

@@ -42,9 +42,9 @@ always = false
 packages = ["zen-browser-bin"]
 
 [modules.antigravity]
-description = "Antigravity AI Agent configuration and agent skills"
+description = "Antigravity AI Agent configuration, ECC bundle, and agent skills"
 always = true
-packages = ["python", "git"]
+packages = ["python", "git", "nodejs"]
 
 [modules.ags]
 description = "AGS widgets and overlay clock (experimental / decoupled)"
