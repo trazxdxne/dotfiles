@@ -1,103 +1,52 @@
-[modules.network]
-description = "Network bootstrap, DNS over TLS, Zapret, AmneziaWG and Game Split-Tunneling"
-always = true
-packages = ["nftables"]
-distro_packages.arch = ["amneziawg-tools", "amneziawg-dkms"]
-distro_packages.fedora = []
-
-[modules.network.root_services]
-enable = ["game-bypass-routing"]
+# Modules Configuration
+# Managed by install.sh (Lean GNU Stow Overlay)
 
 [modules.base]
-description = "Shell, terminal, base settings"
+description = "Core shell (Fish), terminal (WezTerm), micro editor, and base configs"
 always = true
-packages = ["fish", "wezterm", "fastfetch", "micro", "gum", "stow", "topgrade", "wl-clipboard", "libnotify"]
-distro_packages.arch = ["7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "nodejs", "pnpm", "discord", "gnome-keyring", "brave-origin-bin"]
-distro_packages.fedora = ["p7zip", "p7zip-plugins", "gnome-keyring", "nodejs", "pnpm"]
-
-[modules.antigravity]
-description = "Antigravity AI Agent configuration, skills and patcher"
-packages = []
-distro_packages.arch = ["python", "git"]
-distro_packages.fedora = ["python3", "git"]
+packages = ["fish", "wezterm", "fastfetch", "micro", "stow", "topgrade", "wl-clipboard", "libnotify", "7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "discord", "gnome-keyring", "brave-origin-bin"]
 
 [modules.niri]
-description = "Niri compositor"
-packages = ["niri", "fuzzel", "nautilus", "playerctl"]
-distro_packages.arch = ["xdg-desktop-portal-gnome", "rust", "xwayland-satellite"]
-distro_packages.fedora = ["xdg-desktop-portal-gnome", "cargo"]
+description = "Niri Wayland scrollable-tiling compositor"
+always = true
+packages = ["niri", "fuzzel", "nautilus", "playerctl", "xdg-desktop-portal-gnome", "xwayland-satellite"]
 
-[modules.ags]
-description = "AGS bar and widgets"
-packages = []
-distro_packages.arch = ["aylurs-gtk-shell"]
-distro_packages.fedora = ["aylurs-gtk-shell"]
-
-[modules.ags.user_services]
-"ags.service" = ".config/systemd/user/ags.service"
-
-[modules.greeter]
-description = "Noctalia Greeter (greetd)"
-packages = ["greetd"]
-distro_packages.arch = ["noctalia-greeter"]
-distro_packages.fedora = []
-
-[modules.greeter.root_services]
-enable = ["greetd"]
+[modules.hyprland]
+description = "Hyprland Wayland compositor (Omarchy & Arch ready)"
+always = false
+packages = ["hyprland", "hyprlock", "hypridle", "waybar", "fuzzel"]
 
 [modules.noctalia]
-description = "Noctalia theming engine"
+description = "Noctalia desktop shell, bar, and unified theming engine"
+always = true
 packages = ["noctalia"]
 
 [modules.audio]
-description = "Audio (WirePlumber, EasyEffects)"
-packages = ["wireplumber", "pipewire", "easyeffects"]
-distro_packages.arch = ["pipewire-pulse", "calf", "lsp-plugins-lv2"]
-distro_packages.fedora = ["pipewire-pulseaudio", "calf", "lsp-plugins-lv2"]
+description = "PipeWire and WirePlumber audio rules and volume fixes"
+always = true
+packages = ["pipewire", "wireplumber", "easyeffects", "pipewire-pulse"]
 
-[modules.audio.user_services]
-"alsa-volume-restore.service" = ".config/systemd/user/alsa-volume-restore.service"
-
-[modules.system-hw]
-description = "System hardware (polkit, modprobe, systemd-oomd)"
-packages = ["polkit", "power-profiles-daemon"]
-distro_packages.arch = ["v4l2loopback-dkms"]
-distro_packages.fedora = ["akmod-v4l2loopback"]
-
-[modules.system-hw.gpu_packages.amd.arch]
-packages = ["vulkan-radeon", "mesa", "amd-ucode"]
-
-[modules.system-hw.gpu_packages.amd.fedora]
-packages = ["mesa-vulkan-drivers", "mesa-dri-drivers", "mesa-va-drivers-freeworld", "microcode_ctl"]
-
-[modules.system-hw.gpu_packages.nvidia.arch]
-packages = ["nvidia", "nvidia-utils", "nvidia-settings"]
-
-[modules.system-hw.gpu_packages.nvidia.fedora]
-packages = ["akmod-nvidia", "xorg-x11-drv-nvidia-cuda"]
-
-[modules.system-hw.root_services]
-enable = ["systemd-oomd"]
-
-[modules.syncthing]
-description = "Syncthing file synchronization"
-packages = ["syncthing"]
-
-[modules.syncthing.user_services]
-"syncthing.service" = ""
-
-[modules.minecraft]
-description = "Minecraft Server Management"
+[modules.network]
+description = "Game bypass user script and routing helpers"
+always = true
 packages = []
-
-[modules.zen]
-description = "Zen Browser"
-packages = []
-distro_packages.arch = ["zen-browser-bin"]
-distro_packages.fedora = []
 
 [modules.reshade]
-description = "ReShade with Momo presets for Steam/Proton (Dead by Daylight)"
-packages = []
-distro_packages.arch = ["7zip", "curl", "git"]
-distro_packages.fedora = ["p7zip", "p7zip-plugins", "curl", "git"]
+description = "ReShade presets and Steam/Proton helpers (Dead by Daylight)"
+always = true
+packages = ["curl", "git", "7zip"]
+
+[modules.zen]
+description = "Zen Browser configuration"
+always = false
+packages = ["zen-browser-bin"]
+
+[modules.antigravity]
+description = "Antigravity AI Agent configuration and agent skills"
+always = true
+packages = ["python", "git"]
+
+[modules.ags]
+description = "AGS widgets and overlay clock (experimental / decoupled)"
+always = false
+packages = ["aylurs-gtk-shell"]

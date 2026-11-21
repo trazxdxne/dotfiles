@@ -1,2 +1,0 @@
-[commands]
-"noctalia-greeter" = "sh -c 'if [ -d \"$HOME/Projects/noctalia-greeter\" ]; then cd \"$HOME/Projects/noctalia-greeter\" && git pull --rebase && meson setup build-release --prefix=/usr --buildtype=release --reconfigure && meson compile -C build-release && pkexec sh -c \"cd $HOME/Projects/noctalia-greeter && meson install -C build-release && ./scripts/setup_greeter_system.sh\"; fi'"

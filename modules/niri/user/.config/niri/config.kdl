@@ -17,7 +17,9 @@ environment {
 
 spawn-at-startup "noctalia"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
-spawn-at-startup "/home/trazxdxne/.local/bin/niri-autostart" "--config" "/home/trazxdxne/.config/niri-autostart/config.kdl"
+spawn-at-startup "AyuGram"
+spawn-at-startup "discord"
+spawn-at-startup "/opt/brave-origin-bin/brave-origin" "--new-window"
 
 input {
     keyboard {
