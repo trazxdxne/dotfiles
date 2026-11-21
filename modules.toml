@@ -9,7 +9,7 @@ packages = ["fish", "wezterm", "fastfetch", "micro", "stow", "topgrade", "wl-cli
 [modules.niri]
 description = "Niri Wayland scrollable-tiling compositor"
 always = true
-packages = ["niri", "fuzzel", "nautilus", "playerctl", "xdg-desktop-portal-gnome", "xwayland-satellite"]
+packages = ["niri", "fuzzel", "nautilus", "playerctl", "xdg-desktop-portal-gnome", "xwayland-satellite", "niri-autostart-bin"]
 
 [modules.hyprland]
 description = "Hyprland Wayland compositor (Omarchy & Arch ready)"

@@ -191,13 +191,16 @@ for script_file in "$HOME/.local/bin"/* "$DOTFILES_DIR/modules/hyprland/user/.co
     [[ -f "$script_file" ]] && chmod +x "$script_file" 2>/dev/null || true
 done
 
-# Ensure niri-autostart binary is present for Niri layout convergence
-if [[ " ${MODULE_LIST[*]} " =~ " niri " ]] && [[ ! -x "$HOME/.local/bin/niri-autostart" ]]; then
-    printf ":: niri-autostart not found in ~/.local/bin, checking repository...\n"
+# Ensure niri-autostart binary is present for Niri layout convergence (from original developer)
+if [[ " ${MODULE_LIST[*]} " =~ " niri " ]] && ! command -v niri-autostart &>/dev/null; then
+    printf ":: niri-autostart not found in PATH, checking original repository (partanskiy/niri-autostart)...\n"
     NIRI_AUTOSTART_DIR="$HOME/Projects/niri-autostart"
     if [[ ! -d "$NIRI_AUTOSTART_DIR/.git" ]]; then
         mkdir -p "$HOME/Projects"
-        git clone "https://github.com/trazxdxne/niri-autostart.git" "$NIRI_AUTOSTART_DIR" || true
+        git clone "https://github.com/partanskiy/niri-autostart.git" "$NIRI_AUTOSTART_DIR" || true
+    else
+        printf ":: updating niri-autostart from upstream...\n"
+        git -C "$NIRI_AUTOSTART_DIR" pull --ff-only 2>/dev/null || true
     fi
     if command -v cargo &>/dev/null && [[ -f "$NIRI_AUTOSTART_DIR/Cargo.toml" ]]; then
         printf ":: building niri-autostart with cargo...\n"
