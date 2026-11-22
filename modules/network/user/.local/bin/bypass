@@ -1,0 +1,595 @@
+#!/usr/bin/env python3
+import sys
+import os
+import subprocess
+import argparse
+import asyncio
+import json
+import time
+import ssl
+import urllib.request
+import urllib.error
+from pathlib import Path
+
+CONFIG_DIR = Path.home() / ".config" / "bypass"
+VPN_DIR = CONFIG_DIR / "vpn"
+STRATEGIES_DIR = CONFIG_DIR / "strategies"
+SYS_STRATEGIES_DIR = Path("/etc/bypass/strategies")
+SYS_VPN_DIR = Path("/etc/amnezia/amneziawg")
+def find_dotfiles_dir():
+    try:
+        p = Path(__file__).resolve()
+        for parent in p.parents:
+            if (parent / "modules.toml").is_file():
+                return parent
+    except Exception:
+        pass
+    for candidate in [Path.home() / ".dotfiles", Path.home() / "Projects" / "dotfiles"]:
+        if candidate.is_dir():
+            return candidate
+    return Path("/home/trazxdxne/Projects/dotfiles")
+
+DOTFILES_DIR = find_dotfiles_dir()
+FALLBACK_STRATEGIES_DIR = DOTFILES_DIR / "system" / "network" / "zapret-strategies"
+FALLBACK_DNS_DIR = DOTFILES_DIR / "system" / "network" / "dns"
+SYS_RESOLVED_DIR = Path("/etc/systemd/resolved.conf.d")
+
+C_RESET = "\033[0m"
+C_BOLD = "\033[1m"
+C_GREEN = "\033[32m"
+C_RED = "\033[31m"
+C_YELLOW = "\033[33m"
+C_BLUE = "\033[34m"
+C_CYAN = "\033[36m"
+C_DIM = "\033[2m"
+
+def run_cmd(cmd, check=False, capture=True):
+    try:
+        res = subprocess.run(
+            cmd,
+            shell=isinstance(cmd, str),
+            check=check,
+            stdout=subprocess.PIPE if capture else None,
+            stderr=subprocess.PIPE if capture else None,
+            text=True
+        )
+        return res.returncode == 0, res.stdout.strip() if res.stdout else "", res.stderr.strip() if res.stderr else ""
+    except Exception as e:
+        return False, "", str(e)
+
+def is_service_active(service_name):
+    ok, out, _ = run_cmd(["systemctl", "is-active", service_name])
+    return out == "active"
+
+def get_active_vpn_service():
+    ok, out, _ = run_cmd("systemctl list-units --type=service --state=running 'awg-quick@*' --no-legend")
+    if ok and out:
+        for line in out.splitlines():
+            parts = line.split()
+            if parts:
+                srv = parts[0]
+                if srv.startswith("awg-quick@") and srv.endswith(".service"):
+                    profile = srv[len("awg-quick@"):-len(".service")]
+                    return profile
+    return None
+
+def get_available_vpn_profiles():
+    profiles = set()
+    for search_dir in [VPN_DIR, SYS_VPN_DIR, DOTFILES_DIR / "system" / "network"]:
+        if search_dir.is_dir():
+            for p in search_dir.glob("*.conf"):
+                if p.stem not in ["awg0.conf.template", "malw-dns"]:
+                    profiles.add(p.stem)
+    return sorted(list(profiles))
+
+def get_available_strategies():
+    strategies = {}
+    for search_dir in [STRATEGIES_DIR, SYS_STRATEGIES_DIR, FALLBACK_STRATEGIES_DIR]:
+        if search_dir.is_dir():
+            for p in search_dir.glob("*.conf"):
+                name = p.stem
+                if name not in strategies:
+                    desc = ""
+                    with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                        for line in f:
+                            if line.startswith("NAME="):
+                                desc = line.split("=", 1)[1].strip().strip('"\'')
+                                break
+                    strategies[name] = desc or name
+    return strategies
+
+def get_active_strategy():
+    active_file = CONFIG_DIR / "active_strategy"
+    if active_file.is_file():
+        return active_file.read_text().strip()
+    sys_active = Path("/etc/bypass/active_strategy")
+    if sys_active.is_file():
+        return sys_active.read_text().strip()
+    return "discord_youtube"
+
+def set_active_strategy(strat):
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    (CONFIG_DIR / "active_strategy").write_text(strat)
+    if os.access("/etc/bypass", os.W_OK):
+        Path("/etc/bypass/active_strategy").write_text(strat)
+
+def get_public_ip_info():
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    try:
+        req = urllib.request.Request("https://1.1.1.1/cdn-cgi/trace", headers={"User-Agent": "bypass/1.0"})
+        with urllib.request.urlopen(req, timeout=2.5, context=ctx) as resp:
+            data = resp.read().decode("utf-8")
+            info = dict(line.split("=", 1) for line in data.splitlines() if "=" in line)
+            return info.get("ip", "unknown"), info.get("loc", "unknown")
+    except Exception:
+        pass
+    try:
+        req = urllib.request.Request("https://api.ipify.org?format=json", headers={"User-Agent": "bypass/1.0"})
+        with urllib.request.urlopen(req, timeout=2.5, context=ctx) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data.get("ip", "unknown"), "?"
+    except Exception:
+        return "unreachable", "?"
+
+def cmd_status(args):
+    print(f"\n{C_BOLD}{C_CYAN}:: Network Bypass & Circumvention Status{C_RESET}\n")
+
+    vpn_active = get_active_vpn_service()
+    if vpn_active:
+        print(f"  {C_GREEN}●{C_RESET} {C_BOLD}VPN (AmneziaWG):{C_RESET} {C_GREEN}ACTIVE{C_RESET} ({vpn_active})")
+    else:
+        print(f"  {C_RED}○{C_RESET} {C_BOLD}VPN (AmneziaWG):{C_RESET} {C_DIM}INACTIVE{C_RESET}")
+
+    zapret_running = is_service_active("zapret.service")
+    active_strat = get_active_strategy()
+    if zapret_running:
+        print(f"  {C_GREEN}●{C_RESET} {C_BOLD}Zapret (DPI Desync):{C_RESET} {C_GREEN}ACTIVE{C_RESET} ({active_strat})")
+    else:
+        print(f"  {C_RED}○{C_RESET} {C_BOLD}Zapret (DPI Desync):{C_RESET} {C_DIM}INACTIVE{C_RESET} (strategy: {active_strat})")
+
+    game_bypass = is_service_active("game-bypass-routing.service")
+    if game_bypass:
+        print(f"  {C_GREEN}●{C_RESET} {C_BOLD}Game Split-Tunneling:{C_RESET} {C_GREEN}ENABLED{C_RESET} (cgroup mark 0x51)")
+    else:
+        print(f"  {C_YELLOW}○{C_RESET} {C_BOLD}Game Split-Tunneling:{C_RESET} {C_DIM}STOPPED{C_RESET}")
+
+    dns_mode = "System Default"
+    dns_file = SYS_RESOLVED_DIR / "bypass-dns.conf"
+    if dns_file.is_file():
+        content = dns_file.read_text()
+        if "cloudflare" in content or "1.1.1.1" in content:
+            dns_mode = "Cloudflare (DoT Strict)"
+        elif "quad9" in content or "9.9.9.9" in content:
+            dns_mode = "Quad9 (DoT Strict)"
+        elif "adguard" in content:
+            dns_mode = "AdGuard (DoT Strict)"
+        elif "malw" in content:
+            dns_mode = "Malw DNS (DoT Opportunistic)"
+        elif "DNSOverTLS=no" in content:
+            dns_mode = "Direct ISP (DoT Disabled)"
+
+    print(f"  {C_BLUE}🌐{C_RESET} {C_BOLD}DNS Resolver:{C_RESET} {dns_mode}")
+
+    print(f"\n  {C_DIM}Probing public IP...{C_RESET}", end="\r")
+    pub_ip, loc = get_public_ip_info()
+    print(f"  {C_CYAN}🌍{C_RESET} {C_BOLD}Public IP:{C_RESET} {pub_ip} [{loc}]\n")
+
+def cmd_vpn(args):
+    action = args.vpn_action
+    target = args.target
+
+    if action == "status":
+        active = get_active_vpn_service()
+        if active:
+            print(f"Active VPN profile: {C_GREEN}{active}{C_RESET}")
+            ok, out, _ = run_cmd(["ip", "-brief", "address", "show", "dev", active])
+            if ok and out:
+                print(f"Interface: {out}")
+        else:
+            print("No VPN profile currently active.")
+    elif action == "list":
+        profiles = get_available_vpn_profiles()
+        active = get_active_vpn_service()
+        print(f"\n{C_BOLD}Available VPN Profiles:{C_RESET}")
+        for p in profiles:
+            mark = f" {C_GREEN}[active]{C_RESET}" if p == active else ""
+            print(f"  • {p}{mark}")
+        print()
+    elif action == "off":
+        active = get_active_vpn_service()
+        if active:
+            print(f":: stopping awg-quick@{active}.service...")
+            run_cmd(["systemctl", "stop", f"awg-quick@{active}.service"], capture=False)
+            print(f"{C_GREEN}✓ VPN stopped.{C_RESET}")
+        else:
+            print("VPN is already stopped.")
+    elif action in ["on", "switch"]:
+        profiles = get_available_vpn_profiles()
+        if not target:
+            target = "WARPw_93" if "WARPw_93" in profiles else (profiles[0] if profiles else "awg0")
+
+        if target not in profiles:
+            print(f"{C_RED}error: profile '{target}' not found.{C_RESET}")
+            print(f"Available profiles: {', '.join(profiles)}")
+            return 1
+
+        active = get_active_vpn_service()
+        if active:
+            print(f":: stopping current profile {active}...")
+            run_cmd(["systemctl", "stop", f"awg-quick@{active}.service"], capture=False)
+
+        sys_target = SYS_VPN_DIR / f"{target}.conf"
+        if not sys_target.is_file():
+            found_src = None
+            for p in [VPN_DIR / f"{target}.conf", DOTFILES_DIR / "system" / "network" / f"{target}.conf"]:
+                if p.is_file():
+                    found_src = p
+                    break
+            if found_src:
+                run_cmd(f"pkexec install -Dm600 '{found_src}' '{sys_target}'")
+
+        print(f":: starting awg-quick@{target}.service...")
+        ok, _, err = run_cmd(["systemctl", "start", f"awg-quick@{target}.service"])
+        if ok:
+            print(f"{C_GREEN}✓ Connected to {target}.{C_RESET}")
+        else:
+            print(f"{C_RED}failed to start VPN:{C_RESET} {err}")
+            return 1
+
+def cmd_zapret(args):
+    action = args.zapret_action
+    target = args.target
+
+    if action == "status":
+        running = is_service_active("zapret.service")
+        strat = get_active_strategy()
+        state_str = f"{C_GREEN}RUNNING{C_RESET}" if running else f"{C_RED}STOPPED{C_RESET}"
+        print(f"Zapret Status: {state_str} (Strategy: {strat})")
+    elif action == "list":
+        strategies = get_available_strategies()
+        active = get_active_strategy()
+        print(f"\n{C_BOLD}Available Zapret Strategies:{C_RESET}")
+        for s, desc in strategies.items():
+            mark = f" {C_GREEN}[active]{C_RESET}" if s == active else ""
+            print(f"  • {C_BOLD}{s}{C_RESET}: {desc}{mark}")
+        print()
+    elif action == "off":
+        print(":: stopping zapret.service...")
+        run_cmd(["systemctl", "stop", "zapret.service"], capture=False)
+        print(f"{C_GREEN}✓ Zapret stopped.{C_RESET}")
+    elif action in ["on", "strategy", "restart"]:
+        if target:
+            strategies = get_available_strategies()
+            if target not in strategies:
+                print(f"{C_RED}error: strategy '{target}' not found.{C_RESET}")
+                print(f"Available: {', '.join(strategies.keys())}")
+                return 1
+            set_active_strategy(target)
+        strat = get_active_strategy()
+        print(f":: restarting zapret.service with strategy '{strat}'...")
+        ok, _, err = run_cmd(["systemctl", "restart", "zapret.service"])
+        if ok:
+            print(f"{C_GREEN}✓ Zapret active with {strat}.{C_RESET}")
+        else:
+            print(f"{C_RED}failed to restart zapret:{C_RESET} {err}")
+            return 1
+
+def cmd_dns(args):
+    action = args.dns_action
+    provider = args.provider
+
+    presets = {
+        "cloudflare": ("Cloudflare 1.1.1.1 (DoT Strict)", "cloudflare.conf"),
+        "quad9": ("Quad9 9.9.9.9 (DoT Strict)", "quad9.conf"),
+        "adguard": ("AdGuard DNS (DoT Strict)", "adguard.conf"),
+        "malw": ("Malw DNS (DoT Opportunistic)", "malw.conf"),
+        "isp": ("Direct ISP (Standard UDP 53)", "isp.conf")
+    }
+
+    if action == "list":
+        print(f"\n{C_BOLD}Available DNS Presets:{C_RESET}")
+        for key, (desc, _) in presets.items():
+            print(f"  • {C_BOLD}{key}{C_RESET} - {desc}")
+        print()
+    elif action == "status":
+        dns_file = SYS_RESOLVED_DIR / "bypass-dns.conf"
+        if dns_file.is_file():
+            print(f"{C_BOLD}Current /etc/systemd/resolved.conf.d/bypass-dns.conf:{C_RESET}")
+            print(dns_file.read_text())
+        else:
+            print("No custom bypass-dns.conf deployed. Using systemd-resolved defaults.")
+    elif action == "set":
+        if not provider or provider not in presets:
+            print(f"{C_RED}error: invalid provider.{C_RESET} Choose from: {', '.join(presets.keys())}")
+            return 1
+
+        desc, conf_name = presets[provider]
+        src_file = FALLBACK_DNS_DIR / conf_name
+        dest_file = SYS_RESOLVED_DIR / "bypass-dns.conf"
+
+        if not src_file.is_file():
+            print(f"{C_RED}error: template file {src_file} missing.{C_RESET}")
+            return 1
+
+        print(f":: switching DNS to {desc}...")
+        ok, _, err = run_cmd(f"pkexec install -Dm644 '{src_file}' '{dest_file}'")
+        if not ok:
+            print(f"{C_RED}failed to deploy DNS config:{C_RESET} {err}")
+            return 1
+
+        run_cmd(["systemctl", "restart", "systemd-resolved.service"], capture=False)
+        print(f"{C_GREEN}✓ DNS set to {provider}.{C_RESET}")
+
+async def probe_endpoint(name, url, category, timeout=3.5, check_stream=False):
+    start = time.perf_counter()
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    def fetch():
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+            }
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
+                code = resp.getcode()
+                if check_stream:
+                    chunk = resp.read(1024)
+                    return code, len(chunk) > 0
+                return code, True
+        except urllib.error.HTTPError as e:
+            if check_stream and e.code in [400, 403, 404]:
+                return e.code, True
+            return e.code, e.code in [200, 204, 206, 301, 302, 304, 307, 308, 400, 403, 404]
+
+    try:
+        code, ok = await asyncio.wait_for(asyncio.to_thread(fetch), timeout=timeout + 0.5)
+        elapsed = (time.perf_counter() - start) * 1000
+        return {
+            "name": name,
+            "category": category,
+            "status": "PASS" if ok else f"HTTP {code}",
+            "time_ms": elapsed,
+            "success": ok
+        }
+    except Exception as e:
+        elapsed = (time.perf_counter() - start) * 1000
+        err_msg = type(e).__name__
+        if isinstance(e, asyncio.TimeoutError) or "Timeout" in err_msg:
+            err_msg = "TIMEOUT"
+        elif "Certificate" in str(e):
+            err_msg = "SSL_ERROR"
+        return {
+            "name": name,
+            "category": category,
+            "status": err_msg,
+            "time_ms": elapsed,
+            "success": False
+        }
+
+async def run_healthchecks(full=False):
+    targets = [
+        ("YouTube (Web)", "https://www.youtube.com", "Video / Google", False),
+        ("YouTube (CDN)", "https://redirector.googlevideo.com", "Video / Google", True),
+        ("Discord (API)", "https://discord.com/api/v10/gateway", "Discord", False),
+        ("Discord (CDN)", "https://cdn.discordapp.com", "Discord", False),
+        ("RuTracker", "https://rutracker.org", "Blocked Web", False),
+        ("X / Twitter", "https://x.com", "Blocked Web", False),
+        ("NTC Party", "https://ntc.party", "Blocked Web", False),
+        ("VKontakte", "https://vk.com", "Domestic / Direct", False),
+        ("Yandex", "https://ya.ru", "Domestic / Direct", False),
+    ]
+
+    tasks = [probe_endpoint(name, url, cat, check_stream=stream) for name, url, cat, stream in targets]
+    results = await asyncio.gather(*tasks)
+    return results
+
+def cmd_test(args):
+    print(f"\n{C_BOLD}{C_CYAN}:: Running Fast Asynchronous Health Checks...{C_RESET}\n")
+    results = asyncio.run(run_healthchecks(full=args.full))
+
+    print(f"  {C_BOLD}{'Service':<20} {'Category':<18} {'Status':<14} {'Latency':<10}{C_RESET}")
+    print(f"  {'-'*64}")
+
+    passed = 0
+    total = len(results)
+
+    for r in results:
+        status_color = C_GREEN if r["success"] else C_RED
+        mark = "✓" if r["success"] else "✗"
+        lat = f"{r['time_ms']:.0f} ms"
+        print(f"  {r['name']:<20} {C_DIM}{r['category']:<18}{C_RESET} {status_color}{mark} {r['status']:<12}{C_RESET} {lat:<10}")
+        if r["success"]:
+            passed += 1
+
+    print(f"  {'-'*64}")
+    summary_color = C_GREEN if passed == total else (C_YELLOW if passed > 0 else C_RED)
+    print(f"  Result: {summary_color}{passed}/{total} services accessible{C_RESET}\n")
+
+    if args.check_game_bypass and run_cmd("command -v game-bypass")[0]:
+        print(f"  {C_BOLD}Verifying Game Split-Tunneling Routing:{C_RESET}")
+        ok1, normal_ip, _ = run_cmd("curl -s --connect-timeout 3 https://1.1.1.1/cdn-cgi/trace | grep -Po 'ip=\\K.*'")
+        ok2, game_ip, _ = run_cmd("game-bypass curl -s --connect-timeout 3 https://1.1.1.1/cdn-cgi/trace | grep -Po 'ip=\\K.*'")
+        if ok1 and ok2:
+            print(f"    • Default Scope IP:     {C_CYAN}{normal_ip}{C_RESET}")
+            print(f"    • Game Scope IP:        {C_YELLOW}{game_ip}{C_RESET}")
+            if normal_ip != game_ip:
+                print(f"    {C_GREEN}✓ Split-tunneling working: Game traffic routes independently.{C_RESET}\n")
+            else:
+                print(f"    {C_DIM}ℹ Both scopes resolve through same gateway.{C_RESET}\n")
+
+def cmd_tune(args):
+    strategies = get_available_strategies()
+    if not strategies:
+        print(f"{C_RED}error: no strategies found to benchmark.{C_RESET}")
+        return 1
+
+    print(f"\n{C_BOLD}{C_CYAN}:: Automated Zapret Strategy Benchmarking{C_RESET}\n")
+    print(f"Found {len(strategies)} strategies to benchmark against YouTube and Discord.\n")
+
+    benchmarks = []
+    for strat_key, strat_desc in strategies.items():
+        print(f"  Testing strategy: {C_BOLD}{strat_key}{C_RESET} ({strat_desc})...", end="", flush=True)
+        set_active_strategy(strat_key)
+        run_cmd(["systemctl", "restart", "zapret.service"])
+        time.sleep(1.2)
+
+        async def quick_test():
+            t1 = probe_endpoint("YouTube", "https://www.youtube.com", "Video", timeout=2.5)
+            t2 = probe_endpoint("CDN", "https://redirector.googlevideo.com", "Video", timeout=2.5, check_stream=True)
+            t3 = probe_endpoint("Discord", "https://discord.com/api/v10/gateway", "Discord", timeout=2.5)
+            return await asyncio.gather(t1, t2, t3)
+
+        res = asyncio.run(quick_test())
+        score = sum(1 for r in res if r["success"])
+        avg_lat = sum(r["time_ms"] for r in res) / len(res)
+
+        if score == 3:
+            print(f" {C_GREEN}PASS (3/3) [{avg_lat:.0f}ms]{C_RESET}")
+        elif score > 0:
+            print(f" {C_YELLOW}PARTIAL ({score}/3) [{avg_lat:.0f}ms]{C_RESET}")
+        else:
+            print(f" {C_RED}FAILED (0/3){C_RESET}")
+
+        benchmarks.append((strat_key, score, avg_lat))
+
+    benchmarks.sort(key=lambda x: (-x[1], x[2]))
+    best_strat = benchmarks[0][0]
+    best_score = benchmarks[0][1]
+
+    print(f"\n{C_BOLD}Winner:{C_RESET} {C_GREEN}{best_strat}{C_RESET} (score: {best_score}/3)")
+    set_active_strategy(best_strat)
+    run_cmd(["systemctl", "restart", "zapret.service"])
+    print(f"{C_GREEN}✓ Active strategy set to {best_strat}.{C_RESET}\n")
+
+def cmd_menu(args):
+    menu_items = [
+        "1. Toggle VPN (On / Off)",
+        "2. Switch VPN Profile",
+        "3. Toggle Zapret (On / Off)",
+        "4. Switch Zapret Strategy",
+        "5. Switch DNS Provider",
+        "6. Run Full Healthcheck",
+        "7. Auto-Tune Zapret",
+        "8. Show Network Status",
+        "0. Exit"
+    ]
+
+    has_fzf = run_cmd("command -v fzf")[0]
+    has_fuzzel = run_cmd("command -v fuzzel")[0]
+
+    if not sys.stdin.isatty() and has_fuzzel:
+        input_data = "\n".join(menu_items)
+        ok, choice, _ = run_cmd(f"echo '{input_data}' | fuzzel -d -p 'Bypass > '")
+        if not ok or not choice:
+            return 0
+    elif has_fzf and sys.stdin.isatty():
+        input_data = "\n".join(menu_items)
+        ok, choice, _ = run_cmd(f"echo '{input_data}' | fzf --prompt='Bypass > ' --header='Network Bypass Control'")
+        if not ok or not choice:
+            return 0
+    else:
+        print(f"\n{C_BOLD}{C_CYAN}:: Bypass Interactive Menu{C_RESET}")
+        for item in menu_items:
+            print(f"  {item}")
+        try:
+            choice = input("\nSelect an option [1-8]: ").strip()
+        except (KeyboardInterrupt, EOFError):
+            print()
+            return 0
+
+    if choice.startswith("1"):
+        active = get_active_vpn_service()
+        if active:
+            cmd_vpn(argparse.Namespace(vpn_action="off", target=None))
+        else:
+            cmd_vpn(argparse.Namespace(vpn_action="on", target=None))
+    elif choice.startswith("2"):
+        profiles = get_available_vpn_profiles()
+        if has_fzf and sys.stdin.isatty():
+            ok, sel, _ = run_cmd(f"echo '{chr(10).join(profiles)}' | fzf --prompt='Select Profile > '")
+            if ok and sel:
+                cmd_vpn(argparse.Namespace(vpn_action="switch", target=sel))
+        else:
+            cmd_vpn(argparse.Namespace(vpn_action="list", target=None))
+    elif choice.startswith("3"):
+        if is_service_active("zapret.service"):
+            cmd_zapret(argparse.Namespace(zapret_action="off", target=None))
+        else:
+            cmd_zapret(argparse.Namespace(zapret_action="on", target=None))
+    elif choice.startswith("4"):
+        strats = list(get_available_strategies().keys())
+        if has_fzf and sys.stdin.isatty():
+            ok, sel, _ = run_cmd(f"echo '{chr(10).join(strats)}' | fzf --prompt='Select Strategy > '")
+            if ok and sel:
+                cmd_zapret(argparse.Namespace(zapret_action="strategy", target=sel))
+        else:
+            cmd_zapret(argparse.Namespace(zapret_action="list", target=None))
+    elif choice.startswith("5"):
+        dns_options = ["cloudflare", "quad9", "adguard", "malw", "isp"]
+        if has_fzf and sys.stdin.isatty():
+            ok, sel, _ = run_cmd(f"echo '{chr(10).join(dns_options)}' | fzf --prompt='Select DNS > '")
+            if ok and sel:
+                cmd_dns(argparse.Namespace(dns_action="set", provider=sel))
+        else:
+            cmd_dns(argparse.Namespace(dns_action="list", provider=None))
+    elif choice.startswith("6"):
+        cmd_test(argparse.Namespace(full=True, check_game_bypass=True))
+    elif choice.startswith("7"):
+        cmd_tune(argparse.Namespace())
+    elif choice.startswith("8"):
+        cmd_status(argparse.Namespace())
+
+def main():
+    parser = argparse.ArgumentParser(description="Unified Network Bypass & DPI Control for Arch/CachyOS")
+    subparsers = parser.add_subparsers(dest="command")
+
+    subparsers.add_parser("status", help="Show full network bypass status")
+
+    p_vpn = subparsers.add_parser("vpn", help="Manage AmneziaWG VPN tunnels")
+    p_vpn.add_argument("vpn_action", choices=["status", "on", "off", "switch", "list"], nargs="?", default="status")
+    p_vpn.add_argument("target", nargs="?", default=None)
+
+    p_zapret = subparsers.add_parser("zapret", help="Manage Zapret DPI bypass daemon")
+    p_zapret.add_argument("zapret_action", choices=["status", "on", "off", "strategy", "list", "restart"], nargs="?", default="status")
+    p_zapret.add_argument("target", nargs="?", default=None)
+
+    p_dns = subparsers.add_parser("dns", help="Manage system DNS resolvers")
+    p_dns.add_argument("dns_action", choices=["status", "list", "set"], nargs="?", default="status")
+    p_dns.add_argument("provider", nargs="?", default=None)
+
+    p_test = subparsers.add_parser("test", help="Run automated target health check")
+    p_test.add_argument("--full", action="store_true", help="Include video stream chunk probe")
+    p_test.add_argument("--check-game-bypass", action="store_true", default=True, help="Verify game-bypass scope")
+
+    subparsers.add_parser("tune", help="Auto-benchmark Zapret strategies")
+    subparsers.add_parser("menu", help="Interactive TUI or GUI menu")
+
+    if len(sys.argv) == 1:
+        cmd_status(argparse.Namespace())
+        return
+
+    args = parser.parse_args()
+
+    dispatch = {
+        "status": cmd_status,
+        "vpn": cmd_vpn,
+        "zapret": cmd_zapret,
+        "dns": cmd_dns,
+        "test": cmd_test,
+        "tune": cmd_tune,
+        "menu": cmd_menu,
+    }
+
+    if args.command in dispatch:
+        dispatch[args.command](args)
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()

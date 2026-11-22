@@ -19,6 +19,8 @@ node_modules/
 
 # Build artifacts
 **/build/
+__pycache__/
+*.pyc
 
 # App State & Dynamic files
 **/alarms.json

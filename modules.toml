@@ -4,7 +4,7 @@
 [modules.base]
 description = "Core shell (Fish), terminal (WezTerm), micro editor, and base configs"
 always = true
-packages = ["fish", "wezterm", "fastfetch", "micro", "stow", "topgrade", "wl-clipboard", "libnotify", "7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "discord", "gnome-keyring", "brave-origin-bin"]
+packages = ["fish", "wezterm", "fastfetch", "micro", "stow", "topgrade", "wl-clipboard", "libnotify", "7zip", "fresh-editor", "otf-geist-mono-nerd", "ayugram-desktop", "discord", "gnome-keyring", "brave-origin-bin", "fzf"]
 
 [modules.niri]
 description = "Niri Wayland scrollable-tiling compositor"
@@ -27,9 +27,9 @@ always = true
 packages = ["pipewire", "wireplumber", "easyeffects", "pipewire-pulse"]
 
 [modules.network]
-description = "Game bypass user script and routing helpers"
+description = "Unified network bypass controller (AmneziaWG, Zapret, DNS, game split-tunneling)"
 always = true
-packages = []
+packages = ["python", "curl"]
 
 [modules.reshade]
 description = "ReShade presets and Steam/Proton helpers (Dead by Daylight)"

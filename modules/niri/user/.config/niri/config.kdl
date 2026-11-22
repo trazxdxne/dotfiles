@@ -380,6 +380,7 @@ binds {
 
 
     Mod+V cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
+    Mod+Shift+V hotkey-overlay-title="Network Bypass Menu" { spawn "bypass" "menu"; }
 
     Mod+BackSpace cooldown-ms=500 { spawn "noctalia" "msg" "panel-toggle" "session"; }
 

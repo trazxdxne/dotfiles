@@ -1,0 +1,29 @@
+/* Allow users in wheel group to manage network bypass services without password */
+polkit.addRule(function(action, subject) {
+    if (!subject.isInGroup("wheel")) {
+        return undefined;
+    }
+
+    if (action.id == "org.freedesktop.systemd1.manage-units") {
+        var unit = action.lookup("unit");
+        if (unit && (
+            unit.indexOf("awg-quick@") === 0 ||
+            unit === "zapret.service" ||
+            unit === "game-bypass-routing.service" ||
+            unit === "systemd-resolved.service"
+        )) {
+            return polkit.Result.YES;
+        }
+    }
+
+    if (action.id == "org.freedesktop.systemd1.reload-daemon") {
+        return polkit.Result.YES;
+    }
+
+    if (action.id == "org.freedesktop.resolve1.set-dns-servers" ||
+        action.id == "org.freedesktop.resolve1.set-domains" ||
+        action.id == "org.freedesktop.resolve1.set-default-route" ||
+        action.id == "org.freedesktop.resolve1.set-dns-over-tls") {
+        return polkit.Result.YES;
+    }
+});
