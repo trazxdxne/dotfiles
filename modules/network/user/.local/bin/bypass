@@ -159,14 +159,18 @@ def cmd_status(args):
     dns_file = SYS_RESOLVED_DIR / "bypass-dns.conf"
     if dns_file.is_file():
         content = dns_file.read_text()
-        if "cloudflare" in content or "1.1.1.1" in content:
+        if "dns-ai.ru" in content or "194.87.196.13" in content:
+            dns_mode = "DNS-AI.ru (Gemini / Claude / ChatGPT)"
+        elif "comss.one" in content or "93.115.24.204" in content:
+            dns_mode = "Comss.one DNS (AI & Geo-Bypass)"
+        elif "malw" in content:
+            dns_mode = "Malw DNS (AI & Geo-Bypass)"
+        elif "cloudflare" in content or "1.1.1.1" in content:
             dns_mode = "Cloudflare (DoT Strict)"
         elif "quad9" in content or "9.9.9.9" in content:
             dns_mode = "Quad9 (DoT Strict)"
         elif "adguard" in content:
             dns_mode = "AdGuard (DoT Strict)"
-        elif "malw" in content:
-            dns_mode = "Malw DNS (DoT Opportunistic)"
         elif "DNSOverTLS=no" in content:
             dns_mode = "Direct ISP (DoT Disabled)"
 
@@ -281,10 +285,12 @@ def cmd_dns(args):
     provider = args.provider
 
     presets = {
+        "dns-ai": ("DNS-AI.ru (Optimized for Gemini, Claude & ChatGPT)", "dns-ai.conf"),
+        "comss": ("Comss.one DNS (Popular 4PDA AI & Service Bypass)", "comss.conf"),
+        "malw": ("Malw DNS (Community AI & Geo-Bypass DoT/DoH)", "malw.conf"),
         "cloudflare": ("Cloudflare 1.1.1.1 (DoT Strict)", "cloudflare.conf"),
         "quad9": ("Quad9 9.9.9.9 (DoT Strict)", "quad9.conf"),
         "adguard": ("AdGuard DNS (DoT Strict)", "adguard.conf"),
-        "malw": ("Malw DNS (DoT Opportunistic)", "malw.conf"),
         "isp": ("Direct ISP (Standard UDP 53)", "isp.conf")
     }
 
@@ -345,7 +351,7 @@ async def probe_endpoint(name, url, category, timeout=3.5, check_stream=False):
         except urllib.error.HTTPError as e:
             if check_stream and e.code in [400, 403, 404]:
                 return e.code, True
-            return e.code, e.code in [200, 204, 206, 301, 302, 304, 307, 308, 400, 403, 404]
+            return e.code, e.code in [200, 204, 206, 301, 302, 304, 307, 308, 400, 401, 403, 404]
 
     try:
         code, ok = await asyncio.wait_for(asyncio.to_thread(fetch), timeout=timeout + 0.5)
@@ -374,6 +380,10 @@ async def probe_endpoint(name, url, category, timeout=3.5, check_stream=False):
 
 async def run_healthchecks(full=False):
     targets = [
+        ("Google Gemini", "https://gemini.google.com", "AI / Gemini", False),
+        ("Google AI Studio", "https://aistudio.google.com", "AI / Gemini", False),
+        ("Gemini API", "https://generativelanguage.googleapis.com", "AI / Gemini", False),
+        ("OpenAI API", "https://api.openai.com/v1/models", "AI / ChatGPT", False),
         ("YouTube (Web)", "https://www.youtube.com", "Video / Google", False),
         ("YouTube (CDN)", "https://redirector.googlevideo.com", "Video / Google", True),
         ("Discord (API)", "https://discord.com/api/v10/gateway", "Discord", False),
@@ -531,7 +541,7 @@ def cmd_menu(args):
         else:
             cmd_zapret(argparse.Namespace(zapret_action="list", target=None))
     elif choice.startswith("5"):
-        dns_options = ["cloudflare", "quad9", "adguard", "malw", "isp"]
+        dns_options = ["dns-ai", "comss", "malw", "cloudflare", "quad9", "adguard", "isp"]
         if has_fzf and sys.stdin.isatty():
             ok, sel, _ = run_cmd(f"echo '{chr(10).join(dns_options)}' | fzf --prompt='Select DNS > '")
             if ok and sel:
