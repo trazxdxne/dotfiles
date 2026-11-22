@@ -7,6 +7,9 @@ import asyncio
 import json
 import time
 import ssl
+import socket
+import re
+import tempfile
 import urllib.request
 import urllib.error
 from pathlib import Path
@@ -159,7 +162,21 @@ def cmd_status(args):
     dns_file = SYS_RESOLVED_DIR / "bypass-dns.conf"
     if dns_file.is_file():
         content = dns_file.read_text()
-        if "dns-ai.ru" in content or "194.87.196.13" in content:
+        if "ru.geohide.ru" in content:
+            dns_mode = "GeoHide RU (DE Proxy for ChatGPT)"
+        elif "eu.geohide.ru" in content:
+            dns_mode = "GeoHide EU (DE Proxy for ChatGPT)"
+        elif "us.geohide.ru" in content:
+            dns_mode = "GeoHide US (US Proxy for ChatGPT)"
+        elif "magicdns" in content:
+            dns_mode = "MagicDNS (FI Proxy for ChatGPT)"
+        elif "bezmezhau" in content:
+            dns_mode = "Bezmezhau (NL Proxy for ChatGPT)"
+        elif "wlrus" in content:
+            dns_mode = "WLRUS (Fast SmartDNS)"
+        elif "dagami" in content:
+            dns_mode = "Dagami (US Proxy for ChatGPT)"
+        elif "dns-ai.ru" in content or "194.87.196.13" in content:
             dns_mode = "DNS-AI.ru (Gemini / Claude / ChatGPT)"
         elif "195.133.25" in content:
             dns_mode = "Comss.one East (4PDA AI & YouTube)"
@@ -301,12 +318,19 @@ def cmd_dns(args):
     provider = args.provider
 
     presets = {
-        "dns-ai": ("DNS-AI.ru (Optimized for Gemini, Claude & ChatGPT)", "dns-ai.conf"),
+        "geohide-ru": ("GeoHide RU (Russian Routing & DE Proxy)", "geohide-ru.conf"),
+        "geohide-eu": ("GeoHide EU (European Routing & DE Proxy)", "geohide-eu.conf"),
+        "geohide-us": ("GeoHide US (US Routing & Fast US Proxy)", "geohide-us.conf"),
         "comss": ("Comss.one Primary (Popular 4PDA AI & Service Bypass)", "comss.conf"),
-        "comss-alt": ("Comss.one East/Secondary (4PDA IPs 195.133.25.16)", "comss-alt.conf"),
+        "magicdns": ("MagicDNS (FI Proxy for ChatGPT & AI)", "magicdns.conf"),
+        "bezmezhau": ("Bezmezhau (NL Proxy for AI & Unblocking)", "bezmezhau.conf"),
+        "wlrus": ("WLRUS (Fast DoT / DoH DNS)", "wlrus.conf"),
+        "malw": ("Malw DNS (DE Proxy for ChatGPT & AI)", "malw.conf"),
+        "dagami": ("Dagami (US Proxy for ChatGPT & AI)", "dagami.conf"),
+        "dns-ai": ("DNS-AI.ru (Optimized for Gemini, Claude & ChatGPT)", "dns-ai.conf"),
         "zapret-dns": ("Zapret.moe DNS (4PDA DNS Club - Community Unblock)", "zapret-dns.conf"),
-        "malw": ("Malw DNS (Community AI & Geo-Bypass DoT/DoH)", "malw.conf"),
         "nextdns": ("NextDNS (DnsConf / Custom Profile or Public DoT)", "nextdns.conf"),
+        "comss-alt": ("Comss.one East/Secondary (4PDA IPs 195.133.25.16)", "comss-alt.conf"),
         "nulls-proxy": ("Null's Proxy DNS (Brawl/Supercell & AI Proxy)", "nulls-proxy.conf"),
         "xbox-dns": ("Xbox-DNS.ru (Consoles, AI & Geo-Bypass)", "xbox-dns.conf"),
         "controld": ("Control D (Free Unfiltered / Anti-Malware)", "controld.conf"),
@@ -329,6 +353,65 @@ def cmd_dns(args):
             print(dns_file.read_text())
         else:
             print("No custom bypass-dns.conf deployed. Using systemd-resolved defaults.")
+    elif action in ["monitor", "test"]:
+        print(f"\n{C_BOLD}{C_CYAN}:: SmartDNS & AI Benchmark Monitor (DnsConf Catalog){C_RESET}\n")
+        print(f"  {C_BOLD}{'DNS Server':<14} {'DNS Status':<22} {'AI Routing / Proxy':<26} {'Command':<26}{C_RESET}")
+        print(f"  {'-'*90}")
+        
+        monitor_targets = [
+            ("GeoHide RU", "193.233.112.130", "via DE Proxy", "geohide-ru"),
+            ("GeoHide EU", "5.175.161.3", "via DE Proxy", "geohide-eu"),
+            ("GeoHide US", "192.255.159.240", "via US Proxy", "geohide-us"),
+            ("Comss", "93.115.24.204", "Direct (Unblocked)", "comss"),
+            ("MagicDNS", "109.120.187.249", "via FI Proxy", "magicdns"),
+            ("Bezmezhau", "143.20.64.55", "via NL Proxy", "bezmezhau"),
+            ("WLRUS", "95.85.240.254", "via SmartDNS", "wlrus"),
+            ("Malw", "179.254.166.171", "via DE Proxy", "malw"),
+            ("Dagami", "179.254.186.80", "via US Proxy", "dagami"),
+            ("DNS-AI", "194.87.196.13", "Direct (Optimized)", "dns-ai"),
+            ("Zapret", "83.217.211.149", "Community Unblock", "zapret-dns"),
+        ]
+
+        def check_conn(ip):
+            t0 = time.perf_counter()
+            for port in (853, 443):
+                try:
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    s.settimeout(0.5)
+                    s.connect((ip, port))
+                    s.close()
+                    return True, (time.perf_counter() - t0) * 1000
+                except OSError:
+                    pass
+            return False, (time.perf_counter() - t0) * 1000
+
+        async def probe_dns_monitor(name, ip, expected_proxy, slug):
+            try:
+                dns_ok, dns_ms = await asyncio.wait_for(asyncio.to_thread(check_conn, ip), timeout=1.2)
+            except Exception:
+                dns_ok, dns_ms = False, 0
+
+            return {
+                "name": name,
+                "dns_ok": dns_ok,
+                "dns_ms": dns_ms,
+                "proxy": expected_proxy if dns_ok else "inaccessible",
+                "slug": slug
+            }
+
+        async def run_all_monitor():
+            tasks = [probe_dns_monitor(n, ip, p, s) for n, ip, p, s in monitor_targets]
+            return await asyncio.gather(*tasks)
+
+        res = asyncio.run(run_all_monitor())
+        for r in res:
+            mark = "✓" if r["dns_ok"] else "✗"
+            color = C_GREEN if r["dns_ok"] else C_RED
+            status_text = f"{mark} online, {r['dns_ms']:.0f} ms" if r["dns_ok"] else f"{mark} offline"
+            ai_text = r["proxy"]
+            cmd_str = f"bypass dns set {r['slug']}"
+            print(f"  {r['name']:<14} {color}{status_text:<20}{C_RESET} {color if r['dns_ok'] else C_RED}{ai_text:<24}{C_RESET} {C_CYAN}{cmd_str:<26}{C_RESET}")
+        print(f"  {'-'*90}\n")
     elif action == "set":
         if not provider or provider not in presets:
             print(f"{C_RED}error: invalid provider.{C_RESET} Choose from: {', '.join(presets.keys())}")
@@ -343,12 +426,10 @@ def cmd_dns(args):
             pid = profile_id.strip()
             desc = f"NextDNS Profile [{pid}] (Custom DnsConf Filter)"
             custom_content = f"[Resolve]\nDNS=45.90.28.0#{pid}.dns.nextdns.io 45.90.30.0#{pid}.dns.nextdns.io 2a07:a8c0::#{pid}.dns.nextdns.io 2a07:a8c1::#{pid}.dns.nextdns.io\nDomains=~.\nDNSOverTLS=opportunistic\n"
-            temp_file = Path("/tmp/bypass_nextdns.conf")
-            try:
-                temp_file.write_text(custom_content)
-                src_to_install = temp_file
-            except Exception:
-                src_to_install = src_file
+            with tempfile.NamedTemporaryFile("w", delete=False) as tf:
+                tf.write(custom_content)
+                tf_path = Path(tf.name)
+            src_to_install = tf_path
         else:
             if not src_file.is_file():
                 print(f"{C_RED}error: template file {src_file} missing.{C_RESET}")
@@ -579,8 +660,10 @@ def cmd_menu(args):
             cmd_zapret(argparse.Namespace(zapret_action="list", target=None))
     elif choice.startswith("5"):
         dns_options = [
-            "dns-ai", "comss", "comss-alt", "zapret-dns", "malw", "nextdns", "nulls-proxy",
-            "xbox-dns", "controld", "mullvad", "cloudflare", "quad9", "adguard", "isp"
+            "geohide-ru", "geohide-eu", "geohide-us", "comss", "magicdns",
+            "bezmezhau", "wlrus", "malw", "dagami", "dns-ai", "zapret-dns",
+            "nextdns", "comss-alt", "nulls-proxy", "xbox-dns", "controld",
+            "mullvad", "cloudflare", "quad9", "adguard", "isp"
         ]
         if has_fzf and sys.stdin.isatty():
             ok, sel, _ = run_cmd(f"echo '{chr(10).join(dns_options)}' | fzf --prompt='Select DNS > '")
@@ -610,7 +693,7 @@ def main():
     p_zapret.add_argument("target", nargs="?", default=None)
 
     p_dns = subparsers.add_parser("dns", help="Manage system DNS resolvers")
-    p_dns.add_argument("dns_action", choices=["status", "list", "set"], nargs="?", default="status")
+    p_dns.add_argument("dns_action", choices=["status", "list", "set", "monitor", "test"], nargs="?", default="status")
     p_dns.add_argument("provider", nargs="?", default=None)
     p_dns.add_argument("profile_id", nargs="?", default=None, help="Custom profile ID for NextDNS")
 
