@@ -23,8 +23,8 @@ fi
 # Aliases
 if [[ -x /opt/zapret/service.sh ]]; then
     alias zapret="/opt/zapret/service.sh"
-else
-    alias zapret="cd ~/.dotfiles/modules/network/zapret && ./service.sh"
+elif [[ -x "$HOME/.dotfiles/system/zapret/service.sh" ]]; then
+    alias zapret="$HOME/.dotfiles/system/zapret/service.sh"
 fi
 
 # Local bin

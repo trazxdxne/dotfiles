@@ -27,8 +27,16 @@ if [[ -f "$SCRIPT_DIR/network/game-bypass-routing.service" ]]; then
 fi
 
 if [[ -f "$SCRIPT_DIR/network/awg0.conf" ]]; then
+    if ! command -v awg-quick &>/dev/null; then
+        printf ":: installing amneziawg-tools and amneziawg-dkms\n"
+        pacman -S --needed --noconfirm amneziawg-tools amneziawg-dkms || true
+    fi
     mkdir -p /etc/amnezia/amneziawg
     install -Dm600 "$SCRIPT_DIR/network/awg0.conf" /etc/amnezia/amneziawg/awg0.conf
+fi
+
+if [[ -f /etc/gai.conf ]]; then
+    sed -i 's/^#precedence ::ffff:0:0\/96  100/precedence ::ffff:0:0\/96  100/' /etc/gai.conf
 fi
 
 printf ":: deploying hardware, polkit, and oomd rules\n"
