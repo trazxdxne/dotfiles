@@ -169,6 +169,10 @@ def cmd_status(args):
             dns_mode = "Zapret.moe DNS (4PDA DNS Club)"
         elif "malw" in content:
             dns_mode = "Malw DNS (AI & Geo-Bypass)"
+        elif "nextdns" in content:
+            m = re.search(r'#([a-zA-Z0-9]+)\.dns\.nextdns\.io', content)
+            prof_tag = f" [{m.group(1)}]" if m and m.group(1) != "dns" else ""
+            dns_mode = f"NextDNS{prof_tag} (DnsConf / Custom Profile)"
         elif "nullsproxy" in content:
             dns_mode = "Null's Proxy DNS (Gaming & AI)"
         elif "xbox-dns" in content:
@@ -302,6 +306,7 @@ def cmd_dns(args):
         "comss-alt": ("Comss.one East/Secondary (4PDA IPs 195.133.25.16)", "comss-alt.conf"),
         "zapret-dns": ("Zapret.moe DNS (4PDA DNS Club - Community Unblock)", "zapret-dns.conf"),
         "malw": ("Malw DNS (Community AI & Geo-Bypass DoT/DoH)", "malw.conf"),
+        "nextdns": ("NextDNS (DnsConf / Custom Profile or Public DoT)", "nextdns.conf"),
         "nulls-proxy": ("Null's Proxy DNS (Brawl/Supercell & AI Proxy)", "nulls-proxy.conf"),
         "xbox-dns": ("Xbox-DNS.ru (Consoles, AI & Geo-Bypass)", "xbox-dns.conf"),
         "controld": ("Control D (Free Unfiltered / Anti-Malware)", "controld.conf"),
@@ -333,12 +338,25 @@ def cmd_dns(args):
         src_file = FALLBACK_DNS_DIR / conf_name
         dest_file = SYS_RESOLVED_DIR / "bypass-dns.conf"
 
-        if not src_file.is_file():
-            print(f"{C_RED}error: template file {src_file} missing.{C_RESET}")
-            return 1
+        profile_id = getattr(args, "profile_id", None)
+        if provider == "nextdns" and profile_id:
+            pid = profile_id.strip()
+            desc = f"NextDNS Profile [{pid}] (Custom DnsConf Filter)"
+            custom_content = f"[Resolve]\nDNS=45.90.28.0#{pid}.dns.nextdns.io 45.90.30.0#{pid}.dns.nextdns.io 2a07:a8c0::#{pid}.dns.nextdns.io 2a07:a8c1::#{pid}.dns.nextdns.io\nDomains=~.\nDNSOverTLS=opportunistic\n"
+            temp_file = Path("/tmp/bypass_nextdns.conf")
+            try:
+                temp_file.write_text(custom_content)
+                src_to_install = temp_file
+            except Exception:
+                src_to_install = src_file
+        else:
+            if not src_file.is_file():
+                print(f"{C_RED}error: template file {src_file} missing.{C_RESET}")
+                return 1
+            src_to_install = src_file
 
         print(f":: switching DNS to {desc}...")
-        ok, _, err = run_cmd(f"pkexec install -Dm644 '{src_file}' '{dest_file}'")
+        ok, _, err = run_cmd(f"pkexec install -Dm644 '{src_to_install}' '{dest_file}'")
         if not ok:
             print(f"{C_RED}failed to deploy DNS config:{C_RESET} {err}")
             return 1
@@ -411,6 +429,7 @@ async def run_healthchecks(full=False):
         ("NTC Party", "https://ntc.party", "Blocked Web", False),
         ("VKontakte", "https://vk.com", "Domestic / Direct", False),
         ("Yandex", "https://ya.ru", "Domestic / Direct", False),
+        ("Vercel (dns-conf-ui)", "https://dns-conf-ui.vercel.app", "Vercel / DnsConf", False),
     ]
 
     tasks = [probe_endpoint(name, url, cat, check_stream=stream) for name, url, cat, stream in targets]
@@ -560,7 +579,7 @@ def cmd_menu(args):
             cmd_zapret(argparse.Namespace(zapret_action="list", target=None))
     elif choice.startswith("5"):
         dns_options = [
-            "dns-ai", "comss", "comss-alt", "zapret-dns", "malw", "nulls-proxy",
+            "dns-ai", "comss", "comss-alt", "zapret-dns", "malw", "nextdns", "nulls-proxy",
             "xbox-dns", "controld", "mullvad", "cloudflare", "quad9", "adguard", "isp"
         ]
         if has_fzf and sys.stdin.isatty():
@@ -593,6 +612,7 @@ def main():
     p_dns = subparsers.add_parser("dns", help="Manage system DNS resolvers")
     p_dns.add_argument("dns_action", choices=["status", "list", "set"], nargs="?", default="status")
     p_dns.add_argument("provider", nargs="?", default=None)
+    p_dns.add_argument("profile_id", nargs="?", default=None, help="Custom profile ID for NextDNS")
 
     p_test = subparsers.add_parser("test", help="Run automated target health check")
     p_test.add_argument("--full", action="store_true", help="Include video stream chunk probe")
