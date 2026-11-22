@@ -29,4 +29,4 @@ complete -c bypass -n "__fish_seen_subcommand_from zapret" -a restart -d "Restar
 complete -c bypass -n "__fish_seen_subcommand_from dns" -a status -d "Show current DNS configuration"
 complete -c bypass -n "__fish_seen_subcommand_from dns" -a list -d "List available DNS presets"
 complete -c bypass -n "__fish_seen_subcommand_from dns" -a set -d "Apply DNS preset"
-complete -c bypass -n "__fish_seen_subcommand_from dns; and __fish_seen_subcommand_from set" -a "dns-ai comss malw cloudflare quad9 adguard isp" -d "DNS Provider"
+complete -c bypass -n "__fish_seen_subcommand_from dns; and __fish_seen_subcommand_from set" -a "dns-ai comss comss-alt zapret-dns malw nulls-proxy xbox-dns controld mullvad cloudflare quad9 adguard isp" -d "DNS Provider"

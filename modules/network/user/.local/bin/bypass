@@ -161,10 +161,22 @@ def cmd_status(args):
         content = dns_file.read_text()
         if "dns-ai.ru" in content or "194.87.196.13" in content:
             dns_mode = "DNS-AI.ru (Gemini / Claude / ChatGPT)"
+        elif "195.133.25" in content:
+            dns_mode = "Comss.one East (4PDA AI & YouTube)"
         elif "comss.one" in content or "93.115.24.204" in content:
-            dns_mode = "Comss.one DNS (AI & Geo-Bypass)"
+            dns_mode = "Comss.one Primary (AI & Geo-Bypass)"
+        elif "zapret.moe" in content or "83.217.211.149" in content:
+            dns_mode = "Zapret.moe DNS (4PDA DNS Club)"
         elif "malw" in content:
             dns_mode = "Malw DNS (AI & Geo-Bypass)"
+        elif "nullsproxy" in content:
+            dns_mode = "Null's Proxy DNS (Gaming & AI)"
+        elif "xbox-dns" in content:
+            dns_mode = "Xbox-DNS.ru (Consoles & Geo-Bypass)"
+        elif "controld" in content:
+            dns_mode = "Control D (Privacy & Anti-Malware)"
+        elif "mullvad" in content:
+            dns_mode = "Mullvad DNS (Privacy & Zero-Log)"
         elif "cloudflare" in content or "1.1.1.1" in content:
             dns_mode = "Cloudflare (DoT Strict)"
         elif "quad9" in content or "9.9.9.9" in content:
@@ -286,8 +298,14 @@ def cmd_dns(args):
 
     presets = {
         "dns-ai": ("DNS-AI.ru (Optimized for Gemini, Claude & ChatGPT)", "dns-ai.conf"),
-        "comss": ("Comss.one DNS (Popular 4PDA AI & Service Bypass)", "comss.conf"),
+        "comss": ("Comss.one Primary (Popular 4PDA AI & Service Bypass)", "comss.conf"),
+        "comss-alt": ("Comss.one East/Secondary (4PDA IPs 195.133.25.16)", "comss-alt.conf"),
+        "zapret-dns": ("Zapret.moe DNS (4PDA DNS Club - Community Unblock)", "zapret-dns.conf"),
         "malw": ("Malw DNS (Community AI & Geo-Bypass DoT/DoH)", "malw.conf"),
+        "nulls-proxy": ("Null's Proxy DNS (Brawl/Supercell & AI Proxy)", "nulls-proxy.conf"),
+        "xbox-dns": ("Xbox-DNS.ru (Consoles, AI & Geo-Bypass)", "xbox-dns.conf"),
+        "controld": ("Control D (Free Unfiltered / Anti-Malware)", "controld.conf"),
+        "mullvad": ("Mullvad Privacy DNS (Zero-Logging & Adblock)", "mullvad.conf"),
         "cloudflare": ("Cloudflare 1.1.1.1 (DoT Strict)", "cloudflare.conf"),
         "quad9": ("Quad9 9.9.9.9 (DoT Strict)", "quad9.conf"),
         "adguard": ("AdGuard DNS (DoT Strict)", "adguard.conf"),
@@ -541,7 +559,10 @@ def cmd_menu(args):
         else:
             cmd_zapret(argparse.Namespace(zapret_action="list", target=None))
     elif choice.startswith("5"):
-        dns_options = ["dns-ai", "comss", "malw", "cloudflare", "quad9", "adguard", "isp"]
+        dns_options = [
+            "dns-ai", "comss", "comss-alt", "zapret-dns", "malw", "nulls-proxy",
+            "xbox-dns", "controld", "mullvad", "cloudflare", "quad9", "adguard", "isp"
+        ]
         if has_fzf and sys.stdin.isatty():
             ok, sel, _ = run_cmd(f"echo '{chr(10).join(dns_options)}' | fzf --prompt='Select DNS > '")
             if ok and sel:
