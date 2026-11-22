@@ -31,6 +31,10 @@ if [[ -f "$SCRIPT_DIR/network/awg0.conf" ]]; then
         printf ":: installing amneziawg-tools and amneziawg-dkms\n"
         pacman -S --needed --noconfirm amneziawg-tools amneziawg-dkms || true
     fi
+    if ! command -v resolvconf &>/dev/null; then
+        printf ":: installing systemd-resolvconf\n"
+        pacman -S --needed --noconfirm systemd-resolvconf || true
+    fi
     mkdir -p /etc/amnezia/amneziawg
     install -Dm600 "$SCRIPT_DIR/network/awg0.conf" /etc/amnezia/amneziawg/awg0.conf
 fi
