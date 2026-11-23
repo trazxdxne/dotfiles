@@ -76,14 +76,26 @@ To solve this, Windows uses **DNS-over-HTTPS (DoH)**, which encrypts queries ove
 Run from PowerShell (automatically prompts for elevation if not already Admin):
 
 ```powershell
-# Check current DNS and DoH status
+# List all 16 available SmartDNS presets from dns-conf-ui
+.\system\network\setup-windows-doh.ps1 -List
+
+# Check current DNS, DoH, and IPv6 leak status
 .\system\network\setup-windows-doh.ps1 -Preset status
 
-# Apply Comss DoH (unblocks AI Studio / Gemini / ChatGPT, keeps Steam fast)
+# Apply DNS-AI DoH (Recommended for Google Gemini & AI Studio)
+.\system\network\setup-windows-doh.ps1 -Preset dns-ai
+
+# Apply Comss DoH
 .\system\network\setup-windows-doh.ps1 -Preset comss
 
-# Apply Cloudflare 1.1.1.1 DoH
-.\system\network\setup-windows-doh.ps1 -Preset cloudflare
+# Apply GeoHide EU (European egress proxy)
+.\system\network\setup-windows-doh.ps1 -Preset geohide-eu
+
+# Apply Malw DNS (DE egress proxy)
+.\system\network\setup-windows-doh.ps1 -Preset malw
+
+# Disable IPv6 to prevent Russian ISP IPv6 geo-leak to Google services
+.\system\network\setup-windows-doh.ps1 -DisableIPv6
 
 # Reset DNS to automatic (DHCP / Router)
 .\system\network\setup-windows-doh.ps1 -Preset reset
