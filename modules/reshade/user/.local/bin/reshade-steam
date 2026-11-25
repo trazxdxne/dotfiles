@@ -11,6 +11,8 @@ RESHADE_INI_TEMPLATE="$RESHADE_DATA_DIR/ReShade.ini"
 BUNDLED_PRESETS_DIR="$(cd "$SCRIPT_DIR/../share/reshade/presets" 2>/dev/null && pwd || true)"
 BUNDLED_INI="$(cd "$SCRIPT_DIR/../share/reshade" 2>/dev/null && pwd || true)/ReShade.ini"
 
+HOOK_DLLS=("dxgi" "d3d12" "d3d11" "d3d10" "d3d9" "opengl32")
+
 mkdir -p "$RESHADE_DATA_DIR" "$RESHADE_BIN_DIR" "$RESHADE_SHADERS_DIR"
 
 if [[ ! -d "$RESHADE_PRESETS_DIR" || -z "$(ls -A "$RESHADE_PRESETS_DIR" 2>/dev/null)" ]]; then
@@ -44,23 +46,52 @@ sync_git_repo() {
 }
 
 download_reshade() {
-    if [[ -f "$RESHADE_BIN_DIR/ReShade64.dll" && -f "$RESHADE_BIN_DIR/ReShade32.dll" ]]; then
+    if [[ ! -f "$RESHADE_BIN_DIR/ReShade64.dll" || ! -f "$RESHADE_BIN_DIR/ReShade32.dll" ]]; then
+        printf ":: downloading latest reshade\n"
+        local setup_url
+        setup_url=$(curl -sL "https://reshade.me" 2>/dev/null | grep -oP '/downloads/ReShade_Setup_[0-9.]+\.exe' | head -n1 || true)
+        if [[ -z "$setup_url" ]]; then
+            setup_url="/downloads/ReShade_Setup_6.8.0.exe"
+        fi
+        local full_url="https://reshade.me${setup_url}"
+
+        local tmp_dir
+        tmp_dir=$(mktemp -d)
+        if curl -sSL "$full_url" -o "$tmp_dir/reshade_setup.exe"; then
+            7z e "$tmp_dir/reshade_setup.exe" -o"$RESHADE_BIN_DIR" ReShade64.dll ReShade32.dll ReShade64.json ReShade32.json -y >/dev/null
+        fi
+        rm -rf "$tmp_dir"
+    else
         printf ":: reshade binaries already present\n"
+    fi
+
+    download_d3dcompiler_47
+}
+
+download_d3dcompiler_47() {
+    local dest="$RESHADE_BIN_DIR/d3dcompiler_47.dll"
+    if [[ -f "$dest" ]]; then
         return 0
     fi
 
-    printf ":: downloading latest reshade\n"
-    local setup_url
-    setup_url=$(curl -sL "https://reshade.me" 2>/dev/null | grep -oP '/downloads/ReShade_Setup_[0-9.]+\.exe' | head -n1 || true)
-    if [[ -z "$setup_url" ]]; then
-        setup_url="/downloads/ReShade_Setup_6.8.0.exe"
-    fi
-    local full_url="https://reshade.me${setup_url}"
-
+    printf ":: downloading d3dcompiler_47.dll (64-bit)\n"
+    local ff_url="https://download-installer.cdn.mozilla.net/pub/firefox/releases/62.0.3/win64/ach/Firefox%20Setup%2062.0.3.exe"
+    local expected_hash="721977f36c008af2b637aedd3f1b529f3cfed6feb10f68ebe17469acb1934986"
     local tmp_dir
     tmp_dir=$(mktemp -d)
-    if curl -sSL "$full_url" -o "$tmp_dir/reshade_setup.exe"; then
-        7z e "$tmp_dir/reshade_setup.exe" -o"$RESHADE_BIN_DIR" ReShade64.dll ReShade32.dll ReShade64.json ReShade32.json -y >/dev/null
+    if curl -fsSL "$ff_url" -o "$tmp_dir/ff_setup.exe"; then
+        local actual_hash
+        actual_hash=$(sha256sum "$tmp_dir/ff_setup.exe" | awk '{print $1}')
+        if [[ "$actual_hash" == "$expected_hash" ]]; then
+            7z e -y "$tmp_dir/ff_setup.exe" -o"$tmp_dir/out" d3dcompiler_47.dll >/dev/null 2>&1 || true
+            local extracted
+            extracted=$(find "$tmp_dir/out" -iname "d3dcompiler_47.dll" 2>/dev/null | head -n1 || true)
+            if [[ -n "$extracted" && -f "$extracted" ]]; then
+                install -Dm644 "$extracted" "$dest"
+            fi
+        else
+            printf "warning: d3dcompiler_47 source hash mismatch\n" >&2
+        fi
     fi
     rm -rf "$tmp_dir"
 }
@@ -151,6 +182,17 @@ find_dbd_compatdata_dir() {
     return 1
 }
 
+find_python_bin() {
+    local candidate
+    for candidate in python3 python; do
+        if command -v "$candidate" >/dev/null 2>&1 && "$candidate" --version >/dev/null 2>&1; then
+            printf "%s" "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
 apply_wine_override() {
     local pfx_dir="$1"
     local dll_name="${2:-dxgi}"
@@ -160,14 +202,62 @@ apply_wine_override() {
         return 0
     fi
 
-    if grep -q -E '\[Software\\+Wine\\+DllOverrides\]' "$user_reg"; then
-        if ! grep -q "\"$dll_name\"=" "$user_reg"; then
-            printf ":: configuring wine dll override (%s=native,builtin) in %s\n" "$dll_name" "$user_reg"
-            sed -E -i "/\[Software\\\\+Wine\\\\+DllOverrides\]/a \"$dll_name\"=\"native,builtin\"" "$user_reg"
-        else
-            printf ":: wine dll override for %s already configured in %s\n" "$dll_name" "$user_reg"
-        fi
+    local py_bin
+    py_bin=$(find_python_bin || true)
+    if [[ -z "$py_bin" ]]; then
+        printf "warning: python not found, skipping user.reg update\n" >&2
+        return 0
     fi
+
+    "$py_bin" - "$user_reg" "$dll_name" << 'PYEOF'
+import re
+import sys
+from pathlib import Path
+
+reg_path = Path(sys.argv[1])
+dll_name = sys.argv[2]
+lines = reg_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+
+overrides = {dll_name: "native,builtin"}
+if dll_name != "d3dcompiler_47":
+    overrides["d3dcompiler_47"] = "native,builtin"
+
+section_idx = None
+section_end = len(lines)
+for idx, line in enumerate(lines):
+    if re.match(r"^\[Software\\+Wine\\+DllOverrides\]", line, re.IGNORECASE):
+        section_idx = idx
+        continue
+    if section_idx is not None and line.startswith("["):
+        section_end = idx
+        break
+
+if section_idx is None:
+    if lines and lines[-1] != "":
+        lines.append("")
+    lines.append("[Software\\\\Wine\\\\DllOverrides]")
+    for key, val in overrides.items():
+        lines.append(f'"{key}"="{val}"')
+else:
+    insert_at = section_idx + 1
+    while insert_at < section_end and lines[insert_at].startswith("#time="):
+        insert_at += 1
+    for key, val in overrides.items():
+        pattern = re.compile(rf'^"{re.escape(key)}"\s*=')
+        updated = False
+        for j in range(insert_at, section_end):
+            if pattern.match(lines[j]):
+                lines[j] = f'"{key}"="{val}"'
+                updated = True
+                break
+        if not updated:
+            lines.insert(insert_at, f'"{key}"="{val}"')
+            insert_at += 1
+            section_end += 1
+
+reg_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+PYEOF
+    printf ":: configured wine dll overrides (%s, d3dcompiler_47) in %s\n" "$dll_name" "$user_reg"
 }
 
 remove_wine_override() {
@@ -175,10 +265,79 @@ remove_wine_override() {
     local dll_name="${2:-dxgi}"
     local user_reg="$pfx_dir/user.reg"
 
-    if [[ -f "$user_reg" ]]; then
-        printf ":: removing wine dll override (%s) from %s\n" "$dll_name" "$user_reg"
-        sed -i "/\"$dll_name\"=\"native,builtin\"/d" "$user_reg"
+    if [[ ! -f "$user_reg" ]]; then
+        return 0
     fi
+
+    local py_bin
+    py_bin=$(find_python_bin || true)
+    if [[ -z "$py_bin" ]]; then
+        return 0
+    fi
+
+    "$py_bin" - "$user_reg" "$dll_name" << 'PYEOF'
+import re
+import sys
+from pathlib import Path
+
+reg_path = Path(sys.argv[1])
+dll_name = sys.argv[2]
+lines = reg_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+
+in_section = False
+out = []
+targets = {dll_name, "d3dcompiler_47"}
+for line in lines:
+    if re.match(r"^\[Software\\+Wine\\+DllOverrides\]", line, re.IGNORECASE):
+        in_section = True
+        out.append(line)
+        continue
+    if in_section and line.startswith("["):
+        in_section = False
+    if in_section:
+        m = re.match(r'^"([^"]+)"\s*=', line)
+        if m and m.group(1) in targets:
+            continue
+    out.append(line)
+
+reg_path.write_text("\n".join(out) + "\n", encoding="utf-8")
+PYEOF
+    printf ":: removed wine dll overrides (%s, d3dcompiler_47) from %s\n" "$dll_name" "$user_reg"
+}
+
+is_reshade_dll() {
+    local file="$1"
+    if [[ -L "$file" ]]; then
+        local target_link
+        target_link=$(readlink "$file" || true)
+        [[ "$target_link" == *"ReShade"* ]] && return 0
+    fi
+    if [[ -f "$file" ]]; then
+        local f_hash
+        f_hash=$(sha256sum "$file" 2>/dev/null | awk '{print $1}')
+        for ref in "$RESHADE_BIN_DIR/ReShade64.dll" "$RESHADE_BIN_DIR/ReShade32.dll"; do
+            if [[ -f "$ref" ]]; then
+                local ref_hash
+                ref_hash=$(sha256sum "$ref" 2>/dev/null | awk '{print $1}')
+                [[ -n "$f_hash" && "$f_hash" == "$ref_hash" ]] && return 0
+            fi
+        done
+    fi
+    return 1
+}
+
+cleanup_conflicting_dlls() {
+    local target_dir="$1"
+    local active_dll="$2"
+
+    for hook in "${HOOK_DLLS[@]}"; do
+        [[ "$hook" == "$active_dll" ]] && continue
+        local candidate="$target_dir/$hook.dll"
+        if [[ -e "$candidate" || -L "$candidate" ]] && is_reshade_dll "$candidate"; then
+            printf ":: removing conflicting ReShade DLL %s.dll\n" "$hook"
+            rm -f "$candidate"
+        fi
+    done
 }
 
 install_to_dir() {
@@ -189,21 +348,25 @@ install_to_dir() {
         printf "error: target directory '%s' does not exist\n" "$target_dir" >&2
         return 1
     fi
+    if [[ ! -f "$RESHADE_BIN_DIR/ReShade64.dll" ]]; then
+        download_reshade
+    fi
+    if [[ ! -f "$RESHADE_BIN_DIR/ReShade64.dll" ]]; then
+        printf "error: ReShade64.dll missing in %s\n" "$RESHADE_BIN_DIR" >&2
+        return 1
+    fi
 
     printf ":: installing reshade into %s (dll: %s.dll)\n" "$target_dir" "$dll_name"
 
-    # Remove conflicting d3d12.dll symlink if present. In Proton, d3d12 is provided
-    # by vkd3d-proton. Shadowing d3d12 with ReShade breaks DX12 and causes circular hook crashes.
-    if [[ -L "$target_dir/d3d12.dll" ]]; then
-        local target_link
-        target_link=$(readlink "$target_dir/d3d12.dll" || true)
-        if [[ "$target_link" == *"ReShade"* ]]; then
-            printf ":: removing conflicting d3d12.dll ReShade symlink\n"
-            rm -f "$target_dir/d3d12.dll"
-        fi
-    fi
+    cleanup_conflicting_dlls "$target_dir" "$dll_name"
 
-    ln -sf "$RESHADE_BIN_DIR/ReShade64.dll" "$target_dir/$dll_name.dll"
+    rm -f "$target_dir/$dll_name.dll"
+    cp -f "$RESHADE_BIN_DIR/ReShade64.dll" "$target_dir/$dll_name.dll"
+
+    if [[ -f "$RESHADE_BIN_DIR/d3dcompiler_47.dll" ]]; then
+        rm -f "$target_dir/d3dcompiler_47.dll"
+        cp -f "$RESHADE_BIN_DIR/d3dcompiler_47.dll" "$target_dir/d3dcompiler_47.dll"
+    fi
 
     ln -sfn "$RESHADE_SHADERS_DIR" "$target_dir/ReShade_shaders"
     ln -sfn "$RESHADE_PRESETS_DIR" "$target_dir/reshade-presets"
@@ -217,8 +380,8 @@ install_to_dir() {
     fi
 
     printf ":: reshade installed successfully\n"
-    printf ":: steam launch options (optional if wine prefix override was applied):\n"
-    printf "   WINEDLLOVERRIDES=\"%s=n,b\" %%command%%\n" "$dll_name"
+    printf ":: steam launch options (recommended fallback):\n"
+    printf "   WINEDLLOVERRIDES=\"d3dcompiler_47=n;%s=n,b\" %%command%%\n" "$dll_name"
 }
 
 uninstall_from_dir() {
@@ -229,10 +392,63 @@ uninstall_from_dir() {
     fi
 
     printf ":: removing reshade from %s\n" "$target_dir"
-    rm -f "$target_dir/dxgi.dll" "$target_dir/d3d12.dll" "$target_dir/d3d11.dll"
+    for hook in "${HOOK_DLLS[@]}"; do
+        local candidate="$target_dir/$hook.dll"
+        if [[ -e "$candidate" || -L "$candidate" ]] && is_reshade_dll "$candidate"; then
+            rm -f "$candidate"
+        fi
+    done
+    rm -f "$target_dir/d3dcompiler_47.dll"
     rm -f "$target_dir/ReShade_shaders" "$target_dir/reshade-presets"
     rm -f "$target_dir/ReShade.ini" "$target_dir/ReShade.log" "$target_dir/Normal.ini"
     printf ":: reshade removed successfully\n"
+}
+
+status_dir() {
+    local target_dir="$1"
+    local pfx_dir="${2:-}"
+
+    printf ":: ReShade status for %s\n" "$target_dir"
+    local active_hooks=()
+    for hook in "${HOOK_DLLS[@]}"; do
+        local candidate="$target_dir/$hook.dll"
+        if [[ -e "$candidate" || -L "$candidate" ]] && is_reshade_dll "$candidate"; then
+            active_hooks+=("$hook.dll")
+        fi
+    done
+    if [[ ${#active_hooks[@]} -eq 0 ]]; then
+        printf "  [-] hook DLL: none installed\n"
+    elif [[ ${#active_hooks[@]} -gt 1 ]]; then
+        printf "  [!] hook DLL collision detected: %s\n" "${active_hooks[*]}"
+    else
+        printf "  [+] hook DLL: %s\n" "${active_hooks[0]}"
+    fi
+
+    if [[ -f "$target_dir/d3dcompiler_47.dll" ]]; then
+        printf "  [+] d3dcompiler_47.dll: present\n"
+    else
+        printf "  [!] d3dcompiler_47.dll: missing\n"
+    fi
+
+    if [[ -f "$target_dir/ReShade.ini" ]]; then
+        printf "  [+] ReShade.ini: present\n"
+    else
+        printf "  [-] ReShade.ini: missing\n"
+    fi
+
+    if [[ -f "$target_dir/ReShade.log" ]]; then
+        printf "  [+] ReShade.log: present (loaded on last run)\n"
+    else
+        printf "  [!] ReShade.log: missing (DLL has not loaded yet)\n"
+    fi
+
+    if [[ -n "$pfx_dir" && -f "$pfx_dir/user.reg" ]]; then
+        if grep -q -E '^"dxgi"="native,builtin"' "$pfx_dir/user.reg"; then
+            printf "  [+] Wine override (dxgi): configured in %s/user.reg\n" "$pfx_dir"
+        else
+            printf "  [!] Wine override (dxgi): missing in %s/user.reg\n" "$pfx_dir"
+        fi
+    fi
 }
 
 setup_all() {
@@ -308,6 +524,22 @@ main() {
                 uninstall_from_dir "$2"
             fi
             ;;
+        status)
+            if [[ -z "${2:-}" || "${2:-}" == "dbd" ]]; then
+                local dbd_dir
+                dbd_dir=$(find_dbd_binary_dir || true)
+                if [[ -n "$dbd_dir" ]]; then
+                    local dbd_pfx
+                    dbd_pfx=$(find_dbd_compatdata_dir || true)
+                    status_dir "$dbd_dir" "$dbd_pfx"
+                else
+                    printf "error: Dead by Daylight not found. Supply path: reshade-steam status <game_dir>\n" >&2
+                    exit 1
+                fi
+            else
+                status_dir "$2"
+            fi
+            ;;
         update|update-shaders)
             download_reshade
             sync_shaders
@@ -318,7 +550,7 @@ main() {
             find "$RESHADE_PRESETS_DIR" -name "*.ini" -printf "   %f\n" 2>/dev/null | sort
             ;;
         *)
-            printf "usage: reshade-steam [--setup | --dbd | install [path] | uninstall [path] | update | list-presets]\n"
+            printf "usage: reshade-steam [--setup | --dbd | install [path] | uninstall [path] | status [path] | update | list-presets]\n"
             ;;
     esac
 }
