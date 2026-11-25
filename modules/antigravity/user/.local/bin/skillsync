@@ -1,0 +1,325 @@
+#!/usr/bin/env python3
+import argparse
+import hashlib
+import json
+import shutil
+import subprocess
+import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+MATTPOCOCK_REPO = "mattpocock/skills"
+ECC_REPO = "affaan-m/ECC"
+TITSTACK_REPO = "ChrisTitusTech/titstack"
+
+DEFAULT_EXCLUDE = {
+    "dwm-titus",
+    "dwm-titus-debug",
+}
+
+
+def find_dotfiles_dir():
+    try:
+        p = Path(__file__).resolve()
+        for parent in p.parents:
+            if (parent / "modules.toml").is_file():
+                return parent
+    except Exception:
+        pass
+    for candidate in (Path.home() / ".dotfiles", Path.home() / "Projects" / "dotfiles"):
+        if candidate.is_dir():
+            return candidate
+    return Path.home() / "Projects" / "dotfiles"
+
+
+def github_get_json(api_path):
+    url = f"https://api.github.com/{api_path.lstrip('/')}"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "skillsync/1.0",
+    }
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def github_get_raw(repo, file_path, ref="HEAD"):
+    url = f"https://raw.githubusercontent.com/{repo}/{ref}/{file_path.lstrip('/')}"
+    req = urllib.request.Request(url, headers={"User-Agent": "skillsync/1.0"})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return resp.read()
+
+
+def parse_mattpocock_tree(tree_items):
+    dirs_sha = {}
+    skills = {}
+    for item in tree_items:
+        path = item.get("path", "")
+        itype = item.get("type", "")
+        if itype == "tree" and path.startswith("skills/"):
+            dirs_sha[path] = item.get("sha", "")
+        elif itype == "blob" and path.startswith("skills/") and path.endswith("/SKILL.md"):
+            parts = path.split("/")
+            if len(parts) == 4:
+                _, category, name, _ = parts
+                skill_dir = f"skills/{category}/{name}"
+                skills[name] = {
+                    "name": name,
+                    "category": category,
+                    "path": skill_dir,
+                    "tree_sha": dirs_sha.get(skill_dir, ""),
+                    "files": [],
+                }
+    for item in tree_items:
+        path = item.get("path", "")
+        if item.get("type") == "blob" and path.startswith("skills/"):
+            parts = path.split("/")
+            if len(parts) >= 4:
+                name = parts[2]
+                if name in skills and path.startswith(skills[name]["path"] + "/"):
+                    skills[name]["files"].append(path)
+    return skills
+
+
+def compute_local_skill_fingerprint(skill_dir):
+    h = hashlib.sha256()
+    for p in sorted(Path(skill_dir).rglob("*")):
+        if p.is_file():
+            rel = p.relative_to(skill_dir).as_posix()
+            h.update(rel.encode("utf-8"))
+            h.update(b"\0")
+            h.update(p.read_bytes())
+            h.update(b"\0")
+    return h.hexdigest()[:16]
+
+
+def load_manifest(manifest_path):
+    if manifest_path.is_file():
+        try:
+            return json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {
+        "mattpocock": {},
+        "ecc": {},
+        "titstack": {},
+        "excluded": sorted(DEFAULT_EXCLUDE),
+    }
+
+
+def save_manifest(manifest_path, data):
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def classify_mattpocock_skills(upstream_skills, skills_root, manifest, include_in_progress=False):
+    tracked = manifest.get("mattpocock", {})
+    excluded = set(manifest.get("excluded", []))
+    local_dirs = {p.name for p in skills_root.iterdir() if p.is_dir()} if skills_root.is_dir() else set()
+
+    report = {"new": [], "update": [], "deprecated": [], "ok": [], "untracked_local": []}
+
+    for name, meta in sorted(upstream_skills.items()):
+        cat = meta["category"]
+        if cat == "deprecated":
+            if name in local_dirs:
+                report["deprecated"].append(meta)
+            continue
+        if cat == "in-progress" and not include_in_progress and name not in local_dirs:
+            continue
+        if name in excluded:
+            continue
+
+        if name not in local_dirs:
+            report["new"].append(meta)
+            continue
+
+        entry = tracked.get(name)
+        if not entry:
+            report["untracked_local"].append(meta)
+        elif entry.get("tree_sha") != meta["tree_sha"]:
+            report["update"].append(meta)
+        else:
+            report["ok"].append(meta)
+
+    for name in sorted(tracked.keys()):
+        if name in local_dirs and name not in upstream_skills:
+            report["deprecated"].append({"name": name, "category": "deleted", "path": tracked[name].get("path", ""), "tree_sha": "", "files": []})
+
+    return report
+
+
+def fetch_upstream_versions():
+    ecc_pkg = github_get_json(f"repos/{ECC_REPO}/contents/package.json")
+    import base64
+    ecc_ver = "?"
+    if "content" in ecc_pkg:
+        decoded = json.loads(base64.b64decode(ecc_pkg["content"]).decode("utf-8"))
+        ecc_ver = decoded.get("version", "?")
+    ecc_commits = github_get_json(f"repos/{ECC_REPO}/commits?per_page=1")
+    tit_commits = github_get_json(f"repos/{TITSTACK_REPO}/commits?per_page=1")
+    return {
+        "ecc": {
+            "version": ecc_ver,
+            "sha": ecc_commits[0]["sha"][:7] if ecc_commits else "?",
+            "date": ecc_commits[0]["commit"]["author"]["date"][:10] if ecc_commits else "?",
+        },
+        "titstack": {
+            "sha": tit_commits[0]["sha"][:7] if tit_commits else "?",
+            "date": tit_commits[0]["commit"]["author"]["date"][:10] if tit_commits else "?",
+        },
+    }
+
+
+def download_skill(meta, skills_root, repo=MATTPOCOCK_REPO):
+    dest_dir = skills_root / meta["name"]
+    tmp_dir = skills_root / f".{meta['name']}.tmp"
+    if tmp_dir.exists():
+        shutil.rmtree(tmp_dir)
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    prefix = meta["path"] + "/"
+    for file_path in meta["files"]:
+        rel = file_path[len(prefix) :]
+        target = tmp_dir / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(github_get_raw(repo, file_path))
+    if dest_dir.exists():
+        shutil.rmtree(dest_dir)
+    tmp_dir.rename(dest_dir)
+    return compute_local_skill_fingerprint(dest_dir)
+
+
+def run_fzf_multi(items, prompt="skills > "):
+    if not items or not shutil.which("fzf") or not sys.stdin.isatty():
+        return []
+    res = subprocess.run(
+        ["fzf", "-m", "--prompt", prompt, "--height", "~50%", "--layout=reverse", "--border"],
+        input="\n".join(items),
+        stdout=subprocess.PIPE,
+        stderr=None,
+        text=True,
+    )
+    if res.returncode == 0:
+        return [ln.strip() for ln in res.stdout.splitlines() if ln.strip()]
+    return []
+
+
+def cmd_status(args, dotfiles_dir):
+    skills_root = dotfiles_dir / "modules" / "antigravity" / "user" / ".agents" / "skills"
+    manifest_path = dotfiles_dir / "modules" / "antigravity" / "skills-manifest.json"
+    manifest = load_manifest(manifest_path)
+
+    tree_resp = github_get_json(f"repos/{MATTPOCOCK_REPO}/git/trees/HEAD?recursive=1")
+    upstream = parse_mattpocock_tree(tree_resp.get("tree", []))
+    report = classify_mattpocock_skills(upstream, skills_root, manifest, include_in_progress=args.include_in_progress)
+
+    print(f"\n:: mattpocock/skills Sync Status ({skills_root})\n")
+    print(f"  [NEW]        {len(report['new']):<3} : {', '.join(m['name'] for m in report['new']) or '(none)'}")
+    print(f"  [UPDATE]     {len(report['update']):<3} : {', '.join(m['name'] for m in report['update']) or '(none)'}")
+    print(f"  [UNTRACKED]  {len(report['untracked_local']):<3} : {', '.join(m['name'] for m in report['untracked_local']) or '(none)'}")
+    print(f"  [DEPRECATED] {len(report['deprecated']):<3} : {', '.join(m['name'] for m in report['deprecated']) or '(none)'}")
+    print(f"  [OK]         {len(report['ok'])}")
+
+    ecc_dir = dotfiles_dir / "modules" / "antigravity" / "user" / ".gemini" / "config" / "plugins" / "ecc"
+    ecc_pkg = json.loads((ecc_dir / "package.json").read_text(encoding="utf-8")) if (ecc_dir / "package.json").is_file() else {}
+    agents_cnt = len(list((ecc_dir / "agents").glob("*.md"))) if (ecc_dir / "agents").is_dir() else 0
+    ecc_skills_cnt = len([p for p in (ecc_dir / "skills").iterdir() if p.is_dir()]) if (ecc_dir / "skills").is_dir() else 0
+    rules_cnt = len(list((ecc_dir / "rules").glob("*.md"))) if (ecc_dir / "rules").is_dir() else 0
+    local_skills_cnt = len([p for p in skills_root.iterdir() if p.is_dir()]) if skills_root.is_dir() else 0
+
+    up = fetch_upstream_versions()
+    print(f"\n:: Upstream Harness Versions\n")
+    print(f"  ECC local      : v{ecc_pkg.get('version', '?')} ({agents_cnt} agents, {ecc_skills_cnt} ecc-skills, {rules_cnt} rules; total skills={ecc_skills_cnt + local_skills_cnt})")
+    print(f"  ECC upstream   : v{up['ecc']['version']} ({up['ecc']['sha']} @ {up['ecc']['date']})")
+    print(f"  titstack       : {up['titstack']['sha']} @ {up['titstack']['date']}\n")
+
+    has_changes = bool(report["new"] or report["update"] or report["deprecated"] or report["untracked_local"])
+    return 1 if has_changes else 0
+
+
+def cmd_sync(args, dotfiles_dir):
+    skills_root = dotfiles_dir / "modules" / "antigravity" / "user" / ".agents" / "skills"
+    manifest_path = dotfiles_dir / "modules" / "antigravity" / "skills-manifest.json"
+    manifest = load_manifest(manifest_path)
+
+    tree_resp = github_get_json(f"repos/{MATTPOCOCK_REPO}/git/trees/HEAD?recursive=1")
+    upstream = parse_mattpocock_tree(tree_resp.get("tree", []))
+    report = classify_mattpocock_skills(upstream, skills_root, manifest, include_in_progress=args.include_in_progress)
+
+    to_install = []
+    if args.skill:
+        for s in args.skill:
+            if s in upstream:
+                to_install.append(upstream[s])
+            else:
+                print(f"[-] unknown upstream skill: {s}")
+    else:
+        to_install.extend(report["update"])
+        to_install.extend(report["untracked_local"])
+        if args.all_new:
+            to_install.extend(report["new"])
+        elif report["new"] and not args.updates_only:
+            choices = [f"{m['name']} [{m['category']}]" for m in report["new"]]
+            picked = run_fzf_multi(choices, prompt="Add new skills (Tab to select) > ")
+            picked_names = {c.split(" ", 1)[0] for c in picked}
+            to_install.extend(m for m in report["new"] if m["name"] in picked_names)
+
+    for meta in to_install:
+        if args.dry_run:
+            print(f"[dry-run] would sync {meta['name']} ({meta['category']})")
+            continue
+        fp = download_skill(meta, skills_root)
+        manifest.setdefault("mattpocock", {})[meta["name"]] = {
+            "category": meta["category"],
+            "path": meta["path"],
+            "tree_sha": meta["tree_sha"],
+            "local_sha": fp,
+        }
+        print(f"[+] synced {meta['name']} ({meta['category']})")
+
+    if args.prune_deprecated and report["deprecated"]:
+        for meta in report["deprecated"]:
+            name = meta["name"]
+            target = skills_root / name
+            if args.dry_run:
+                print(f"[dry-run] would remove deprecated skill {name}")
+                continue
+            if target.is_dir():
+                shutil.rmtree(target)
+            manifest.get("mattpocock", {}).pop(name, None)
+            print(f"[-] removed deprecated skill {name}")
+
+    if not args.dry_run:
+        up = fetch_upstream_versions()
+        manifest["ecc"] = up["ecc"]
+        manifest["titstack"] = up["titstack"]
+        save_manifest(manifest_path, manifest)
+        print(f"[+] updated manifest: {manifest_path}")
+    return 0
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="Track & sync mattpocock/skills, ECC, and titstack updates")
+    parser.add_argument("action", choices=["status", "sync"], nargs="?", default="status")
+    parser.add_argument("--include-in-progress", action="store_true", help="Include mattpocock in-progress skills")
+    parser.add_argument("--all-new", action="store_true", help="Install all new upstream skills without prompting")
+    parser.add_argument("--updates-only", action="store_true", help="Only update already-installed skills")
+    parser.add_argument("--prune-deprecated", action="store_true", help="Remove skills deprecated/deleted upstream")
+    parser.add_argument("--skill", action="append", default=[], help="Specific skill name to install/update")
+    parser.add_argument("--dry-run", action="store_true", help="Preview changes without modifying disk")
+    return parser
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    dotfiles_dir = find_dotfiles_dir()
+    if args.action == "status":
+        return cmd_status(args, dotfiles_dir)
+    if args.action == "sync":
+        return cmd_sync(args, dotfiles_dir)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

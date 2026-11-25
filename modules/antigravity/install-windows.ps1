@@ -68,6 +68,25 @@ Sync-Tree -From $BinSrc -To $BinDst
 Sync-Tree -From $GeminiSrc -To $GeminiDst
 Sync-Tree -From $AgentsSrc -To $AgentsDst
 
+foreach ($sub in @("plugins\ecc\agents", "plugins\ecc\skills", "plugins\ecc\rules")) {
+    $srcSub = Join-Path $GeminiSrc $sub
+    $dstSub = Join-Path $GeminiDst $sub
+    if ((Test-Path $srcSub) -and (Test-Path $dstSub)) {
+        $srcRel = @(Get-ChildItem -Path $srcSub -Recurse -File | ForEach-Object { $_.FullName.Substring($srcSub.Length).TrimStart('\', '/') })
+        Get-ChildItem -Path $dstSub -Recurse -File | ForEach-Object {
+            $rel = $_.FullName.Substring($dstSub.Length).TrimStart('\', '/')
+            if ($rel -notin $srcRel) {
+                Remove-Item -Path $_.FullName -Force
+            }
+        }
+        Get-ChildItem -Path $dstSub -Recurse -Directory | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object {
+            if (-not (Get-ChildItem -Path $_.FullName -Force)) {
+                Remove-Item -Path $_.FullName -Force
+            }
+        }
+    }
+}
+
 $TargetEccMcp = Join-Path $GeminiDst "plugins\ecc\mcp_config.json"
 if (Test-Path $TargetEccMcp) {
     $winPosixHome = "/" + (($HomeDir -replace '\\', '/') -replace ':', '').ToLower().Substring(0,1) + ($HomeDir -replace '\\', '/').Substring(2)
