@@ -1,14 +1,22 @@
 {
-    "mcpServers":  {
-                       "photocraft":  {
-                                          "args":  [
-                                                       "mcp",
-                                                       "--automation-read-root",
-                                                       ".",
-                                                       "--automation-write-root",
-                                                       "."
-                                                   ],
-                                          "command":  "photocraft-cli"
-                                      }
-                   }
+  "mcpServers": {
+    "photocraft": {
+      "command": "photocraft-cli",
+      "args": [
+        "mcp",
+        "--automation-read-root",
+        ".",
+        "--automation-write-root",
+        "."
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--headless"
+      ]
+    }
+  }
 }
