@@ -27,9 +27,9 @@ always = true
 packages = ["pipewire", "wireplumber", "easyeffects", "pipewire-pulse"]
 
 [modules.network]
-description = "Unified network bypass controller (AmneziaWG, Zapret, DNS, game split-tunneling)"
+description = "Unified network bypass controller (AmneziaWG, WARP, Zapret, Blocky DNS, game split-tunneling)"
 always = true
-packages = ["python", "curl"]
+packages = ["python", "curl", "zenity", "nftables"]
 
 [modules.reshade]
 description = "ReShade presets and Steam/Proton helpers (Dead by Daylight)"

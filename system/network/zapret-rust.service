@@ -1,0 +1,14 @@
+[Unit]
+Description=Zapret Discord Youtube Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=ZAPRET_CACHE_DIR=/var/lib/zapret-rust
+ExecStart=/usr/local/bin/zapret-rust --config /var/lib/zapret-rust/conf.env --cache-dir /var/lib/zapret-rust
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

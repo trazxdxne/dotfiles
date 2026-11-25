@@ -21,10 +21,8 @@ elif command -v micro &> /dev/null; then
 fi
 
 # Aliases
-if [[ -x /opt/zapret/service.sh ]]; then
-    alias zapret="/opt/zapret/service.sh"
-elif [[ -x "$HOME/.dotfiles/system/zapret/service.sh" ]]; then
-    alias zapret="$HOME/.dotfiles/system/zapret/service.sh"
+if command -v zapret-rust &> /dev/null; then
+    alias zapret="ZAPRET_CACHE_DIR=/var/lib/zapret-rust zapret-rust"
 fi
 
 # Local bin

@@ -1,0 +1,21 @@
+# bypass-managed: cloudflare
+upstreams:
+  groups:
+    default:
+      - "https://cloudflare-dns.com/dns-query"
+  strategy: strict
+  timeout: 5s
+
+bootstrapDns:
+  - upstream: "1.1.1.1"
+  - upstream: "1.0.0.1"
+
+ports:
+  dns:
+    - 127.0.0.1:53
+    - "[::1]:53"
+
+caching:
+  minTime: 5m
+  maxTime: 30m
+  prefetching: true

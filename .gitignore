@@ -45,3 +45,7 @@ fish_variables
 # Generated environment configs
 conf.env
 **/conf.env
+
+# Personal VPN configs with private keys
+system/network/*.conf
+!system/network/awg0.conf.template

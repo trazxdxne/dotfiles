@@ -1,0 +1,39 @@
+name: Test Dotfiles Network & Scripts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shell tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck fish
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Python test dependencies
+        run: pip install pytest pytest-cov
+
+      - name: Shell syntax and lint checks
+        run: |
+          bash -n install.sh
+          bash -n system/setup-system.sh
+          bash -n system/network/game-bypass-routing.sh
+          bash -n modules/network/user/.local/bin/game-bypass
+          bash -n modules/reshade/user/.local/bin/reshade-steam
+          shellcheck -S warning install.sh system/setup-system.sh system/network/game-bypass-routing.sh modules/network/user/.local/bin/game-bypass modules/reshade/user/.local/bin/reshade-steam
+          find modules -name '*.fish' -exec fish -n {} +
+
+      - name: Run pytest with coverage
+        run: PYTHONPATH=modules/network/user/.local/lib pytest -v --cov=modules/network/user/.local/lib/bypass --cov-report=term-missing --cov-fail-under=80

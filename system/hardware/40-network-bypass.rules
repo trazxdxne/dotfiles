@@ -1,4 +1,3 @@
-/* Allow users in wheel group to manage network bypass services without password */
 polkit.addRule(function(action, subject) {
     if (!subject.isInGroup("wheel")) {
         return undefined;
@@ -8,7 +7,10 @@ polkit.addRule(function(action, subject) {
         var unit = action.lookup("unit");
         if (unit && (
             unit.indexOf("awg-quick@") === 0 ||
+            unit === "zapret-rust.service" ||
             unit === "zapret.service" ||
+            unit === "blocky.service" ||
+            unit === "warp-svc.service" ||
             unit === "game-bypass-routing.service" ||
             unit === "systemd-resolved.service"
         )) {

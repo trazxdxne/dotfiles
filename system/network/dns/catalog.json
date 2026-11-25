@@ -1,0 +1,210 @@
+{
+  "comss": {
+    "name": "Comss.one Primary (AI & Geo-Bypass)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.comss.one/dns-query"
+    ],
+    "bootstrap": ["93.115.24.204", "93.115.24.205"],
+    "dot": ["tcp-tls:93.115.24.204:853", "tcp-tls:93.115.24.205:853"],
+    "routing": "SmartDNS Proxy"
+  },
+  "comss-alt": {
+    "name": "Comss.one East/Secondary",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.comss.one/dns-query"
+    ],
+    "bootstrap": ["195.133.25.16", "195.133.25.99"],
+    "dot": ["tcp-tls:195.133.25.16:853", "tcp-tls:195.133.25.99:853"],
+    "routing": "SmartDNS Proxy (East)"
+  },
+  "dns-ai": {
+    "name": "DNS-AI.ru (Gemini / Claude / ChatGPT)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.dns-ai.ru/dns-query"
+    ],
+    "bootstrap": ["194.87.196.13", "45.151.102.219"],
+    "dot": ["tcp-tls:194.87.196.13:853", "tcp-tls:45.151.102.219:853"],
+    "routing": "AI SNI Proxy"
+  },
+  "geohide-ru": {
+    "name": "GeoHide RU (Russian Routing & DE Proxy)",
+    "mode": "doh",
+    "upstreams": [
+      "https://ru.geohide.ru/dns-query"
+    ],
+    "bootstrap": ["193.233.112.130", "193.233.112.67"],
+    "dot": ["tcp-tls:193.233.112.130:853"],
+    "routing": "DE Proxy (RU Entry)"
+  },
+  "geohide-eu": {
+    "name": "GeoHide EU (European Routing & DE Proxy)",
+    "mode": "doh",
+    "upstreams": [
+      "https://eu.geohide.ru/dns-query"
+    ],
+    "bootstrap": ["5.175.161.3", "5.175.161.40"],
+    "dot": ["tcp-tls:5.175.161.3:853"],
+    "routing": "DE Proxy (EU Entry)"
+  },
+  "geohide-us": {
+    "name": "GeoHide US (US Routing & Fast US Proxy)",
+    "mode": "doh",
+    "upstreams": [
+      "https://us.geohide.ru/dns-query"
+    ],
+    "bootstrap": ["192.255.159.240", "192.255.159.241"],
+    "dot": ["tcp-tls:192.255.159.240:853"],
+    "routing": "US Proxy"
+  },
+  "malw": {
+    "name": "Malw DNS (DE Proxy for ChatGPT & AI)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.malw.link/dns-query"
+    ],
+    "bootstrap": ["179.254.166.171", "164.5.224.81"],
+    "dot": ["tcp-tls:179.254.166.171:853"],
+    "routing": "DE Proxy"
+  },
+  "magicdns": {
+    "name": "MagicDNS (FI Proxy for ChatGPT & AI)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.magicdns.ru/dns-query"
+    ],
+    "bootstrap": ["109.120.187.249", "217.144.190.216"],
+    "dot": ["tcp-tls:109.120.187.249:853"],
+    "routing": "FI Proxy"
+  },
+  "bezmezhau": {
+    "name": "Bezmezhau (NL Proxy for AI & Unblocking)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.bezmezhau.com/dns-query"
+    ],
+    "bootstrap": ["143.20.64.55"],
+    "dot": ["tcp-tls:143.20.64.55:853"],
+    "routing": "NL Proxy"
+  },
+  "dagami": {
+    "name": "Dagami (US Proxy for ChatGPT & AI)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.dagami.ru/dns-query"
+    ],
+    "bootstrap": ["179.254.186.80"],
+    "dot": ["tcp-tls:179.254.186.80:853"],
+    "routing": "US Proxy"
+  },
+  "wlrus": {
+    "name": "WLRUS (Fast SmartDNS)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.wlrus.cfd/dns-query"
+    ],
+    "bootstrap": ["95.85.240.254", "138.124.254.134"],
+    "dot": ["tcp-tls:95.85.240.254:853"],
+    "routing": "SmartDNS"
+  },
+  "zapret-dns": {
+    "name": "Zapret.moe DNS (Community Unblock)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.zapret.moe/dns-query"
+    ],
+    "bootstrap": ["83.217.211.149"],
+    "dot": ["tcp-tls:83.217.211.149:853"],
+    "routing": "Community Unblock"
+  },
+  "nulls-proxy": {
+    "name": "Null's Proxy DNS (Gaming & AI Proxy)",
+    "mode": "doh",
+    "upstreams": [
+      "https://nullsproxy.com/dns-query"
+    ],
+    "bootstrap": ["141.95.97.120", "185.175.46.137"],
+    "dot": [],
+    "routing": "Gaming / AI Proxy"
+  },
+  "xbox-dns": {
+    "name": "Xbox-DNS.ru (Consoles & Geo-Bypass)",
+    "mode": "doh",
+    "upstreams": [
+      "https://xbox-dns.ru/dns-query"
+    ],
+    "bootstrap": ["176.99.11.77", "80.78.247.254"],
+    "dot": [],
+    "routing": "Gaming / Geo-Bypass"
+  },
+  "nextdns": {
+    "name": "NextDNS (Custom Profile or Public DoH)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.nextdns.io"
+    ],
+    "bootstrap": ["45.90.28.0", "45.90.30.0"],
+    "dot": ["tcp-tls:dns.nextdns.io:853"],
+    "routing": "Filtered DoH"
+  },
+  "controld": {
+    "name": "Control D (Unfiltered Privacy DoH)",
+    "mode": "doh",
+    "upstreams": [
+      "https://freedns.controld.com/p0"
+    ],
+    "bootstrap": ["76.76.2.0", "76.76.10.0"],
+    "dot": ["tcp-tls:p0.freedns.controld.com:853"],
+    "routing": "Direct Privacy"
+  },
+  "mullvad": {
+    "name": "Mullvad DNS (Zero-Logging Privacy DoH)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.mullvad.net/dns-query"
+    ],
+    "bootstrap": ["194.242.2.2", "194.242.2.3"],
+    "dot": ["tcp-tls:doh.mullvad.net:853"],
+    "routing": "Direct Privacy"
+  },
+  "cloudflare": {
+    "name": "Cloudflare 1.1.1.1 (Privacy Strict DoH)",
+    "mode": "doh",
+    "upstreams": [
+      "https://cloudflare-dns.com/dns-query"
+    ],
+    "bootstrap": ["1.1.1.1", "1.0.0.1"],
+    "dot": ["tcp-tls:1.1.1.1:853", "tcp-tls:1.0.0.1:853"],
+    "routing": "Direct Fast DoH"
+  },
+  "quad9": {
+    "name": "Quad9 9.9.9.9 (Threat Protection DoH)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.quad9.net/dns-query"
+    ],
+    "bootstrap": ["9.9.9.9", "149.112.112.112"],
+    "dot": ["tcp-tls:dns.quad9.net:853"],
+    "routing": "Direct Security"
+  },
+  "adguard": {
+    "name": "AdGuard DNS (Ad & Tracker Blocking DoH)",
+    "mode": "doh",
+    "upstreams": [
+      "https://dns.adguard-dns.com/dns-query"
+    ],
+    "bootstrap": ["94.140.14.14", "94.140.15.15"],
+    "dot": ["tcp-tls:dns.adguard-dns.com:853"],
+    "routing": "Adblock Privacy"
+  },
+  "isp": {
+    "name": "Direct ISP (Bypass Blocky / Plaintext DHCP)",
+    "mode": "isp",
+    "upstreams": [],
+    "bootstrap": [],
+    "dot": [],
+    "routing": "Direct ISP"
+  }
+}

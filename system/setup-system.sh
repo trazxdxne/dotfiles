@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Standalone System Configuration Deployer (Root / Opt-in)
-# Use this script ONLY when configuring base system services on Arch / CachyOS.
 set -euo pipefail
 
 if [[ "$EUID" -ne 0 ]]; then
@@ -9,29 +7,65 @@ if [[ "$EUID" -ne 0 ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ZAPRET_CACHE_DIR="/var/lib/zapret-rust"
+ZAPRET_RUST_URL="https://github.com/Sergeydigl3/zapret-discord-youtube-rust/releases/latest/download/zapret-rust-linux-x86_64"
 
 printf ":: deploying system network configurations\n"
-mkdir -p /etc/systemd/resolved.conf.d /etc/bypass/strategies /etc/amnezia/amneziawg
+mkdir -p /etc/systemd/resolved.conf.d /etc/blocky /etc/systemd/system/blocky.service.d /etc/amnezia/amneziawg "$ZAPRET_CACHE_DIR"
 
-if [[ -d "$SCRIPT_DIR/network/zapret-strategies" ]]; then
-    install -Dm644 "$SCRIPT_DIR/network/zapret-strategies/"*.conf /etc/bypass/strategies/
-    if [[ ! -f /etc/bypass/active_strategy ]]; then
-        printf "discord_youtube" > /etc/bypass/active_strategy
+if systemctl is-active --quiet zapret.service 2>/dev/null; then
+    systemctl stop zapret.service || true
+fi
+systemctl disable zapret.service 2>/dev/null || true
+rm -f /etc/systemd/system/zapret.service /usr/local/bin/zapret-runner.sh
+
+if [[ ! -x /usr/local/bin/zapret-rust ]] || [[ "${1:-}" == "--update-zapret" ]]; then
+    printf ":: downloading zapret-rust binary\n"
+    tmp_bin="$(mktemp)"
+    if curl -fsSL "$ZAPRET_RUST_URL" -o "$tmp_bin"; then
+        install -Dm755 "$tmp_bin" /usr/local/bin/zapret-rust
+    else
+        printf "warning: failed to download zapret-rust from %s\n" "$ZAPRET_RUST_URL" >&2
+    fi
+    rm -f "$tmp_bin"
+fi
+
+if [[ -f "$SCRIPT_DIR/network/zapret-rust.service" ]]; then
+    install -Dm644 "$SCRIPT_DIR/network/zapret-rust.service" /etc/systemd/system/zapret-rust.service
+fi
+
+if ! command -v blocky &>/dev/null; then
+    printf ":: installing blocky DNS proxy\n"
+    if pacman -Si blocky &>/dev/null; then
+        pacman -S --needed --noconfirm blocky || true
+    elif [[ -n "${SUDO_USER:-}" ]] && command -v yay &>/dev/null; then
+        su - "$SUDO_USER" -c "yay -S --needed --noconfirm blocky" || true
+    elif [[ -n "${PKEXEC_UID:-}" ]] && command -v yay &>/dev/null; then
+        pk_user="$(id -nu "$PKEXEC_UID" 2>/dev/null || true)"
+        [[ -n "$pk_user" ]] && su - "$pk_user" -c "yay -S --needed --noconfirm blocky" || true
     fi
 fi
 
-if [[ -f "$SCRIPT_DIR/network/zapret-runner.sh" ]]; then
-    install -Dm755 "$SCRIPT_DIR/network/zapret-runner.sh" /usr/local/bin/zapret-runner.sh
+if [[ -f "$SCRIPT_DIR/network/blocky-default.yml" ]] && [[ ! -f /etc/blocky/blocky.yml ]]; then
+    install -Dm644 "$SCRIPT_DIR/network/blocky-default.yml" /etc/blocky/blocky.yml
+fi
+if [[ -f /etc/blocky/blocky.yml ]] && [[ ! -e /etc/blocky/config.yml ]]; then
+    ln -sf /etc/blocky/blocky.yml /etc/blocky/config.yml
 fi
 
-if [[ -f "$SCRIPT_DIR/network/zapret.service" ]]; then
-    install -Dm644 "$SCRIPT_DIR/network/zapret.service" /etc/systemd/system/zapret.service
-fi
+cat << 'EOF' > /etc/systemd/system/blocky.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/blocky --config /etc/blocky/blocky.yml
+EOF
 
-if [[ -f "$SCRIPT_DIR/network/dns/cloudflare.conf" && ! -f /etc/systemd/resolved.conf.d/bypass-dns.conf ]]; then
-    install -Dm644 "$SCRIPT_DIR/network/dns/cloudflare.conf" /etc/systemd/resolved.conf.d/bypass-dns.conf
-elif [[ -f "$SCRIPT_DIR/network/malw-dns.conf" && ! -f /etc/systemd/resolved.conf.d/bypass-dns.conf ]]; then
-    install -Dm644 "$SCRIPT_DIR/network/malw-dns.conf" /etc/systemd/resolved.conf.d/bypass-dns.conf
+if [[ ! -f /etc/systemd/resolved.conf.d/bypass-dns.conf ]]; then
+    cat << 'EOF' > /etc/systemd/resolved.conf.d/bypass-dns.conf
+[Resolve]
+DNS=127.0.0.1
+Domains=~.
+DNSOverTLS=no
+EOF
 fi
 
 if [[ -f "$SCRIPT_DIR/network/game-bypass-routing.sh" ]]; then
@@ -44,20 +78,13 @@ if [[ -f "$SCRIPT_DIR/network/game-bypass-routing.service" ]]; then
     systemctl enable game-bypass-routing.service || true
 fi
 
-if [[ -f "$SCRIPT_DIR/network/awg0.conf" ]]; then
-    if ! command -v awg-quick &>/dev/null; then
-        printf ":: installing amneziawg-tools and amneziawg-dkms\n"
-        pacman -S --needed --noconfirm amneziawg-tools amneziawg-dkms || true
-    fi
-    if ! command -v resolvconf &>/dev/null; then
-        printf ":: installing systemd-resolvconf\n"
-        pacman -S --needed --noconfirm systemd-resolvconf || true
-    fi
-    install -Dm600 "$SCRIPT_DIR/network/awg0.conf" /etc/amnezia/amneziawg/awg0.conf
+if ! command -v awg-quick &>/dev/null; then
+    printf ":: installing amneziawg-tools and amneziawg-dkms\n"
+    pacman -S --needed --noconfirm amneziawg-tools amneziawg-dkms || true
 fi
-
-if [[ -f "$SCRIPT_DIR/network/WARPw_93.conf" ]]; then
-    install -Dm600 "$SCRIPT_DIR/network/WARPw_93.conf" /etc/amnezia/amneziawg/WARPw_93.conf
+if ! command -v resolvconf &>/dev/null; then
+    printf ":: installing systemd-resolvconf\n"
+    pacman -S --needed --noconfirm systemd-resolvconf || true
 fi
 
 if [[ -f /etc/gai.conf ]]; then
@@ -81,4 +108,8 @@ if [[ -f "$SCRIPT_DIR/greeter/greetd-config.toml" ]]; then
 fi
 
 systemctl daemon-reload
+systemctl enable --now systemd-resolved.service 2>/dev/null || true
+if command -v blocky &>/dev/null; then
+    systemctl enable --now blocky.service 2>/dev/null || true
+fi
 printf ":: system deployment complete\n"
