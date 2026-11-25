@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+
+def run_git(repo, args):
+    try:
+        res = subprocess.run(
+            ["git", "-C", str(repo), *args],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        return res.returncode == 0, res.stdout.strip(), res.stderr.strip()
+    except Exception as e:
+        return False, "", str(e)
+
+
+def discover_repos(extra_roots=None):
+    home = Path.home()
+    candidates = [
+        home / ".dotfiles",
+        home / "Projects" / "dotfiles",
+    ]
+    projects_dir = home / "Projects"
+    if projects_dir.is_dir():
+        for child in sorted(projects_dir.iterdir()):
+            if child.is_dir():
+                candidates.append(child)
+    for root in extra_roots or []:
+        p = Path(root).expanduser()
+        if p.is_dir():
+            candidates.append(p)
+
+    seen = set()
+    repos = []
+    for cand in candidates:
+        if (cand / ".git").exists():
+            resolved = str(cand.resolve()).lower() if os.name == "nt" else str(cand.resolve())
+            if resolved not in seen:
+                seen.add(resolved)
+                repos.append(cand.resolve())
+    return repos
+
+
+def inspect_repo(repo, fetch=False):
+    if fetch:
+        run_git(repo, ["fetch", "--prune", "--quiet"])
+
+    _, branch, _ = run_git(repo, ["rev-parse", "--abbrev-ref", "HEAD"])
+    branch = branch or "HEAD"
+
+    _, status_out, _ = run_git(repo, ["status", "--porcelain"])
+    dirty_count = len([ln for ln in status_out.splitlines() if ln.strip()])
+
+    ok_rem, remotes, _ = run_git(repo, ["remote"])
+    if not ok_rem or not remotes:
+        return {
+            "name": repo.name,
+            "path": repo,
+            "branch": branch,
+            "dirty": dirty_count,
+            "ahead": 0,
+            "behind": 0,
+            "upstream": None,
+            "state": "NO_REMOTE",
+        }
+
+    ok_up, upstream, _ = run_git(repo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"])
+    if not ok_up or not upstream:
+        return {
+            "name": repo.name,
+            "path": repo,
+            "branch": branch,
+            "dirty": dirty_count,
+            "ahead": 0,
+            "behind": 0,
+            "upstream": None,
+            "state": "NO_UPSTREAM",
+        }
+
+    ok_ab, ab_out, _ = run_git(repo, ["rev-list", "--left-right", "--count", f"HEAD...{upstream}"])
+    ahead, behind = 0, 0
+    if ok_ab and ab_out:
+        parts = ab_out.split()
+        if len(parts) == 2:
+            ahead, behind = int(parts[0]), int(parts[1])
+
+    state = "CLEAN"
+    if dirty_count > 0 or ahead > 0 or behind > 0:
+        flags = []
+        if dirty_count > 0:
+            flags.append(f"dirty:{dirty_count}")
+        if ahead > 0:
+            flags.append(f"ahead:{ahead}")
+        if behind > 0:
+            flags.append(f"behind:{behind}")
+        state = " ".join(flags)
+
+    return {
+        "name": repo.name,
+        "path": repo,
+        "branch": branch,
+        "dirty": dirty_count,
+        "ahead": ahead,
+        "behind": behind,
+        "upstream": upstream,
+        "state": state,
+    }
+
+
+def cmd_status(repos, fetch=False):
+    print(f"\n:: Cross-System Git Sync Status ({len(repos)} repos)\n")
+    print(f"  {'Repository':<24} {'Branch':<14} {'State'}")
+    print(f"  {'-' * 64}")
+    needs_attention = False
+    for r in repos:
+        info = inspect_repo(r, fetch=fetch)
+        if info["dirty"] > 0 or info["ahead"] > 0 or info["behind"] > 0:
+            needs_attention = True
+        print(f"  {info['name']:<24} {info['branch']:<14} {info['state']}")
+    print()
+    return 1 if needs_attention else 0
+
+
+def cmd_pull(repos, autostash=False):
+    rc = 0
+    for r in repos:
+        info = inspect_repo(r, fetch=True)
+        if not info["upstream"]:
+            continue
+        if info["behind"] == 0:
+            continue
+        if info["dirty"] > 0 and not autostash:
+            print(f"[!] {info['name']}: behind by {info['behind']} but has {info['dirty']} dirty file(s), skipping")
+            rc = 1
+            continue
+        args = ["pull", "--rebase"]
+        if autostash:
+            args.append("--autostash")
+        ok, _, err = run_git(r, args)
+        if ok:
+            print(f"[+] {info['name']}: pulled {info['behind']} commit(s)")
+        else:
+            print(f"[-] {info['name']}: pull failed ({err})")
+            rc = 1
+    return rc
+
+
+def cmd_push(repos):
+    rc = 0
+    for r in repos:
+        info = inspect_repo(r, fetch=True)
+        if not info["upstream"]:
+            continue
+        if info["behind"] > 0:
+            ok_pull, _, err_pull = run_git(r, ["pull", "--rebase", "--autostash"])
+            if not ok_pull:
+                print(f"[-] {info['name']}: rebase before push failed ({err_pull})")
+                rc = 1
+                continue
+            info = inspect_repo(r, fetch=False)
+        if info["ahead"] > 0:
+            ok, _, err = run_git(r, ["push"])
+            if ok:
+                print(f"[+] {info['name']}: pushed {info['ahead']} commit(s)")
+            else:
+                print(f"[-] {info['name']}: push failed ({err})")
+                rc = 1
+    return rc
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="Cross-OS Git sync status & helper (Windows / CachyOS)")
+    parser.add_argument("action", choices=["status", "pull", "push", "sync"], nargs="?", default="status")
+    parser.add_argument("--fetch", action="store_true", help="Fetch remotes before checking status")
+    parser.add_argument("--autostash", action="store_true", help="Allow --autostash during pull")
+    parser.add_argument("--repo", action="append", default=[], help="Extra repository path to include")
+    return parser
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    repos = discover_repos(extra_roots=args.repo)
+    if args.action == "status":
+        return cmd_status(repos, fetch=args.fetch)
+    if args.action == "pull":
+        return cmd_pull(repos, autostash=args.autostash)
+    if args.action == "push":
+        return cmd_push(repos)
+    if args.action == "sync":
+        rc1 = cmd_pull(repos, autostash=args.autostash)
+        rc2 = cmd_push(repos)
+        rc3 = cmd_status(repos, fetch=False)
+        return 1 if (rc1 or rc2 or rc3) else 0
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

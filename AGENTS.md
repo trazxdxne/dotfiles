@@ -21,10 +21,10 @@ The repository (`~/.dotfiles`) targets **Arch-based distributions (CachyOS, Arch
 
 ## Committing Changes
 
-Commit when a **coherent unit of work** is complete — one atomic commit per logical change. After committing, `git push`.
+Commit when a **coherent unit of work** is complete — one atomic commit per logical change. Always check `git pull --rebase` before editing and `git push` (or `reposync status --fetch`) when done so Windows and CachyOS stay in sync.
 
 - Commit message: one line, English, imperative mood.
-- Scope: `~/.dotfiles` directory only.
+- Scope: `~/.dotfiles` / `~/Projects/dotfiles` directory only.
 
 ## Code Style & Comments
 

@@ -299,7 +299,7 @@ fi
 
 # Adapt user-specific home paths in antigravity mcp_config if running on a non-standard home
 if [[ "$HOME" != "/home/trazxdxne" ]] && [[ -f "$DOTFILES_DIR/modules/antigravity/user/.gemini/config/plugins/ecc/mcp_config.json" ]]; then
-    sed -i "s|/home/trazxdxne|$HOME|g" "$DOTFILES_DIR/modules/antigravity/user/.gemini/config/plugins/ecc/mcp_config.json" 2>/dev/null || true
+    sed -i -E "s|(/home/trazxdxne|/c/Users/trazxdxne)|$HOME|g" "$DOTFILES_DIR/modules/antigravity/user/.gemini/config/plugins/ecc/mcp_config.json" 2>/dev/null || true
 fi
 
 # Ensure user executable permissions
