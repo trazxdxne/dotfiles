@@ -17,6 +17,17 @@
         "@playwright/mcp@latest",
         "--headless"
       ]
+    },
+    "ecc-memory": {
+      "command": "node",
+      "args": [
+        "-e",
+        "import(require('url').pathToFileURL(require('path').join(require('os').homedir(),'.gemini','config','plugins','ecc','scripts','memory-mcp.mjs')).href).then(m=>m.runStdioServer())"
+      ],
+      "env": {
+        "ECC_MEMORY_HARNESS": "antigravity",
+        "ECC_MEMORY_ALLOW_USER_SCOPE": "1"
+      }
     }
   }
 }

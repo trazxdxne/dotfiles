@@ -61,5 +61,14 @@
         "timeout": 30
       }
     ]
+  },
+  "ecc-memory-auto": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node scripts/hooks/antigravity-memory-session-start.js",
+        "timeout": 10
+      }
+    ]
   }
 }

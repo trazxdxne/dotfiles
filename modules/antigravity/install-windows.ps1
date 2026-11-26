@@ -89,9 +89,9 @@ foreach ($sub in @("plugins\ecc\agents", "plugins\ecc\skills", "plugins\ecc\rule
 
 $TargetEccMcp = Join-Path $GeminiDst "plugins\ecc\mcp_config.json"
 if (Test-Path $TargetEccMcp) {
-    $winPosixHome = "/" + (($HomeDir -replace '\\', '/') -replace ':', '').ToLower().Substring(0,1) + ($HomeDir -replace '\\', '/').Substring(2)
+    $winHome = $HomeDir -replace '\\', '/'
     $raw = Get-Content $TargetEccMcp -Raw
-    $patched = $raw -replace '/home/trazxdxne', $winPosixHome
+    $patched = $raw -replace '/home/trazxdxne', $winHome
     if ($patched -ne $raw) {
         Set-Content -Path $TargetEccMcp -Value $patched -NoNewline -Encoding UTF8
     }

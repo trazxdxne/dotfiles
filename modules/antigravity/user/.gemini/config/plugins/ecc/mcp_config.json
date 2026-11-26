@@ -6,7 +6,8 @@
         "/home/trazxdxne/.gemini/config/plugins/ecc/scripts/memory-mcp.mjs"
       ],
       "env": {
-        "ECC_MEMORY_HARNESS": "antigravity"
+        "ECC_MEMORY_HARNESS": "antigravity",
+        "ECC_MEMORY_ALLOW_USER_SCOPE": "1"
       }
     }
   }
